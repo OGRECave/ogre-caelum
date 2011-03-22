@@ -29,6 +29,8 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 #include "OgreBuildSettings.h"
 #endif
 
+#include "CaelumConfig.h"
+
 #include <memory>
 
 // Define the dll export qualifier if compiling for Windows
@@ -47,12 +49,6 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 #else
 	#define CAELUM_EXPORT
 #endif
-
-// Define the version code
-#define CAELUM_VERSION_MAIN 0
-#define CAELUM_VERSION_SEC 5
-#define CAELUM_VERSION_TER 0
-#define CAELUM_VERSION = (CAELUM_VERSION_MAIN << 16) | (CAELUM_VERSION_SEC << 8) | CAELUM_VERSION_TER
 
 // By default only compile type descriptors for scripting.
 #ifndef CAELUM_TYPE_DESCRIPTORS
