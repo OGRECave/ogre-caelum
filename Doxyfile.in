@@ -31,7 +31,7 @@ PROJECT_NAME           = Caelum
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.5
+PROJECT_NUMBER         = ${VERSION}
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -534,8 +534,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = main/src \
-                         main/include
+INPUT                  = ${Caelum_SOURCE_DIR}/main/src/ \
+                         ${Caelum_SOURCE_DIR}/main/include/ \
+						 ${Caelum_BINARY_DIR}/main/include/
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
