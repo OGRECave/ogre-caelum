@@ -21,6 +21,12 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 #include "CaelumPrecompiled.h"
 #include "PointStarfield.h"
 
+// disable: "conversion from 'double' to 'float', possible loss of data
+#   pragma warning (disable : 4244)
+
+// disable: "truncation from 'double' to 'float'
+#   pragma warning (disable : 4305)
+
 // Data from http://heasarc.gsfc.nasa.gov/W3Browse/star-catalog/bsc5p.html
 // Converted using the following MSVS regexps:
 // ^\|0*{:d+} 0*{:d+} 0*{[0-9.]+}\|{[+\-]}0*{:d+} 0*{:d+} 0*{[0-9.]+}\|{.*}\|$

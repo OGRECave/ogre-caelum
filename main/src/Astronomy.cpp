@@ -275,6 +275,7 @@ namespace Caelum
     void Astronomy::getGregorianDateFromJulianDay(
             int julianDay, int &year, int &month, int &day)
     {
+
         // From http://en.wikipedia.org/wiki/Julian_day
         int J = julianDay;
         int j = J + 32044;
@@ -301,15 +302,20 @@ namespace Caelum
         // Integer julian days are at noon.
         // static_cast<int)(floor( is more precise than Ogre::Math::IFloor.
         // Yes, it does matter.
-        int ijd = static_cast<int>(floor(julianDay + 0.5));
+        int fpmode = enterHighPrecissionFloatingPointMode();
+        julianDay += (LongReal)0.5;
+       int ijd = static_cast<int>(floor(julianDay));
         getGregorianDateFromJulianDay(ijd, year, month, day);
 
-        LongReal s = (julianDay + 0.5 - ijd) * 86400.0;
+
+      LongReal s = (julianDay - (LongReal)ijd);
+      s *= 86400.0;
         hour = static_cast<int>(floor(s / 3600));
         s -= hour * 3600;
         minute = static_cast<int>(floor(s / 60));
         s -= minute * 60;
         second = s;
+      restoreFloatingPointMode(fpmode);
     }
 
     void Astronomy::getGregorianDateFromJulianDay(

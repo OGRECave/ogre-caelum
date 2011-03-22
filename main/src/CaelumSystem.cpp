@@ -488,7 +488,7 @@ namespace Caelum
 
         // Update scene fog.
         if (getManageSceneFog ()) {
-            mSceneMgr->setFog (Ogre::FOG_EXP2,
+            mSceneMgr->setFog (Ogre::FOG_LINEAR,
                     fogColour * mSceneFogColourMultiplier,
                     fogDensity * mSceneFogDensityMultiplier);
         }

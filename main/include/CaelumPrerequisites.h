@@ -26,6 +26,7 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 #include "Ogre/Ogre.h"
 #else
 #include "Ogre.h"
+#include "OgreBuildSettings.h"
 #endif
 
 #include <memory>
