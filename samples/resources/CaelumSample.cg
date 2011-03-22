@@ -1,0 +1,249 @@
+/*
+This file is part of Caelum.
+See http://www.ogre3d.org/wiki/index.php/Caelum 
+
+Copyright (c) 2008 Caelum team. See Contributors.txt for details.
+
+Caelum is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Caelum is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Caelum. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+void PssmShadowCasterVP
+(
+    float4 iPosition : POSITION,
+#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+    in float2 iTexCoord : TEXCOORD0,
+#endif
+
+    uniform float4x4 wvpMat,
+
+#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+    out float2 oTexCoord : TEXCOORD1,
+#endif
+    out float2 oDepth : TEXCOORD0,
+    out float4 oPosition : POSITION
+)
+{
+    // this is the view space position
+    oPosition = mul(wvpMat, iPosition);
+
+    // depth info for the fragment.
+    oDepth.x = oPosition.z;
+    oDepth.y = oPosition.w;
+
+#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+    // Careful: texture coordinate is moved from TEXCOORD0 to TEXCOORD1
+    oTexCoord = iTexCoord;
+#endif
+
+    // clamp z to zero. seem to do the trick. :-/
+    //oPosition.z = max(oPosition.z, 0);
+}
+
+void PssmShadowCasterFP
+(
+    in float2 depth : TEXCOORD0,
+#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+    in float2 texCoord : TEXCOORD1,
+    uniform sampler2D mainTexture : register(s0),
+#endif
+
+    uniform float4 pssmSplitPoints,
+
+    out float4 oColour : COLOR
+)
+{
+    float finalDepth = depth.x / depth.y;
+#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+    float4 texColour = tex2D (mainTexture, texCoord.xy);
+    oColour = float4(finalDepth, finalDepth, finalDepth, texColour.a);
+#else
+    oColour = float4(finalDepth, finalDepth, finalDepth, 1);
+#endif
+}
+
+float shadowPCF(sampler2D shadowMap, float4 shadowMapPos, float2 offset, float shadowBias)
+{
+    shadowMapPos = shadowMapPos / shadowMapPos.w;
+
+    float2 uv = shadowMapPos.xy;
+    float4 o = float4(offset, -offset) * 0.3f;
+
+    float compValue = shadowMapPos.z + shadowBias;
+
+    float result = 0;
+    result += (compValue <= tex2D(shadowMap, uv.xy + o.xy).r) ? 1 : 0;
+    result += (compValue <= tex2D(shadowMap, uv.xy + o.xw).r) ? 1 : 0;
+    result += (compValue <= tex2D(shadowMap, uv.xy + o.zy).r) ? 1 : 0;
+    result += (compValue <= tex2D(shadowMap, uv.xy + o.zw).r) ? 1 : 0;
+    return result / 4;
+}
+
+// Vertex program entry point.
+void MainVP
+(
+        in float4 iPosition : POSITION,
+        in float2 iTexCoord : TEXCOORD0,
+        in float4 iNormal : NORMAL,
+        
+#if PSSM
+        uniform float4x4 texWorldViewProjMatrix0,
+        uniform float4x4 texWorldViewProjMatrix1,
+        uniform float4x4 texWorldViewProjMatrix2,
+#endif
+        uniform float4x4 worldviewproj_matrix,
+        uniform float4x4 inverse_transpose_worldview_matrix,
+
+#if PSSM
+        out float4 oLightPosition2 : TEXCOORD5,
+        out float4 oLightPosition1 : TEXCOORD4,
+        out float4 oLightPosition0 : TEXCOORD3,
+        out float  oSplitPoint : TEXCOORD2,
+#endif
+        out float2 oTexCoord : TEXCOORD0,
+        out float3 oNormal : TEXCOORD1,
+        out float4 oPosition : POSITION
+) {
+    oPosition = mul(worldviewproj_matrix, iPosition);
+    oTexCoord = iTexCoord;
+    oNormal = normalize(mul(inverse_transpose_worldview_matrix, iNormal).xyz);
+
+#if PSSM
+    // Split point is eye-space z.
+    oSplitPoint = oPosition.z;
+
+    // Calculate the position of vertex in light space
+    oLightPosition0 = mul(texWorldViewProjMatrix0, iPosition);
+    oLightPosition1 = mul(texWorldViewProjMatrix1, iPosition);
+    oLightPosition2 = mul(texWorldViewProjMatrix2, iPosition);
+#endif
+}
+
+// Fragment program entry point.
+void MainFP
+(
+    in float2 iTexcoord : TEXCOORD0,
+    in float3 iNormal : TEXCOORD1,
+
+#if PSSM
+    in float iSplitPoint : TEXCOORD2,
+    in float4 iLightPosition0 : TEXCOORD3,
+    in float4 iLightPosition1 : TEXCOORD4,
+    in float4 iLightPosition2 : TEXCOORD5,
+#endif
+
+#if PSSM
+    uniform float4 invShadowMapSize0,
+    uniform float4 invShadowMapSize1,
+    uniform float4 invShadowMapSize2,
+    uniform float4 pssmSplitPoints,
+    uniform float shadowBias,
+
+    uniform sampler2D shadowMap0 : register(s0),
+    uniform sampler2D shadowMap2 : register(s2),
+    uniform sampler2D shadowMap1 : register(s1),
+    uniform sampler mainTexture : register(s3),
+    #if TERRAIN
+        uniform sampler detailTexture : register(s4),
+    #endif
+#else
+    uniform sampler mainTexture : register(s0),
+    #if TERRAIN
+        uniform sampler detailTexture : register(s1),
+    #endif
+#endif
+
+#if AMBIENT
+    uniform float4 derived_scene_colour,
+#endif
+
+    uniform float4 surface_diffuse_colour,
+
+#if ONE_LIGHT
+    uniform float4 light_position_view_space,
+    uniform float4 derived_light_diffuse_colour,
+#endif 
+
+#if TWO_LIGHTS
+    uniform float4 light_position_view_space_0,
+    uniform float4 derived_light_diffuse_colour_0,
+    uniform float4 light_position_view_space_1,
+    uniform float4 derived_light_diffuse_colour_1,
+#endif
+            
+    out float4 oColour : COLOR
+)
+{
+    // Initialize to 0; then accumulate.
+    oColour = float4(0, 0, 0, 0);
+
+    // calculate shadow
+    float shadowing = 1.0f;
+#if PSSM
+    float4 splitColour;
+    if (iSplitPoint <= pssmSplitPoints.y) {
+        splitColour = float4(0.1, 0, 0, 1);
+        shadowing = shadowPCF(shadowMap0, iLightPosition0, invShadowMapSize0.xy, shadowBias);
+    } else if (iSplitPoint <= pssmSplitPoints.z) {
+        splitColour = float4(0, 0.1, 0, 1);
+        shadowing = shadowPCF(shadowMap1, iLightPosition1, invShadowMapSize1.xy, shadowBias);
+    } else {
+        splitColour = float4(0.1, 0.1, 0, 1);
+        shadowing = shadowPCF(shadowMap2, iLightPosition2, invShadowMapSize2.xy, shadowBias);
+    }
+
+    // Can check that splitting is done correctly:
+    //oColour += splitColour;
+#endif
+
+#if TERRAIN
+    // Modulate two scaled textures.
+    float4 baseColour =
+            tex2D(mainTexture, iTexcoord * 20) *
+            tex2D(detailTexture, iTexcoord * 100);
+#else
+    float4 baseColour = tex2D(mainTexture, iTexcoord);
+#endif
+
+#if AMBIENT
+    oColour += baseColour * derived_scene_colour;
+#endif
+
+#if ONE_LIGHT
+    float3 normal = normalize(iNormal);
+
+    float diffuse_factor = max(0, dot(float4(normal, 1), light_position_view_space));
+    float4 light_colour = diffuse_factor * derived_light_diffuse_colour * shadowing;
+
+    oColour += baseColour * light_colour;
+#endif
+
+#if TWO_LIGHTS
+    float3 normal = normalize(iNormal);
+
+    // Accumulate two lights
+    float4 light_colour = float4(0, 0, 0, 0);
+
+    float diffuse_factor_0 = max(0, dot(float4(normal, 1), light_position_view_space_0));
+    light_colour += diffuse_factor_0 * derived_light_diffuse_colour_0 * shadowing;
+
+    float diffuse_factor_1 = max(0, dot(float4(normal, 1), light_position_view_space_1));
+    light_colour += diffuse_factor_1 * derived_light_diffuse_colour_1 * shadowing;
+
+    oColour += light_colour * baseColour;
+#endif
+
+    // In the OpenGL fixed function lighting output alpha is ALWAYS equal to material alpha
+    // That is a very sensible mode of operation; duplicate that.
+    oColour.a = surface_diffuse_colour.a * baseColour.a;
+}

@@ -1,0 +1,595 @@
+//
+//This file is part of Caelum.
+//See http://www.ogre3d.org/wiki/index.php/Caelum 
+//
+//Copyright (c) 2006-2007 Caelum team. See Contributors.txt for details.
+//
+//Caelum is free software: you can redistribute it and/or modify
+//it under the terms of the GNU Lesser General Public License as published
+//by the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//Caelum is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public License
+//along with Caelum. If not, see <http://www.gnu.org/licenses/>.
+//
+
+vertex_program CaelumSample/PSSM/ShadowCaster/VP cg
+{
+    source CaelumSample.cg
+    profiles vs_1_1 arbvp1
+    entry_point PssmShadowCasterVP
+    compile_arguments -DPSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
+
+    default_params
+    {
+        param_named_auto wvpMat worldviewproj_matrix
+    }
+}
+
+fragment_program CaelumSample/PSSM/ShadowCaster/FP cg
+{
+    source CaelumSample.cg
+    profiles ps_2_0 arbfp1
+    entry_point PssmShadowCasterFP
+    compile_arguments -DPSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
+
+    default_params
+    {
+    }
+}
+
+// Default shadow caster.
+//
+// Ogre will automatically adjust this material for culling and alpha-rejection for each pass
+//
+// This material fetches alpha from the first texture and passes it through
+// in order for alpha rejection to work. This happens even for materials that
+// don't use alpha rejection and for texture-less materials; even though it is
+// not necesarry in those cases; and sub-optimal. Doing things the optimal way
+// would a large number of shadow_caster_material instances; perhaps generated
+// at runtime.
+material CaelumSample/PSSM/ShadowCaster
+{
+    technique
+    {
+        pass
+        {
+            // See: http://www.ogre3d.org/phpBB2/viewtopic.php?t=44817
+            fog_override true
+            
+            vertex_program_ref CaelumSample/PSSM/ShadowCaster/VP
+            {
+            }
+
+            fragment_program_ref CaelumSample/PSSM/ShadowCaster/FP
+            {
+            }
+        }
+    }
+}
+
+vertex_program CaelumSample/BasicVP cg
+{
+    source CaelumSample.cg
+    entry_point MainVP
+    profiles vs_2_0 arbvp1
+    compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
+
+    default_params
+    {
+        param_named_auto worldviewproj_matrix worldviewproj_matrix
+        param_named_auto inverse_transpose_worldview_matrix inverse_transpose_worldview_matrix
+    }
+}
+
+fragment_program CaelumSample/BasicFP cg
+{
+    source CaelumSample.cg
+    entry_point MainFP
+    profiles ps_2_x arbfp1
+    compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
+    
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto derived_scene_colour derived_scene_colour
+        param_named_auto light_position_view_space_0 light_position_view_space 0
+        param_named_auto light_position_view_space_1 light_position_view_space 1
+        param_named_auto derived_light_diffuse_colour_0 derived_light_diffuse_colour 0
+        param_named_auto derived_light_diffuse_colour_1 derived_light_diffuse_colour 1
+    }
+}
+
+fragment_program CaelumSample/BasicFP/Terrain cg
+{
+    source CaelumSample.cg
+    entry_point MainFP
+    profiles ps_2_x arbfp1
+    compile_arguments -DTERRAIN=1 -DAMBIENT=1 -DTWO_LIGHTS=1
+    
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto derived_scene_colour derived_scene_colour
+        param_named_auto light_position_view_space_0 light_position_view_space 0
+        param_named_auto light_position_view_space_1 light_position_view_space 1
+        param_named_auto derived_light_diffuse_colour_0 derived_light_diffuse_colour 0
+        param_named_auto derived_light_diffuse_colour_1 derived_light_diffuse_colour 1
+    }
+}
+
+vertex_program CaelumSample/PSSM/AmbientVP cg
+{
+    source CaelumSample.cg
+    profiles vs_1_1 arbvp1
+    entry_point MainVP
+    compile_arguments -DPSSM=0 -DAMBIENT=1
+
+    default_params
+    {
+        param_named_auto worldviewproj_matrix worldviewproj_matrix
+    }
+}
+
+fragment_program CaelumSample/PSSM/AmbientFP cg
+{
+    source CaelumSample.cg
+    profiles ps_2_x arbfp1
+    entry_point MainFP
+    compile_arguments -DPSSM=0 -DAMBIENT=1
+
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto derived_scene_colour derived_scene_colour
+    }
+}
+
+fragment_program CaelumSample/PSSM/AmbientFP/Terrain cg
+{
+    source CaelumSample.cg
+    profiles ps_2_x arbfp1
+    entry_point MainFP
+    compile_arguments -DPSSM=0 -DAMBIENT=1 -DTERRAIN=1
+
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto derived_scene_colour derived_scene_colour
+    }
+}
+
+vertex_program CaelumSample/PSSM/OneLightVP cg
+{
+    source CaelumSample.cg
+    profiles vs_1_1 arbvp1
+    entry_point MainVP
+    compile_arguments -DPSSM=1 -DONE_LIGHT=1
+
+    default_params
+    {
+        param_named_auto worldviewproj_matrix worldviewproj_matrix
+        param_named_auto inverse_transpose_worldview_matrix inverse_transpose_worldview_matrix
+
+        param_named_auto texWorldViewProjMatrix0 texture_worldviewproj_matrix 0
+        param_named_auto texWorldViewProjMatrix1 texture_worldviewproj_matrix 1
+        param_named_auto texWorldViewProjMatrix2 texture_worldviewproj_matrix 2
+    }
+}
+
+fragment_program CaelumSample/PSSM/OneLightFP cg
+{
+    source CaelumSample.cg
+    profiles ps_2_x arbfp1
+    entry_point MainFP
+    compile_arguments -DPSSM=1 -DONE_LIGHT=1
+
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto invShadowMapSize0 inverse_texture_size 0
+        param_named_auto invShadowMapSize1 inverse_texture_size 1
+        param_named_auto invShadowMapSize2 inverse_texture_size 2
+
+        param_named_auto light_position_view_space light_position_view_space 0
+        param_named_auto derived_light_diffuse_colour derived_light_diffuse_colour 0
+
+        param_named pssmSplitPoints float4 0 0 0 0
+        // 0 by default; only used for materials which don't cull backfaces.
+        param_named shadowBias float 0
+    }
+}
+
+fragment_program CaelumSample/PSSM/OneLightFP/Terrain cg
+{
+    source CaelumSample.cg
+    profiles ps_2_x arbfp1
+    entry_point MainFP
+    compile_arguments -DPSSM=1 -DONE_LIGHT=1 -DTERRAIN
+
+    default_params
+    {
+        param_named_auto surface_diffuse_colour surface_diffuse_colour
+        param_named_auto invShadowMapSize0 inverse_texture_size 0
+        param_named_auto invShadowMapSize1 inverse_texture_size 1
+        param_named_auto invShadowMapSize2 inverse_texture_size 2
+
+        param_named_auto light_position_view_space light_position_view_space 0
+        param_named_auto derived_light_diffuse_colour derived_light_diffuse_colour 0
+
+        param_named pssmSplitPoints float4 0 0 0 0
+        param_named shadowBias float 0
+    }
+}
+
+// Base material for Caelum samples
+//
+// This only supports one ambient/diffuse textures.
+// Emissive and specular colours are defined but not actually used.
+abstract material CaelumSample/Base
+{
+    // Default values for the variables
+    set $AmbientColour "1 1 1 1"
+    set $DiffuseColour "1 1 1 1"
+    set $SpecularColour "0 0 0 0 0"
+    set $EmissiveColour "0 0 0 0"
+
+    // Don't provide this default for textures; missing textures should be visible errors.
+    //set $AmbientDiffuseTexture "FAIL.png"
+
+    technique Default
+    {
+        scheme Default
+
+        pass Main
+        {
+            ambient $AmbientColour
+            diffuse $DiffuseColour
+            specular $SpecularColour
+            emissive $EmissiveColour
+            fog_override true none
+            
+            vertex_program_ref CaelumSample/BasicVP
+            {
+            }
+
+            fragment_program_ref CaelumSample/BasicFP
+            {
+            }
+
+            texture_unit Main
+            {
+                tex_coord_set 0
+                texture $AmbientDiffuseTexture
+            }
+        }
+    }
+
+    technique PSSM
+    {
+        scheme PSSM
+
+        pass Ambient
+        {
+            fog_override true none
+
+            illumination_stage ambient
+            ambient $AmbientColour
+            diffuse $DiffuseColour
+            specular 0 0 0 0 0
+            emissive $EmissiveColour
+
+            vertex_program_ref CaelumSample/PSSM/AmbientVP
+            {
+            }
+
+            fragment_program_ref CaelumSample/PSSM/AmbientFP
+            {
+            }
+
+            texture_unit Main
+            {
+                tex_coord_set 0
+                texture $AmbientDiffuseTexture
+            }
+        }
+
+        pass Directional
+        {
+            fog_override true none
+
+            illumination_stage per_light
+            max_lights 2
+            iteration once_per_light directional
+
+            scene_blend add
+
+            ambient 0 0 0 0
+            diffuse $DiffuseColour
+            specular $SpecularColour
+            emissive 0 0 0 0
+
+            vertex_program_ref CaelumSample/PSSM/OneLightVP
+            {
+            }
+
+            fragment_program_ref CaelumSample/PSSM/OneLightFP
+            {
+            }
+
+            texture_unit shadow_tex0
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 0
+            }
+
+            texture_unit shadow_tex1
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 1
+            }
+
+            texture_unit shadow_tex2
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 2
+            }
+
+            texture_unit Main
+            {
+                tex_coord_set 3
+                texture $AmbientDiffuseTexture
+            }
+        }
+    }
+}
+
+abstract material CaelumSample/AlphaRejectionBase: CaelumSample/Base
+{
+    technique Default
+    {
+        pass Main
+        {
+            cull_hardware none
+            alpha_rejection greater_equal 128
+        }
+    }
+
+    technique PSSM
+    {
+        pass Ambient
+        {
+            cull_hardware none
+            alpha_rejection greater_equal 128
+        }
+
+        pass Directional
+        {
+            fragment_program_ref *
+            {
+                param_named shadowBias float -0.0001
+            }
+            cull_hardware none
+            alpha_rejection greater_equal 128
+        }
+    }
+
+    technique CaelumDepth
+    {
+        scheme CaelumDepth
+
+        pass AlphaRejectionDepth
+        {
+            depth_write on
+            depth_check on
+            
+            cull_hardware none
+            alpha_rejection greater_equal 128
+            fog_override true none
+
+            vertex_program_ref Caelum/DepthRenderAlphaRejectionVP
+            {
+            }
+
+            fragment_program_ref Caelum/DepthRenderAlphaRejectionFP
+            {
+            }
+
+            texture_unit Main
+            {
+            }
+        }
+    }
+}
+
+abstract material CaelumSample/AlphaBlendBase: CaelumSample/Base
+{
+    technique Default
+    {
+        pass Main
+        {
+            cull_hardware none
+            scene_blend alpha_blend
+            depth_write off
+        }
+    }
+
+    technique PSSM
+    {
+        pass Ambient
+        {
+            cull_hardware none
+            depth_write off
+
+            scene_blend src_alpha one_minus_src_alpha
+        }
+
+        pass Directional
+        {
+            cull_hardware none
+            depth_write off
+
+            scene_blend src_alpha one
+        }
+    }
+
+    technique CaelumDepth
+    {
+        scheme CaelumDepth
+        pass Main
+        {
+            depth_write off
+            colour_write off
+        }
+    }
+}
+
+// Terrain material is special; it has a custom vp/fp and an additional texture.
+material CaelumSample/Terrain: CaelumSample/Base
+{
+    // Silence warnings about unset variables.
+    set $AmbientDiffuseTexture "terrain_dirt-grass.jpg"
+
+    technique Default
+    {
+        pass Main
+        {
+            fragment_program_ref CaelumSample/BasicFP/Terrain
+            {
+            }
+
+            texture_unit Main
+            {
+                texture terrain_dirt-grass.jpg
+                tex_coord_set 0
+            }
+
+            texture_unit TerrainDetail
+            {
+                texture terrain_detail.jpg
+                tex_coord_set 1
+            }
+        }
+    }
+
+    technique PSSM
+    {
+        pass Ambient
+        {
+            fragment_program_ref CaelumSample/PSSM/AmbientFP/Terrain
+            {
+            }
+
+            texture_unit Main
+            {
+                texture terrain_dirt-grass.jpg
+                tex_coord_set 0
+            }
+
+            texture_unit TerrainDetail
+            {
+                texture terrain_detail.jpg
+                tex_coord_set 1
+            }
+        }
+
+        pass Directional
+        {
+            fragment_program_ref CaelumSample/PSSM/OneLightFP/Terrain
+            {
+            }
+
+            texture_unit shadow_tex0
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 0
+            }
+
+            texture_unit shadow_tex1
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 1
+            }
+
+            texture_unit shadow_tex2
+            {
+                content_type shadow
+                tex_address_mode clamp
+                tex_coord_set 2
+            }
+
+            texture_unit Main
+            {
+                texture terrain_dirt-grass.jpg
+                tex_coord_set 3
+            }
+
+            texture_unit TerrainDetail
+            {
+                texture terrain_detail.jpg
+                tex_coord_set 4
+            }
+        }
+    }
+}
+
+// Materials used in various sample models.
+material Examples/TudorHouse: CaelumSample/Base
+{
+    set $AmbientDiffuseTexture TudorHouse.jpg
+}
+
+material CaelumSample/AlphaBlendTest: CaelumSample/AlphaBlendBase
+{
+    set $AmbientDiffuseTexture AlphaBlendTest.png
+}
+
+material CaelumSample/AlphaRejectionTest: CaelumSample/AlphaRejectionBase
+{
+    set $AmbientDiffuseTexture AlphaRejectionTest.png
+}
+
+material 3D-Diggers/fir01: CaelumSample/AlphaRejectionBase 
+{
+    set $AmbientDiffuseTexture "fir01.png"
+    set $AmbientColour "0.5 0.5 0.5 1"
+    set $DiffuseColour "0.6 0.6 0.6 1"
+}
+
+material 3D-Diggers/fir02: CaelumSample/Base
+{
+    set $AmbientDiffuseTexture "fir02.jpg"
+    set $AmbientColour "0.5 0.5 0.5 1"
+    set $DiffuseColour "0.6 0.6 0.6 1"
+}
+
+material SOLID/TEX/wood7.jpg: CaelumSample/AlphaBlendBase 
+{
+    set $AmbientDiffuseTexture "wood7.jpg"
+    set $AmbientColour "0.4 0.4 0.4 1"
+    set $DiffuseColour "1 1 1 1"
+}
+
+material SOLID/TEX/Leaves.png: CaelumSample/AlphaRejectionBase 
+{
+    set $AmbientDiffuseTexture "Leaves.png"
+    set $AmbientColour "0.5 0.5 0.5 1"
+    set $DiffuseColour "0.6 0.6 0.6 1"
+}
+
+material SOLID/TEX/PineLeaves.png: CaelumSample/AlphaRejectionBase  
+{
+    set $AmbientDiffuseTexture "PineLeaves.png"
+    set $AmbientColour "0.5 0.5 0.5 1"
+    set $DiffuseColour "0.6 0.6 0.6 1"
+}

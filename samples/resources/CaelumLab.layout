@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="CaelumLab" >
+        <Property Name="InheritsAlpha" Value="False" />
+        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="TaharezLook/FrameWindow" Name="CaelumLab/Main" >
+            <Property Name="Font" Value="BlueHighway-10" />
+            <Property Name="Alpha" Value="0.5" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="TitlebarFont" Value="BlueHighway-10" />
+            <Property Name="Text" Value="Double click to show/hide" />
+            <Property Name="FrameEnabled" Value="True" />
+            <Property Name="SizingEnabled" Value="True" />
+            <Property Name="RollUpEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{1,-400},{0,0},{1,0},{1,-110}}" />
+            <Property Name="UnifiedMinSize" Value="{{0,300},{0,300}}" />
+            <Property Name="CloseButtonEnabled" Value="False" />
+
+            <Window Type="TaharezLook/ScrollablePane" Name="CaelumLab/ScrollablePane">
+                <Property Name="UnifiedAreaRect" Value="{{0,15},{0,35},{1,-15},{1,-10}}" />
+                <Property Name="ContentPaneAutoSized" Value="True" />
+                <Property Name="ForceVertScrollBar" Value="True" />
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/Scripting/GroupBox">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,35}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,65}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/Scripting/Label" >
+                        <Property Name="Text" Value="Scripting:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/LoadScriptLabel" >
+                        <Property Name="Text" Value="Load settings:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Combobox" Name="CaelumLab/LoadScriptCombo" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,35}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,90}}" />
+                        <Property Name="ClippedByParent" Value="false" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="ReadOnly" Value="True" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/SceneSetup/GroupBox">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,105}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,95}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/SceneSetup/Label" >
+                        <Property Name="Text" Value="Scene setup:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/MaterialSchemeLabel" >
+                        <Property Name="Text" Value="Material scheme:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Combobox" Name="CaelumLab/MaterialSchemeCombo" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,35}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,90}}" />
+                        <Property Name="ClippedByParent" Value="false" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="ReadOnly" Value="True" />
+                    </Window>
+
+                    <Window Type="TaharezLook/Checkbox" Name="CaelumLab/ForceTerrainShadowsCheckbox" >
+                        <Property Name="Text" Value="Force TerrainSceneManager shadows" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-20},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/TimeGroupBox">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,205}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,125}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/TimeLabel" >
+                        <Property Name="Text" Value="Time:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/UtcTimeLabel" >
+                        <Property Name="Text" Value="UTC Time:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/UtcTimeEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/JulianDayLabel" >
+                        <Property Name="Text" Value="Julian Day:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/JulianDayEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/TimeScaleLabel" >
+                        <Property Name="Text" Value="Time multiplier:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/TimeScaleEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/TimeScaleScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,95}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/CameraGroup">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,335}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,215}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraLabel" >
+                        <Property Name="Text" Value="Camera:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraPositionLabel" >
+                        <Property Name="Text" Value="Camera position:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraPositionEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraDirectionLabel" >
+                        <Property Name="Text" Value="Camera direction:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraDirectionEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                  
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraSpeedLabel" >
+                        <Property Name="Text" Value="Move speed:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraSpeedEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CameraSpeedScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,95}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraFovLabel" >
+                        <Property Name="Text" Value="Field of view:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraFovEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0, 120}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CameraFovScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,125}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraNearClipLabel" >
+                        <Property Name="Text" Value="Near clip distance:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,150}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraNearClipEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,150}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CameraNearClipScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,155}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CameraFarClipLabel" >
+                        <Property Name="Text" Value="Far clip distance:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,180}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CameraFarClipEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,180}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CameraFarClipScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,185}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/SunMoonGroup">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,555}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,155}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/SunMoonLabel" >
+                        <Property Name="Text" Value="Sun and moon:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/SunDirectionLabel" >
+                        <Property Name="Text" Value="Sun direction:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/SunDirectionEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-165},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/Button" Name="CaelumLab/SunDirectionFocusButton" >
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{1.0,-35},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,25},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/MoonDirectionLabel" >
+                        <Property Name="Text" Value="Moon direction:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/MoonDirectionEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-165},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/Button" Name="CaelumLab/MoonDirectionFocusButton" >
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{1.0,-35},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,25},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/MoonPhaseLabel" >
+                        <Property Name="Text" Value="Moon phase (0-2):" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/MoonPhaseEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/MoonLightLabel" >
+                        <Property Name="Text" Value="Moonlight:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/MoonLightEditbox" >
+                        <Property Name="NormalTextColour" Value="FF999999" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,-130},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/CloudsGroup">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,715}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,155}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CloudsLabel" >
+                        <Property Name="Text" Value="Clouds:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CloudLayer1CoverLabel" >
+                        <Property Name="Text" Value="Layer 1 coverage:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CloudLayer1CoverEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CloudLayer1CoverScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,70},{0,35}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CloudLayer1HeightLabel" >
+                        <Property Name="Text" Value="Layer 1 height:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CloudLayer1HeightEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CloudLayer1HeightScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,70},{0,65}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CloudLayer2CoverLabel" >
+                        <Property Name="Text" Value="Layer 2 coverage:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CloudLayer2CoverEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CloudLayer2CoverScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,70},{0,95}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/CloudLayer2HeightLabel" >
+                        <Property Name="Text" Value="Layer 2 height:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/CloudLayer2HeightEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/CloudLayer2HeightScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,70},{0,125}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/PointStarfieldGroup">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,875}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,155}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/PointStarfieldLabel" >
+                        <Property Name="Text" Value="Point starfield:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+                
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/StarMagScaleLabel" >
+                        <Property Name="Text" Value="Magnitude scale:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/StarMagScaleEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/StarMagScaleScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,35}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/StarMag0SizeLabel" >
+                        <Property Name="Text" Value="Mag 0 size (px):" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/StarMag0SizeEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/StarMag0SizeScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,65}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/StarMinSizeLabel" >
+                        <Property Name="Text" Value="Min size (px):" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/StarMinSizeEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/StarMinSizeScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,95}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/StarMaxSizeLabel" >
+                        <Property Name="Text" Value="Max size (px):" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/StarMaxSizeEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/StarMaxSizeScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,125}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/PrecipitationGroup">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,1035}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,125}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/PrecipitationLabel" >
+                        <Property Name="Text" Value="Precipitation:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+                  
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/PrecipitationTypeLabel" >
+                        <Property Name="Text" Value="Type:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/PrecipitationTypeEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/PrecipitationTypeScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,35}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/PrecipitationSpeedLabel" >
+                        <Property Name="Text" Value="Speed:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/PrecipitationSpeedEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/PrecipitationSpeedScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,65}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                  
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/PrecipitationIntensityLabel" >
+                        <Property Name="Text" Value="Intensity:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/PrecipitationIntensityEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/PrecipitationIntensityScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,95}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+
+                <Window Type="TaharezLook/StaticImage" Name="CaelumLab/DepthComposer/Group">
+                    <Property Name="UnifiedPosition" Value="{{0,10},{0,1165}}" />
+                    <Property Name="UnifiedSize" Value="{{1.0,-20},{0,215}}" />
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/DepthComposer/TitleLabel" >
+                        <Property Name="Text" Value="     Depth-based compositor:" />
+                        <Property Name="TextColours" Value="FFFFFF77" />
+                        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+                        <Property Name="Disabled" Value="true" />
+                        <Property Name="UnifiedSize" Value="{{1.0,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="BackgroundColours" Value="tl:FFFFFFFF tr:00000000 bl:FFFFFFFF br:00FFFFFF" />
+                        <Property Name="FrameColours" Value="tl:FFFFFFFF tr:00FFFFFF bl:FFFFFFFF br:00FFFFFF" />
+                    </Window>
+                  
+                    <!-- HACK: Placed on top of the title label. -->
+                    <Window Type="TaharezLook/Checkbox" Name="CaelumLab/DepthComposer/EnabledCheckbox" >
+                        <Property Name="Text" Value="" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,5},{0,0}}" />
+                        <Property Name="UnifiedSize" Value="{{0,25},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                  
+                    <Window Type="TaharezLook/Checkbox" Name="CaelumLab/DepthComposer/DebugDepthRenderCheckbox" >
+                        <Property Name="Text" Value="Debug depth render" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,30}}" />
+                        <Property Name="UnifiedSize" Value="{{1,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/Checkbox" Name="CaelumLab/DepthComposer/SkyDomeHazeCheckbox" >
+                        <Property Name="Text" Value="Sky Dome Haze" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,60}}" />
+                        <Property Name="UnifiedSize" Value="{{1,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/Checkbox" Name="CaelumLab/DepthComposer/GroundFogCheckbox" >
+                        <Property Name="Text" Value="Exp ground fog" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,90}}" />
+                        <Property Name="UnifiedSize" Value="{{1,0},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/DepthComposer/GroundFogDensityLabel" >
+                        <Property Name="Text" Value="Density:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/DepthComposer/GroundFogDensityEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,120}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/DepthComposer/GroundFogDensityScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,125}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/DepthComposer/GroundFogVerticalDecayLabel" >
+                        <Property Name="Text" Value="Vertical decay:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,150}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/DepthComposer/GroundFogVerticalDecayEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,150}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/DepthComposer/GroundFogVerticalDecayScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,155}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+
+                    <Window Type="TaharezLook/StaticText" Name="CaelumLab/DepthComposer/GroundFogBaseLevelLabel" >
+                        <Property Name="Text" Value="Ground level:" />
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,10},{0,180}}" />
+                        <Property Name="UnifiedSize" Value="{{0,120},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="TaharezLook/Editbox" Name="CaelumLab/DepthComposer/GroundFogBaseLevelEditbox" >
+                        <Property Name="TextColours" Value="FFFFFF00" />
+                        <Property Name="FrameEnabled" Value="True" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0,120},{0,180}}" />
+                        <Property Name="UnifiedSize" Value="{{0.4,-55},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="True" />
+                    </Window>
+                    <Window Type="TaharezLook/HorizontalScrollbar" Name="CaelumLab/DepthComposer/GroundFogBaseLevelScrollbar" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="InheritsAlpha" Value="False" />
+                        <Property Name="UnifiedPosition" Value="{{0.4,75},{0,185}}" />
+                        <Property Name="UnifiedSize" Value="{{0.6,-85},{0,15}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </Window>
+              
+                <Window Type="TaharezLook/Button" Name="CaelumLab/QuitButton" >
+                    <Property Name="Text" Value="Quit" />
+                    <Property Name="InheritsAlpha" Value="False" />
+                    <Property Name="UnifiedPosition" Value="{{1.0,-110},{0,1390}}" />
+                    <Property Name="UnifiedSize" Value="{{0,100},{0,25}}" />
+                </Window>
+                <Window Type="TaharezLook/Button" Name="CaelumLab/ResetButton" >
+                    <Property Name="Text" Value="Reset" />
+                    <Property Name="InheritsAlpha" Value="False" />
+                    <Property Name="UnifiedPosition" Value="{{1.0,-220},{0,1390}}" />
+                    <Property Name="UnifiedSize" Value="{{0,100},{0,25}}" />
+                </Window>
+                <Window Type="TaharezLook/Button" Name="CaelumLab/DumpButton" >
+                    <Property Name="Text" Value="Magic Dump" />
+                    <Property Name="InheritsAlpha" Value="False" />
+                    <Property Name="UnifiedPosition" Value="{{1.0,-330},{0,1390}}" />
+                    <Property Name="UnifiedSize" Value="{{0,100},{0,25}}" />
+                </Window>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>
