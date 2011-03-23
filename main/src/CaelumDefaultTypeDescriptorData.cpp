@@ -108,10 +108,18 @@ namespace Caelum
                     new AccesorPropertyDescriptor<Caelum::CaelumSystem, ColourValue>(
                             &Caelum::CaelumSystem::getGlobalFogColourMultiplier,
                             &Caelum::CaelumSystem::setGlobalFogColourMultiplier));
-            td->add("manage_scene_fog",
-                    new AccesorPropertyDescriptor<Caelum::CaelumSystem, bool, bool, bool>(
+            td->add("manage_scene_fog_mode",
+					new AccesorPropertyDescriptor<Caelum::CaelumSystem, Ogre::FogMode, Ogre::FogMode, Ogre::FogMode>(
                             &Caelum::CaelumSystem::getManageSceneFog,
                             &Caelum::CaelumSystem::setManageSceneFog));
+            td->add("manage_scene_start",
+					new AccesorPropertyDescriptor<Caelum::CaelumSystem, Ogre::Real, Ogre::Real, Ogre::Real>(
+							&Caelum::CaelumSystem::getManageSceneFogStart,
+							&Caelum::CaelumSystem::setManageSceneFogStart));
+            td->add("manage_scene_end",
+					new AccesorPropertyDescriptor<Caelum::CaelumSystem, Ogre::Real, Ogre::Real, Ogre::Real>(
+						&Caelum::CaelumSystem::getManageSceneFogEnd,
+						&Caelum::CaelumSystem::setManageSceneFogEnd));
             td->add("scene_fog_density_multiplier",
                     new AccesorPropertyDescriptor<Caelum::CaelumSystem, Real, Real, Real>(
                             &Caelum::CaelumSystem::getSceneFogDensityMultiplier,

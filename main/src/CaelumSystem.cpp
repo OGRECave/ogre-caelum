@@ -118,7 +118,9 @@ namespace Caelum
         setSunColoursImage(DEFAULT_SUN_COLOURS_IMAGE);
 
         // Fog defaults.
-        setManageSceneFog (true);
+		setManageSceneFog (Ogre::FOG_EXP2);
+		setManageSceneFogStart(900);
+		setManageSceneFogEnd(1000);
         mGlobalFogDensityMultiplier = 1;
         mGlobalFogColourMultiplier = Ogre::ColourValue(1.0, 1.0, 1.0, 1.0);
         mSceneFogDensityMultiplier = 1;
@@ -487,10 +489,12 @@ namespace Caelum
         }
 
         // Update scene fog.
-        if (getManageSceneFog ()) {
-            mSceneMgr->setFog (Ogre::FOG_EXP2,
+		if (mManageSceneFogMode != Ogre::FOG_NONE) {
+            mSceneMgr->setFog (mManageSceneFogMode,
                     fogColour * mSceneFogColourMultiplier,
-                    fogDensity * mSceneFogDensityMultiplier);
+                    fogDensity * mSceneFogDensityMultiplier, 
+					mManageSceneFogFromDistance,
+					mManageSceneFogToDistance);
         }
 
         // Update ground fog.
@@ -573,16 +577,39 @@ namespace Caelum
         }
     }
 
-    void CaelumSystem::setManageSceneFog (bool value) {
-        mManageSceneFog = value;
+    void CaelumSystem::setManageSceneFog (Ogre::FogMode v) {
+        mManageSceneFogMode = v;
+		
         // Prevent having some stale values around.
-        if (!value) {
+        if (!v == Ogre::FOG_NONE) {
             mSceneMgr->setFog (Ogre::FOG_NONE);
         }
     }
 
-    bool CaelumSystem::getManageSceneFog () const {
-        return mManageSceneFog;
+	void CaelumSystem::disableFogMangement()
+	{
+		// NO RESET
+		mManageSceneFogMode = Ogre::FOG_NONE;
+	}
+
+    Ogre::FogMode CaelumSystem::getManageSceneFog () const {
+        return mManageSceneFogMode;
+    }
+
+    void CaelumSystem::setManageSceneFogStart (Ogre::Real from) {
+		mManageSceneFogFromDistance = from;
+    }
+
+    Ogre::Real CaelumSystem::getManageSceneFogStart () const {
+        return mManageSceneFogFromDistance;
+    }
+
+	void CaelumSystem::setManageSceneFogEnd (Ogre::Real from) {
+		mManageSceneFogToDistance = from;
+    }
+
+    Ogre::Real CaelumSystem::getManageSceneFogEnd () const {
+        return mManageSceneFogToDistance;
     }
 
     void CaelumSystem::setSceneFogDensityMultiplier (Real value) {

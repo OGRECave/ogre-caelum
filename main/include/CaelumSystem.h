@@ -142,8 +142,11 @@ namespace Caelum
         /// Automatically set the viewport colour to black.
         bool mAutoViewportBackground;
 
-        /// Flag to indicate if Caelum manages standard Ogre::Scene fog.
-		bool mManageSceneFog;
+        /// Fog Mode caelum should use
+		Ogre::FogMode mManageSceneFogMode;
+
+		/// Distances for linear fog mode
+		Ogre::Real    mManageSceneFogFromDistance, mManageSceneFogToDistance;
 
         Real mGlobalFogDensityMultiplier;
         Ogre::ColourValue mGlobalFogColourMultiplier;
@@ -471,12 +474,18 @@ namespace Caelum
 
             @param value New value
 		 */
-		void setManageSceneFog (bool value);
+		void setManageSceneFog (Ogre::FogMode f);
+		void disableFogMangement();
 
 		/** Tells if Caelum is managing the fog or not.
 			@return The value set in setManageSceneFog.
 		 */
-		bool getManageSceneFog () const;
+		Ogre::FogMode getManageSceneFog () const;
+
+		void setManageSceneFogStart (Ogre::Real from);
+		void setManageSceneFogEnd (Ogre::Real to);
+		Ogre::Real getManageSceneFogStart() const;
+		Ogre::Real getManageSceneFogEnd() const;
 
         /** Multiplier for scene fog density (default 1).
             This is an additional multiplier for Ogre::Scene fog density.
