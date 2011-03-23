@@ -581,9 +581,8 @@ namespace Caelum
         mManageSceneFogMode = v;
 		
         // Prevent having some stale values around.
-        if (!v == Ogre::FOG_NONE) {
-            mSceneMgr->setFog (Ogre::FOG_NONE);
-        }
+		// also important: we need to initialize this before using any terrain
+        mSceneMgr->setFog (mManageSceneFogMode);
     }
 
 	void CaelumSystem::disableFogMangement()
