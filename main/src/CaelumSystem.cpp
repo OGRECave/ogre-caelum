@@ -514,6 +514,7 @@ namespace Caelum
                     moonDir,
                     moonLightColour,
                     moonBodyColour);
+            mMoon->setMoonNorthPoleDirection(getEclipticNorthPoleDirection(julDay)); // its not precise, but error is within 1.5 degrees
             mMoon->setPhase (moonPhase);
         }
 
@@ -737,6 +738,21 @@ namespace Caelum
         return res;
     }
 
+	const Ogre::Vector3 CaelumSystem::getEclipticNorthPoleDirection (LongReal jday)
+    {
+        Ogre::Degree azimuth, altitude;
+        {
+            ScopedHighPrecissionFloatSwitch precissionSwitch;
+			
+            Astronomy::getHorizontalNorthEclipticPolePosition(jday,
+					getObserverLongitude (), getObserverLatitude (),
+					azimuth, altitude);
+        }	
+        Ogre::Vector3 res = -makeDirection(azimuth, altitude);
+		
+		return res;
+	}
+	
 	const Ogre::Vector3 CaelumSystem::getMoonDirection (LongReal jday)
     {
         Ogre::Degree azimuth, altitude;
@@ -754,12 +770,13 @@ namespace Caelum
 
     const Ogre::Real CaelumSystem::getMoonPhase (LongReal jday)
     {
-        // Calculates julian days since January 22, 2008 13:36 (full moon)
+        // Calculates julian days since June 04, 1993 20:31 (full moon)
         // and divides by the time between lunations (synodic month)
-        LongReal T = (jday - 2454488.0665L) / 29.531026L;
+		// Formula derived from http://scienceworld.wolfram.com/astronomy/Lunation.html
+        LongReal T = (jday - 2449143.3552943347L) / 29.53058867L;
 
-        T = fabs(fmod(T, 1));
-        return -fabs(-4 * T + 2) + 2;
+        T -= floor(T);	// [0..1)
+        return T;
     }
 
     void CaelumSystem::forceSubcomponentQueryFlags (uint flags)

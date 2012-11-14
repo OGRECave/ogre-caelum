@@ -238,6 +238,23 @@ namespace Caelum
         altitude = Ogre::Degree(al);  
     }
 
+    void Astronomy::getHorizontalNorthEclipticPolePosition (
+			LongReal jday,
+			Ogre::Degree longitude, Ogre::Degree latitude,
+			Ogre::Degree &azimuth, Ogre::Degree &altitude)
+    {
+		// Get precise equatorial spherical coordinates of North Ecliptic Pole
+        LongReal rasc = 270.0;
+		LongReal decl = 90.0 - 23.439281;
+		
+		// Equatorial to horizontal
+        LongReal az, al;
+        Astronomy::convertEquatorialToHorizontal (
+				jday, longitude.valueDegrees (), latitude.valueDegrees (), rasc, decl, az, al);
+        azimuth = Ogre::Degree(az);                
+        altitude = Ogre::Degree(al);  
+    }
+	
     int Astronomy::getJulianDayFromGregorianDate(
             int year, int month, int day)
     {

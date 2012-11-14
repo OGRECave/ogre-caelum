@@ -93,6 +93,9 @@ namespace Caelum
 
 		/// Set the moon's phase
 		void setPhase (Ogre::Real phase);
+		
+		/// Set Moon`s north pole direction
+		void setMoonNorthPoleDirection(const Ogre::Vector3& moonNorthPoleDir);
 
     public:
 		/// Handle camera change.

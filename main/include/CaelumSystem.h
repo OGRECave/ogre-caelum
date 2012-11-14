@@ -636,14 +636,18 @@ namespace Caelum
 		 */
 		const Ogre::Vector3 getMoonDirection (LongReal jday);
 
-        /** Fake function to get the phase of the moon
+        /** Function to get the phase of the moon
          *  @param jday Julian day
-         *  @return the phase of the moon; ranging from 0(full moon) to 2(new moon).
-         *  The calculations performed by this function are completely fake.
-         *  It's a triangle wave with a period of 28.5 days.
+         *  @return the phase of the moon; ranging from 0(full moon) to 1(again full moon).
          */
 		const Ogre::Real getMoonPhase (LongReal jday);
 
+		/** Get the ecliptic's north pole direction at a certain time.
+		 *  Useful as Moon's north polar axis points within 1.5 degrees of the north ecliptic pole.
+         *  @param jday astronomical julian day.
+		 */
+		const Ogre::Vector3 getEclipticNorthPoleDirection (LongReal jday);
+		
     private:
 		/** Handle FrameListener::frameStarted to call updateSubcomponents every frame.
          *  If you don't register CaelumSystem as a an ogre frame listener you have to

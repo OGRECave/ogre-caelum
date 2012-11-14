@@ -118,6 +118,12 @@ namespace Caelum
         mParams.phase.set(mParams.fpParams, phase);	
     }
 
+    void Moon::setMoonNorthPoleDirection(const Ogre::Vector3& moonNorthPoleDir)
+    {
+        mMoonBB->setBillboardType(Ogre::BBT_ORIENTED_COMMON);
+        mMoonBB->setCommonDirection(moonNorthPoleDir);
+    }
+
     void Moon::setQueryFlags (uint flags) {
         mMoonBB->setQueryFlags (flags);
         mBackBB->setQueryFlags (flags);

@@ -132,11 +132,16 @@ namespace Caelum
                 LongReal jday,
                 LongReal longitude, LongReal latitude,
                 LongReal &azimuth, LongReal &altitude);
-		static void getHorizontalMoonPosition (
+        static void getHorizontalMoonPosition (
                 LongReal jday,
                 Ogre::Degree longitude, Ogre::Degree latitude,
                 Ogre::Degree &azimuth, Ogre::Degree &altitude);
 
+        static void getHorizontalNorthEclipticPolePosition (
+                LongReal jday,
+                Ogre::Degree longitude, Ogre::Degree latitude,
+                Ogre::Degree &azimuth, Ogre::Degree &altitude);
+		
         /** Get astronomical julian day from normal gregorian calendar.
          *  From wikipedia: the integer number of days that have elapsed
          *  since the initial epoch defined as
