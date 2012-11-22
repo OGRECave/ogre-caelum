@@ -503,6 +503,22 @@ namespace Caelum
             getGroundFog ()->setDensity (fogDensity * mGroundFogDensityMultiplier);
         }
 
+        // Choose between sun and moon (should be done before updating)
+        if (getSun() && getMoon ()) {
+            Ogre::Real moonBrightness = moonLightColour.r + moonLightColour.g + moonLightColour.b + moonLightColour.a;
+            Ogre::Real sunBrightness = sunLightColour.r + sunLightColour.g + sunLightColour.b + sunLightColour.a;
+            bool sunBrighterThanMoon = (sunBrightness > moonBrightness);
+            
+            if (getEnsureSingleLightSource ()) {
+                getMoon()->setForceDisable (sunBrighterThanMoon);
+                getSun()->setForceDisable (!sunBrighterThanMoon);
+            }
+            if (getEnsureSingleShadowSource ()) {
+                getMoon()->getMainLight ()->setCastShadows (!sunBrighterThanMoon);
+                getSun()->getMainLight ()->setCastShadows (sunBrighterThanMoon);
+            }
+        }
+
         // Update sun
         if (getSun ()) {
             mSun->update (sunDir, sunLightColour, sunSphereColour);
@@ -560,21 +576,6 @@ namespace Caelum
                         );
              */
             mSceneMgr->setAmbientLight (ambient);
-        }
-
-        if (getSun() && getMoon ()) {
-            Ogre::Real moonBrightness = moonLightColour.r + moonLightColour.g + moonLightColour.b + moonLightColour.a;
-            Ogre::Real sunBrightness = sunLightColour.r + sunLightColour.g + sunLightColour.b + sunLightColour.a;
-            bool sunBrighterThanMoon = (sunBrightness > moonBrightness);
-
-            if (getEnsureSingleLightSource ()) {
-                getMoon ()->setForceDisable (sunBrighterThanMoon);
-                getSun ()->setForceDisable (!sunBrighterThanMoon);
-            }
-            if (getEnsureSingleShadowSource ()) {
-                getMoon ()->getMainLight ()->setCastShadows (!sunBrighterThanMoon);
-                getSun ()->getMainLight ()->setCastShadows (sunBrighterThanMoon);
-            }
         }
     }
 
