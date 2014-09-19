@@ -28,7 +28,10 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 	#define SINGLETON_MEMBER msSingleton
 #endif
 
-template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
+namespace Ogre
+{
+    template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
+}
 
 namespace Caelum
 {
