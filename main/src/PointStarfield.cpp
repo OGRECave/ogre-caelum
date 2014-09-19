@@ -209,9 +209,8 @@ namespace Caelum
         }
         mManualObj->end();
 
-        // Set infinite bounds on the starfield.
-        AxisAlignedBox box;
-        box.setInfinite ();
+        // Set finite bounds on the starfield to avoid parent AABB infection
+        AxisAlignedBox box(EXTENT_FINITE);
         mManualObj->setBoundingBox (box);
 
 		mValidGeometry = true;
