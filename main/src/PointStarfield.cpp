@@ -210,7 +210,7 @@ namespace Caelum
         mManualObj->end();
 
         // Set finite bounds on the starfield to avoid parent AABB infection
-        AxisAlignedBox box(EXTENT_FINITE);
+        AxisAlignedBox box(Ogre::AxisAlignedBox::EXTENT_FINITE);
         mManualObj->setBoundingBox (box);
 
 		mValidGeometry = true;
