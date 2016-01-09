@@ -368,7 +368,7 @@ namespace Caelum
     }
 
     CaelumSystemScriptTranslator::CaelumSystemScriptTranslator ():
-            mResourceManager(false),
+            mResourceManager(),
             mTranslationTarget(0),
             mTranslationTargetFound(false),
             mTypeDescriptor(0)
