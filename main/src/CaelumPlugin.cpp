@@ -28,10 +28,14 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
 	#define SINGLETON_MEMBER msSingleton
 #endif
 
-namespace Ogre
-{
+#if OGRE_VERSION_MINOR >= 9
+    namespace Ogre
+    {
+        template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
+    }
+#else
     template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
-}
+#endif
 
 namespace Caelum
 {
@@ -134,7 +138,9 @@ namespace Caelum
         assert (this->isInstalled () && "Must install CaelumPlugin before loading scripts");
 
         // Fetch raw resource ptr. Attempt to support explicit resource groups currently in Ogre trunk.
-#if OGRE_VERSION >= 0x00010700
+#if OGRE_VERSION >= 0x00010900
+	Ogre::ResourcePtr res = getPropScriptResourceManager ()->createOrRetrieve (objectName, groupName).first;
+#elif OGRE_VERSION >= 0x00010700
         Ogre::ResourcePtr res = getPropScriptResourceManager ()->getByName (objectName, groupName);
 #else
         Ogre::ResourcePtr res = getPropScriptResourceManager ()->getByName (objectName);
