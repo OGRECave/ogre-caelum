@@ -7,11 +7,6 @@ FILE(GLOB sources ${Caelum_SOURCE_DIR}/main/src/*.cpp ${Caelum_SOURCE_DIR}/main/
 
 set(LIBNAME "Caelum")
 
-
-find_package(Boost 1.44 COMPONENTS date_time filesystem)
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories   (${Boost_LIBRARY_DIRS})
-
 add_definitions("-DCAELUM_LIB -DCAELUM_SCRIPT_SUPPORT -D_CAELUM_TYPE_DESCRIPTORS")
 
 ADD_LIBRARY(${LIBNAME} SHARED ${sources})
