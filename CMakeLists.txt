@@ -26,6 +26,8 @@ SET(LIB_VERSION "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_BUILD_VERSION}"
 # define the project
 project(Caelum VERSION ${LIB_VERSION})
 
+option( INSTALL_OGRE_PLUGIN "Install Caelum as OGRE plugin" ON )
+
 # build static libs by default
 SET(BUILD_SHARED_LIBS OFF)
 
