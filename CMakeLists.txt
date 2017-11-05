@@ -65,7 +65,7 @@ ELSEIF (UNIX)
 endif (WIN32)
 
 # some PG build options
-set(Caelum_BUILD_SAMPLES "TRUE" CACHE BOOL "build the examples")
+set(Caelum_BUILD_SAMPLES "FALSE" CACHE BOOL "unsupported: demos require the terrain scene manager from Ogre 1.7")
 #set(Caelum_ALTERNATE_COORDSYSTEM "FALSE" CACHE BOOL "alternate coordinate system, do not use unless you are very sure about it")
 #set(Caelum_USE_OGRE_RANDOM       "FALSE" CACHE BOOL "fallback to Ogre's PRNG instead of using our own (not recommended)")
 #set(Caelum_USER_DATA             "FALSE" CACHE BOOL "ability to attach user data to entities")
@@ -118,9 +118,9 @@ endif ()
 # now add the directories
 add_subdirectory(main)
 
-#if(Caelum_BUILD_SAMPLES)
-#	add_subdirectory(samples)
-#endif(Caelum_BUILD_SAMPLES)
+if(Caelum_BUILD_SAMPLES)
+	add_subdirectory(samples)
+endif(Caelum_BUILD_SAMPLES)
 
 
 # cpack
