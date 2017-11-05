@@ -1,0 +1,4 @@
+<map id="Caelum::SkyDome" name="Caelum::SkyDome">
+<area shape="rect" id="node1" title="A sky dome element." alt="" coords="47,80,190,107"/>
+<area shape="rect" id="node2" href="$classCaelum_1_1CameraBoundElement.html" title="A camera&#45;bound element." alt="" coords="5,5,232,32"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Caelum::AccesorPropertyDescriptor&lt; TargetT, ParamT, InParamT, OutParamT &gt;" name="Caelum::AccesorPropertyDescriptor&lt; TargetT, ParamT, InParamT, OutParamT &gt;">
+<area shape="rect" id="node1" title="ValuePropertyDescriptor implementation based on function pointers to get/set methods." alt="" coords="5,169,259,225"/>
+<area shape="rect" id="node2" href="$classCaelum_1_1TypedValuePropertyDescriptor.html" title=" " alt="" coords="27,80,237,121"/>
+<area shape="rect" id="node3" href="$classCaelum_1_1ValuePropertyDescriptor.html" title="Basic property descriptor interface." alt="" coords="13,5,251,32"/>
+</map>

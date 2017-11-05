@@ -1,0 +1,5 @@
+<map id="Caelum::Moon" name="Caelum::Moon">
+<area shape="rect" id="node1" title="Class representing the moon." alt="" coords="61,155,177,181"/>
+<area shape="rect" id="node2" href="$classCaelum_1_1BaseSkyLight.html" title="Base class for sky lights (sun and moon)." alt="" coords="35,80,202,107"/>
+<area shape="rect" id="node3" href="$classCaelum_1_1CameraBoundElement.html" title="A camera&#45;bound element." alt="" coords="5,5,232,32"/>
+</map>

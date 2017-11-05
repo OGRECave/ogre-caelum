@@ -1,0 +1,4 @@
+<map id="Caelum::DepthRenderer" name="Caelum::DepthRenderer">
+<area shape="rect" id="node1" title="Render the depth buffer to a texture." alt="" coords="5,95,184,121"/>
+<area shape="rect" id="node2" href="/usr/local/share/doc/OGRE/api/Ogre.tag$class_ogre_1_1_render_queue_1_1_renderable_listener.html" title=" " alt="" coords="16,5,173,47"/>
+</map>

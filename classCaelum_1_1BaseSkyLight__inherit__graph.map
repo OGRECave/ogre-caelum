@@ -1,0 +1,7 @@
+<map id="Caelum::BaseSkyLight" name="Caelum::BaseSkyLight">
+<area shape="rect" id="node1" title="Base class for sky lights (sun and moon)." alt="" coords="137,80,304,107"/>
+<area shape="rect" id="node3" href="$classCaelum_1_1Moon.html" title="Class representing the moon." alt="" coords="5,155,121,181"/>
+<area shape="rect" id="node4" href="$classCaelum_1_1SphereSun.html" title="Class representing the sun as sphere with emissive color on it." alt="" coords="146,155,295,181"/>
+<area shape="rect" id="node5" href="$classCaelum_1_1SpriteSun.html" title="Class representing the sun as billboard with texture on it." alt="" coords="320,155,463,181"/>
+<area shape="rect" id="node2" href="$classCaelum_1_1CameraBoundElement.html" title="A camera&#45;bound element." alt="" coords="107,5,334,32"/>
+</map>

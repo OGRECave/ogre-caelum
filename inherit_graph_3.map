@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classCaelum_1_1CameraBoundElement.html" title="A camera&#45;bound element." alt="" coords="5,157,232,184"/>
+<area shape="rect" id="node2" href="$classCaelum_1_1BaseSkyLight.html" title="Base class for sky lights (sun and moon)." alt="" coords="285,56,451,83"/>
+<area shape="rect" id="node6" href="$classCaelum_1_1GroundFog.html" title="Exponential ground fog system implementation." alt="" coords="293,107,443,133"/>
+<area shape="rect" id="node7" href="$classCaelum_1_1ImageStarfield.html" title="Image&#45;based starfield class." alt="" coords="280,157,456,184"/>
+<area shape="rect" id="node8" href="$classCaelum_1_1PointStarfield.html" title="Point starfield class." alt="" coords="284,208,452,235"/>
+<area shape="rect" id="node9" href="$classCaelum_1_1SkyDome.html" title="A sky dome element." alt="" coords="297,259,439,285"/>
+<area shape="rect" id="node3" href="$classCaelum_1_1Moon.html" title="Class representing the moon." alt="" coords="521,5,637,32"/>
+<area shape="rect" id="node4" href="$classCaelum_1_1SphereSun.html" title="Class representing the sun as sphere with emissive color on it." alt="" coords="504,56,653,83"/>
+<area shape="rect" id="node5" href="$classCaelum_1_1SpriteSun.html" title="Class representing the sun as billboard with texture on it." alt="" coords="507,107,650,133"/>
+</map>
