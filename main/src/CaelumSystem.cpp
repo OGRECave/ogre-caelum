@@ -753,7 +753,7 @@ namespace Caelum
 		return res;
 	}
 
-    const Ogre::Real CaelumSystem::getMoonPhase (LongReal jday)
+    Ogre::Real CaelumSystem::getMoonPhase (LongReal jday)
     {
         // Calculates julian days since June 04, 1993 20:31 (full moon)
         // and divides by the time between lunations (synodic month)

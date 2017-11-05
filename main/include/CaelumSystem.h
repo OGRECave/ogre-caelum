@@ -624,7 +624,7 @@ namespace Caelum
          *  @param jday Julian day
          *  @return the phase of the moon; ranging from 0(full moon) to 1(again full moon).
          */
-		const Ogre::Real getMoonPhase (LongReal jday);
+		Ogre::Real getMoonPhase (LongReal jday);
 
 		/** Get the ecliptic's north pole direction at a certain time.
 		 *  Useful as Moon's north polar axis points within 1.5 degrees of the north ecliptic pole.

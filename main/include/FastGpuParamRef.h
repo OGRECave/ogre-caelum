@@ -100,7 +100,7 @@ namespace Caelum
             #if CAELUM_DEBUG_PARAM_REF
                 assert(params.getPointer() == mParams.getPointer());
             #endif
-            assert(!params.isNull());
+            assert(params);
             if (mPhysicalIndex != InvalidPhysicalIndex) {
                 params->_writeRawConstant(mPhysicalIndex, arg);
             }
@@ -111,7 +111,7 @@ namespace Caelum
             #if CAELUM_DEBUG_PARAM_REF
                 assert(params.getPointer() == mParams.getPointer());
             #endif
-            assert(!params.isNull());
+            assert(params);
             if (mPhysicalIndex != InvalidPhysicalIndex) {
                 params->_writeRawConstant(mPhysicalIndex, arg, count);
             }
