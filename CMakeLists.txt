@@ -33,10 +33,11 @@ SET(BUILD_SHARED_LIBS OFF)
 
 SET(CMAKE_USE_RELATIVE_PATHS OFF)
 
-find_package(OGRE REQUIRED)
+find_package(OGRE 1.10 REQUIRED)
+link_directories(${OGRE_LIBRARY_DIRS})
 
 # setup paths
-SET(LIB_INSTALL_DIR "${OGRE_PLUGIN_DIR_REL}")
+SET(LIB_INSTALL_DIR "${OGRE_PLUGIN_DIR}")
 SET(RUNTIME_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/bin/")
 SET(LIBRARY_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/lib/")
 SET(ARCHIVE_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/lib/")
@@ -126,7 +127,7 @@ add_subdirectory(main)
 set(CPACK_PACKAGE_DESCRIPTION "Caelum")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Caelum is an add-on for the 3D graphics rendering engine OGRE, aimed to render atmospheric effects.")
 set(CPACK_PACKAGE_NAME "caelum")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libogre-1.9-dev, libois-dev")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libogre-1.9-dev")
 set(CPACK_PACKAGE_CONTACT "Edgar@AnotherFoxGuy.com")
 set(CPACK_PACKAGE_VENDOR "Edgar@AnotherFoxGuy.com")
 SET(CPACK_PACKAGE_VERSION ${LIB_VERSION})
@@ -155,7 +156,6 @@ include(CPack)
 # doxygen stuff
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
-    message("found doxygen, generating documentation")
     # prepare doxygen configuration file
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 

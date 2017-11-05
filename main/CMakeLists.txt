@@ -38,19 +38,5 @@ target_link_libraries(${LIBNAME} PRIVATE
         )
 
 # --- Ogre 3D graphics engine ---
-target_link_libraries(${LIBNAME} PRIVATE
-        ${OGRE_LIBRARIES}
-        ${OGRE_Paging_LIBRARIES}
-        ${OGRE_RTShaderSystem_LIBRARIES}
-        ${OGRE_Terrain_LIBRARIES}
-        )
-target_include_directories(${LIBNAME} PRIVATE
-        ${OGRE_INCLUDE_DIRS}
-        ${OGRE_Paging_INCLUDE_DIRS}
-        ${OGRE_RTShaderSystem_INCLUDE_DIRS}
-        ${OGRE_Terrain_INCLUDE_DIRS}
-        )
-if (OGRE_VERSION VERSION_GREATER 1.8)
-    target_link_libraries(${LIBNAME} PRIVATE ${OGRE_Overlay_LIBRARIES})
-    target_include_directories(${LIBNAME} PRIVATE ${OGRE_Overlay_INCLUDE_DIRS})
-endif ()
+target_link_libraries(${LIBNAME} PRIVATE ${OGRE_LIBRARIES})
+target_include_directories(${LIBNAME} PRIVATE ${OGRE_INCLUDE_DIRS})
