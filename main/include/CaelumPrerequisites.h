@@ -60,21 +60,6 @@
     #endif
 #endif
 
-/// @file
-
-/** @mainpage
- *
- *  %Caelum is an Ogre add-on for atmospheric rendering. It is composed of a
- *  number of small mostly self-contained components and a big
- *  Caelum::CaelumSystem class which ties them all together in an easy-to-use
- *  way.
- *
- *  More information is available on the wiki page:
- *  http://www.ogre3d.org/wiki/index.php/Caelum
- *
- *  You can discuss and report issues in the forum:
- *  http://www.ogre3d.org/addonforums/viewforum.php?f=21
- */
 
 /** Caelum namespace
  *
