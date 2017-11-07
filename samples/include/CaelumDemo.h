@@ -5,7 +5,7 @@
 #include "CaelumDemoCommon.h"
 #include "ExampleApplication.h"
 
-class CaelumSampleFrameListener : public ExampleFrameListener
+class CaelumSampleFrameListener : public OgreBites::InputListener
 {
 protected:
     Caelum::CaelumSystem *mCaelumSystem;
@@ -15,7 +15,7 @@ protected:
     float mTimeTillNextUpdate;
 
 public:
-    CaelumSampleFrameListener(RenderWindow* win, Camera* cam): ExampleFrameListener(win, cam)
+    CaelumSampleFrameListener(RenderWindow* win, Camera* cam)
     {
         mScene = cam->getSceneManager();
         mPaused = false;
@@ -41,7 +41,7 @@ public:
         mCaelumSystem->getUniversalClock ()->setTimeScale (512);
 
         // Register caelum as a listener.
-        mWindow->addListener (mCaelumSystem);
+        win->addListener (mCaelumSystem);
         Root::getSingletonPtr()->addFrameListener (mCaelumSystem);
 
         UpdateSpeedFactor(mCaelumSystem->getUniversalClock ()->getTimeScale ());
@@ -62,33 +62,29 @@ public:
         mCaelumSystem->getUniversalClock ()->setTimeScale (mPaused ? 0 : mSpeedFactor);
     }
 
-    bool frameEnded(const FrameEvent& evt)
+    bool keyPressed(const OgreBites::KeyboardEvent& evt)
     {
-        if (!ExampleFrameListener::frameEnded(evt)) {
-            return false;
-        }
+        if (evt.keysym.sym == SDLK_ESCAPE) {
+            Root::getSingletonPtr()->queueEndRendering ();
+         }
 
-        // Stop key repeat for these keys.
-        mTimeTillNextUpdate -= evt.timeSinceLastFrame;
-        if (mTimeTillNextUpdate <= 0) {
-            if (mKeyboard->isKeyDown (OIS::KC_SPACE)) {
-                mTimeTillNextUpdate = 1;
-                mPaused = !mPaused;
-                UpdateSpeedFactor(mSpeedFactor);
-            }
-            if (mKeyboard->isKeyDown (OIS::KC_X)) {
-                mTimeTillNextUpdate = 0.25;
-                UpdateSpeedFactor(mSpeedFactor / 2);
-            }
-            if (mKeyboard->isKeyDown (OIS::KC_C)) {
-                mTimeTillNextUpdate = 0.25;
-                UpdateSpeedFactor(mSpeedFactor * 2);
-            }
-            if (mKeyboard->isKeyDown (OIS::KC_Z)) {
-                mTimeTillNextUpdate = 1;
-                UpdateSpeedFactor(mSpeedFactor * -1);
-            }
-        }
+        if (evt.keysym.sym == SDLK_SPACE) {
+             mTimeTillNextUpdate = 1;
+             mPaused = !mPaused;
+             UpdateSpeedFactor(mSpeedFactor);
+         }
+         if (evt.keysym.sym == 'x') {
+             mTimeTillNextUpdate = 0.25;
+             UpdateSpeedFactor(mSpeedFactor / 2);
+         }
+         if (evt.keysym.sym == 'c') {
+             mTimeTillNextUpdate = 0.25;
+             UpdateSpeedFactor(mSpeedFactor * 2);
+         }
+         if (evt.keysym.sym == 'z') {
+             mTimeTillNextUpdate = 1;
+             UpdateSpeedFactor(mSpeedFactor * -1);
+         }
 
         return true;
     }
@@ -107,13 +103,8 @@ public:
 
     void createFrameListener ()
     {
-        mFrameListener = new CaelumSampleFrameListener (mWindow, mCamera);
-        mRoot->addFrameListener (mFrameListener);
-    }
-
-    virtual void chooseSceneManager(void)
-    {
-        mSceneMgr = mRoot->createSceneManager("TerrainSceneManager");
+        mFrameListener = new CaelumSampleFrameListener (getRenderWindow(), mCamera);
+        addInputListener(mFrameListener);
     }
 
     virtual void createCamera(void)
@@ -137,11 +128,11 @@ public:
 
     void createScene ()
     {
+        // needs porting to new terrain system
+#if 0
         // Put some terrain in the scene
         std::string terrain_cfg("CaelumDemoTerrain.cfg");
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-        terrain_cfg = mResourcePath + terrain_cfg;
-#endif
         mSceneMgr->setWorldGeometry (terrain_cfg);
+#endif
     }
 };
