@@ -175,7 +175,7 @@ namespace Caelum
             if (inner) {
                 //Ogre::LogManager::getSingletonPtr ()->logMessage (
                 //        "PrivatePtr: Destroying scene node " + inner->getName ());
-                inner->getCreator ()->destroySceneNode (inner->getName ());
+                inner->getCreator ()->destroySceneNode (inner);
                 inner = 0;
             }
         }

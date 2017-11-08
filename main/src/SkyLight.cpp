@@ -34,7 +34,7 @@ namespace Caelum
 
     BaseSkyLight::~BaseSkyLight () {
         if (mNode) {
-            static_cast<Ogre::SceneNode *>(mNode->getParent ())->removeAndDestroyChild (mNode->getName ());
+            static_cast<Ogre::SceneNode *>(mNode->getParent ())->removeAndDestroyChild (mNode);
             mNode = 0;
         }
 
