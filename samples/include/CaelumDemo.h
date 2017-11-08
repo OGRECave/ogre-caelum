@@ -97,10 +97,6 @@ public:
     {
     }
 
-    ~CaelumSampleApplication ()
-    {
-    }
-
     void createFrameListener ()
     {
         mFrameListener = new CaelumSampleFrameListener (getRenderWindow(), mCamera);
@@ -115,8 +111,8 @@ public:
         // Start the camera on a hill in the middle of the terrain
         // looking towards Z+ (north).
         // Sun should rise in the east(left) and set in the west(right).
-        mCamera->setPosition (Vector3 (775, 100, 997));
-        mCamera->lookAt (Vector3 (775, 100, 1000));
+        mCamera->setPosition (Vector3 (775, 100, 1997));
+        mCamera->lookAt (Vector3 (0, 0, 0));
 
         mCamera->setNearClipDistance(5);
 
@@ -128,6 +124,8 @@ public:
 
     void createScene ()
     {
+        mSceneMgr->getRootSceneNode()->attachObject(
+                mSceneMgr->createEntity("House", "TudorHouse.mesh"));
         // needs porting to new terrain system
 #if 0
         // Put some terrain in the scene

@@ -40,10 +40,12 @@ public:
         mFrameListener = 0;
     }
     /// Standard destructor
-    virtual ~ExampleApplication()
+    void shutdown()
     {
         if (mFrameListener)
             delete mFrameListener;
+
+        OgreBites::ApplicationContext::shutdown();
     }
 
     /// Start the example
