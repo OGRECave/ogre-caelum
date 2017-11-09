@@ -593,6 +593,11 @@ namespace Caelum
         mTranslatorMap.insert (std::make_pair ("depth_composer", &mDepthComposerTranslator));
         mTranslatorMap.insert (std::make_pair ("precipitation", &mPrecipitationTranslator));
         mTranslatorMap.insert (std::make_pair ("sky_dome", &mSkyDomeTranslator));
+
+        ScriptCompilerManager* mgr = ScriptCompilerManager::getSingletonPtr();
+        ScriptTranslatorMap::iterator it;
+        for(it = mTranslatorMap.begin(); it !=  mTranslatorMap.end(); ++it)
+            mgr->registerCustomWordId(it->first);
     }
 
     size_t CaelumScriptTranslatorManager::getNumTranslators () const {
