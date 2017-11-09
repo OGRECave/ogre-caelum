@@ -5,7 +5,7 @@ FILE(GLOB sources ${Caelum_SOURCE_DIR}/main/src/*.cpp ${Caelum_SOURCE_DIR}/main/
 
 set(LIBNAME "Caelum")
 
-add_definitions("-DCAELUM_LIB -DCAELUM_SCRIPT_SUPPORT -D_CAELUM_TYPE_DESCRIPTORS")
+add_definitions("-DCAELUM_LIB")
 
 ADD_LIBRARY(${LIBNAME} SHARED ${sources})
 
