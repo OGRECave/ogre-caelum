@@ -56,3 +56,16 @@ void PhaseMoonFP
     outcol.a = min(outcol.a, lum * alpha);
     outcol.rgb /= lum;
 }
+
+// Vertex program entry point.
+void PhaseMoonVP
+(
+        in float4 iPosition : POSITION,
+        in float2 iTexCoord : TEXCOORD0,
+        uniform float4x4 worldviewproj_matrix,
+        out float2 oTexCoord : TEXCOORD0,
+        out float4 oPosition : POSITION
+) {
+    oPosition = mul(worldviewproj_matrix, iPosition);
+    oTexCoord = iTexCoord;
+}

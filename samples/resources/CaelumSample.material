@@ -61,7 +61,7 @@ vertex_program CaelumSample/BasicVP cg
 {
     source CaelumSample.cg
     entry_point MainVP
-    profiles vs_2_0 arbvp1
+    profiles vs_2_0 arbvp1 glslv
     compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
 
     default_params
@@ -75,7 +75,7 @@ fragment_program CaelumSample/BasicFP cg
 {
     source CaelumSample.cg
     entry_point MainFP
-    profiles ps_2_x arbfp1
+    profiles ps_2_x arbfp1 glslf
     compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
     
     default_params
