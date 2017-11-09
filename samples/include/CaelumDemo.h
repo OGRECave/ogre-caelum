@@ -92,9 +92,16 @@ public:
 
 class CaelumSampleApplication : public ExampleApplication
 {
+    Ogre::Plugin* mPlugin;
 public:
     CaelumSampleApplication ()
     {
+    }
+
+    void loadResources() {
+        mPlugin = new CaelumPlugin();
+        mPlugin->install();
+        ExampleApplication::loadResources();
     }
 
     void createFrameListener ()
