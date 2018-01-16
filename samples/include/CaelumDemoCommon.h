@@ -13,6 +13,8 @@
 #include <unistd.h>
 #endif
 
+#include <iostream>
+
 using namespace Caelum;
 
 /** Report an exception as a message box or a stderr message.
