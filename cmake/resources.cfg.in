@@ -2,4 +2,6 @@
 # Bites uses the next entry to discover the platform shaders
 FileSystem=@OGRE_MEDIA_DIR@
 FileSystem=@CMAKE_SOURCE_DIR@/samples/resources
+
+[Caelum]
 FileSystem=@CMAKE_SOURCE_DIR@/main/resources
