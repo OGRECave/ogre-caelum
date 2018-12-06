@@ -38,11 +38,17 @@ D:        Step right
 #include "Ogre.h"
 #include "OgreStringConverter.h"
 #include "OgreException.h"
+#include "OgreOverlayManager.h"
+#include "OgreOverlayElement.h"
+#include "OgreWindowEventUtilities.h"
+#include "OgreOverlay.h"
 
 //Use this define to signify OIS will be used as a DLL
 //(so that dll import/export macros are in effect)
 #define OIS_DYNAMIC_LIB
 #include <OIS/OIS.h>
+
+#define USE_OIS 0
 
 using namespace Ogre;
 
@@ -94,6 +100,7 @@ public:
 
 		mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
 
+#if USE_OIS
 		LogManager::getSingletonPtr()->logMessage("*** Initializing OIS ***");
 		ParamList pl;
 		size_t windowHnd = 0;
@@ -114,7 +121,7 @@ public:
 		catch(...) {
 			mJoy = 0;
 		}
-
+#endif
 		//Set initial mouse clipping size
 		windowResized(mWindow);
 
@@ -127,6 +134,7 @@ public:
 	//Adjust mouse clipping area
 	virtual void windowResized(RenderWindow* rw)
 	{
+#if USE_OIS
 		unsigned int width, height, depth;
 		int left, top;
 		rw->getMetrics(width, height, depth, left, top);
@@ -134,6 +142,7 @@ public:
 		const OIS::MouseState &ms = mMouse->getMouseState();
 		ms.width = width;
 		ms.height = height;
+#endif
 	}
 
 	//Unattach OIS before window shutdown (very important under Linux)

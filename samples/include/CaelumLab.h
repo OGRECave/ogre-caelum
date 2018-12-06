@@ -5,8 +5,9 @@
 #include "CaelumDemoCommon.h"
 
 #include "CEGUI/CEGUI.h"
-#include "OgreCEGUIRenderer.h"
+#include "Ogre/Renderer.h"
 #include "ExampleApplication.h"
+#include "ExampleFrameListener.h"
 
 enum SampleMaterialScheme
 {
@@ -17,7 +18,8 @@ enum SampleMaterialScheme
 class CaelumLabFrameListener:
         public ExampleFrameListener,
         private OIS::MouseListener,
-        private OIS::KeyListener
+        private OIS::KeyListener,
+        public OgreBites::InputListener
 {
 private:
     SceneManager* mSceneMgr;
@@ -25,8 +27,8 @@ private:
     std::auto_ptr<CaelumSystem> mCaelumSystem;
 
     // Reversing these two causes a crash.
-    std::auto_ptr<CEGUI::Renderer> mGuiRenderer;
-    std::auto_ptr<CEGUI::System> mGuiSystem;
+    CEGUI::Renderer* mGuiRenderer;
+    CEGUI::System* mGuiSystem;
     bool mShutdownRequested;
 
     void initCaelum ();
@@ -36,7 +38,7 @@ private:
     // Quick fetch a widget. Checks existence and type.
     // Throws on not found.
     template<class WidgetT> inline WidgetT* getWidget (const char* name) {
-        return static_cast<WidgetT*>(CEGUI::WindowManager::getSingleton ().getWindow (name));
+        return static_cast<WidgetT*>(mGuiSystem->getDefaultGUIContext().getRootWindow()->getChild(name));
     }
     inline CEGUI::Window* getWindow (const char* name) {
         return getWidget<CEGUI::Window> (name);
@@ -57,7 +59,7 @@ private:
     inline bool leftMouseDown () { return mMouse->getMouseState ().buttonDown (OIS::MB_Left); }
 
     bool mLastMousePositionSet;
-    CEGUI::Point mLastMousePosition;
+    CEGUI::Vector2<float> mLastMousePosition;
 
     // CEGUI event handling.
 	bool handleMouseMove (const CEGUI::EventArgs& evt);
@@ -166,23 +168,20 @@ private:
 
 class CaelumLabApplication: public ExampleApplication
 {
+    Ogre::Plugin* mPlugin;
 public:
     void createFrameListener ();
     void chooseSceneManager ();
     void createCamera ();
     void createScene ();
 
-    void setupResources ();
+    void loadResources() {
+        mPlugin = new CaelumPlugin();
+        mPlugin->install();
+        ExampleApplication::loadResources();
+    }
 
 private:
-    // Install CaelumPlugin manually. Nothing happens if already installed.
-    //
-    // This is only required when statically linking to Caelum (in the linux build).
-    // On windows caelum should be registered in plugins.cfg.
-    //
-    // It gets called from setupResources.
-    void installCaelumPlugin ();
-
     /// Return height at point or -1 if nothing hit.
     Real getHeightAtPoint (Real x, Real z);
 };
