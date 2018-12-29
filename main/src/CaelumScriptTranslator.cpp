@@ -407,7 +407,9 @@ namespace Caelum
             //        "Caelum: Saved " + objNode->cls + " name " + objNode->name + " as a resource");
             PropScriptResourceManager* mgr = this->getResourceManager ();
             ResourcePtr resource = mgr->createResource (objNode->name, compiler->getResourceGroup());
-            resource->_notifyOrigin (objNode->file);
+            if (resource) {
+                resource->_notifyOrigin (objNode->file);
+            }
             return;
         }
 
