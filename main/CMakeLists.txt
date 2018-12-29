@@ -3,27 +3,24 @@ include_directories(${Caelum_BINARY_DIR}/main/include/)
 
 FILE(GLOB sources ${Caelum_SOURCE_DIR}/main/src/*.cpp ${Caelum_SOURCE_DIR}/main/include/*.h)
 
-set(LIBNAME "Caelum")
-
 add_definitions("-DCAELUM_LIB")
 
 ADD_LIBRARY(${LIBNAME} SHARED ${sources})
 
-# install the library
+if(UNIX)
+    # disable "lib" prefix on Unix
+    if(CAELUM_OGRE_PLUGIN)
+        set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
+    endif()
+    set_target_properties(${LIBNAME} PROPERTIES VERSION ${OGRE_VERSION})
+endif()
 
+# install the library
 INSTALL(TARGETS ${LIBNAME}
         RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION ${LIB_DESTINATION}
+        ARCHIVE DESTINATION ${LIB_DESTINATION}
         )
-
-if (INSTALL_OGRE_PLUGIN)
-  INSTALL(TARGETS ${LIBNAME}
-          RUNTIME DESTINATION bin
-          LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-          ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-          )
-endif (INSTALL_OGRE_PLUGIN)
 
 # install the headers: both source and build headers
 INSTALL(DIRECTORY ${Caelum_SOURCE_DIR}/main/include/ DESTINATION include/Caelum FILES_MATCHING PATTERN "*.h" PATTERN ".svn" EXCLUDE)

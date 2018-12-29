@@ -6,7 +6,7 @@ include_directories(
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/resources.cfg.in ${CMAKE_SOURCE_DIR}/bin/resources.cfg)
 add_executable(CaelumDemo ${CMAKE_SOURCE_DIR}/samples/src/CaelumDemo.cpp)
-target_link_libraries(CaelumDemo Caelum ${OGRE_LIBRARIES})
+target_link_libraries(CaelumDemo ${LIBNAME} ${OGRE_LIBRARIES})
 
 # add_executable(CaelumLab ${CMAKE_SOURCE_DIR}/samples/src/CaelumLab.cpp)
 # target_link_libraries(CaelumLab Caelum ${OGRE_LIBRARIES})

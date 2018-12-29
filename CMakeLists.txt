@@ -17,17 +17,17 @@ INCLUDE(CheckIncludeFileCXX)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCSourceCompiles)
 
-# some versioning things
-SET(LIB_MAJOR_VERSION "0")
-SET(LIB_MINOR_VERSION "6")
-SET(LIB_BUILD_VERSION "3")
-SET(LIB_VERSION "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_BUILD_VERSION}")
-
 # define the project
-project(Caelum VERSION ${LIB_VERSION})
+project(Caelum VERSION 0.6.3)
 
-option( CAELUM_INSTALL_OGRE_PLUGIN "Install Caelum as OGRE plugin" ON )
+# some versioning things
+SET(LIB_MAJOR_VERSION ${Caelum_VERSION_MAJOR})
+SET(LIB_MINOR_VERSION ${Caelum_VERSION_MINOR})
+SET(LIB_BUILD_VERSION ${Caelum_VERSION_PATCH})
+
+option( CAELUM_OGRE_PLUGIN "Build Caelum as OGRE plugin" ON )
 option( CAELUM_SCRIPT_SUPPORT "Load CaelumSystem and it's components from a script file" ON)
+option( CAELUM_BUILD_SAMPLES "build samples" OFF)
 
 # build static libs by default
 SET(BUILD_SHARED_LIBS OFF)
@@ -38,7 +38,6 @@ find_package(OGRE 1.10 REQUIRED)
 link_directories(${OGRE_LIBRARY_DIRS})
 
 # setup paths
-SET(LIB_INSTALL_DIR "${OGRE_PLUGIN_DIR}")
 SET(RUNTIME_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/bin/")
 SET(LIBRARY_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/lib/")
 SET(ARCHIVE_OUTPUT_DIRECTORY "${Caelum_SOURCE_DIR}/lib/")
@@ -65,16 +64,10 @@ ELSEIF (UNIX)
     set(CMAKE_EXE_LINKER_FLAGS_RelWithDebug "${CMAKE_EXE_LINKER_FLAGS_RelWithDebug} -O0")
 endif (WIN32)
 
-# some PG build options
-set(Caelum_BUILD_SAMPLES "FALSE" CACHE BOOL "unsupported: demos require the terrain scene manager from Ogre 1.7")
-#set(Caelum_ALTERNATE_COORDSYSTEM "FALSE" CACHE BOOL "alternate coordinate system, do not use unless you are very sure about it")
-#set(Caelum_USE_OGRE_RANDOM       "FALSE" CACHE BOOL "fallback to Ogre's PRNG instead of using our own (not recommended)")
-#set(Caelum_USER_DATA             "FALSE" CACHE BOOL "ability to attach user data to entities")
-
 # Needed for Caelum.pc.in
 SET(prefix ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix "\${prefix}")
-SET(libdir "\${exec_prefix}/${LIB_INSTALL_DIR}")
+SET(libdir "${OGRE_PLUGIN_DIR}")
 SET(bindir "\${exec_prefix}/bin")
 SET(includedir "\${prefix}/include")
 SET(PACKAGE_NAME "Caelum")
@@ -115,6 +108,13 @@ endif ()
 #	ENDIF()
 #ENDIF()
 
+if(CAELUM_OGRE_PLUGIN)
+    set(LIB_DESTINATION ${OGRE_PLUGIN_DIR})
+    set(LIBNAME "Plugin_Caelum")
+else()
+    set(LIB_DESTINATION "lib")
+    set(LIBNAME "Caelum")
+endif()
 
 # now add the directories
 add_subdirectory(main)
