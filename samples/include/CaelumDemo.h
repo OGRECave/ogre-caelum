@@ -4,6 +4,7 @@
 
 #include "CaelumDemoCommon.h"
 #include "ExampleApplication.h"
+#include "LegacyTerrainLoader.h"
 
 class CaelumSampleFrameListener : public OgreBites::InputListener
 {
@@ -133,13 +134,13 @@ public:
 
     void createScene ()
     {
-        mSceneMgr->getRootSceneNode()->attachObject(
-                mSceneMgr->createEntity("House", "TudorHouse.mesh"));
-        // needs porting to new terrain system
-#if 0
+
+        SceneNode* houseNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        houseNode->setPosition(Vector3 (775, 60, 1150));
+        houseNode->setScale(0.05, 0.05, 0.05);
+        houseNode->yaw(Degree(45));
+        houseNode->attachObject(mSceneMgr->createEntity("House", "TudorHouse.mesh"));
         // Put some terrain in the scene
-        std::string terrain_cfg("CaelumDemoTerrain.cfg");
-        mSceneMgr->setWorldGeometry (terrain_cfg);
-#endif
+        loadLegacyTerrain("CaelumDemoTerrain.cfg", mSceneMgr);
     }
 };
