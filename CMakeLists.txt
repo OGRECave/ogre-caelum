@@ -99,9 +99,9 @@ endif()
 # now add the directories
 add_subdirectory(main)
 
-if(Caelum_BUILD_SAMPLES)
+if(CAELUM_BUILD_SAMPLES)
 	add_subdirectory(samples)
-endif(Caelum_BUILD_SAMPLES)
+endif()
 
 
 # cpack
