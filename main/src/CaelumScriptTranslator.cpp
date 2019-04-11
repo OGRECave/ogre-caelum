@@ -488,7 +488,7 @@ namespace Caelum
                     //
                     // Script parsing should still succeed.
                     compiler->addError (
-                            ScriptCompiler::CE_UNSUPPORTEDBYRENDERSYSTEM,
+                            ScriptCompiler::CE_INVALIDPARAMETERS,
                             childObjNode->file, childObjNode->line,
                             "Failed to create component \"" + className + "\": " + ex.getFullDescription ());
                     continue;
