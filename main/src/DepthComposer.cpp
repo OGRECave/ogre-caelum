@@ -121,7 +121,7 @@ namespace Caelum
     {
         LogManager::getSingleton().logMessage (
                 "Caelum::DepthComposer: Attaching screen-space fog instance"
-                " to viewport \'" + StringConverter::toString ((long)getViewport ()) + "\'"
+                " to viewport \'" + StringConverter::toString (reinterpret_cast<size_t>(getViewport ())) + "\'"
                 " of render target \'" + getViewport()->getTarget ()->getName () + "\'");
 
         addCompositor ();
@@ -135,7 +135,7 @@ namespace Caelum
 
         LogManager::getSingleton().logMessage (
                 "Caelum::DepthComposer: Detached screen-space fog instance"
-                " from viewport \'" + StringConverter::toString ((long)getViewport ()) + "\'"
+                " from viewport \'" + StringConverter::toString (reinterpret_cast<size_t>(getViewport ())) + "\'"
                 " of render target \'" + getViewport()->getTarget ()->getName () + "\'");
     }
 
@@ -234,7 +234,7 @@ namespace Caelum
             return it->second;
         }
     }
-    
+
     DepthComposerInstance* DepthComposer::getViewportInstance(Ogre::Viewport* vp) {
         ViewportInstanceMap::iterator it = mViewportInstanceMap.find(vp);
         if (it != mViewportInstanceMap.end()) {
@@ -298,8 +298,8 @@ namespace Caelum
         int height = getMasterViewport ()->getActualHeight ();
         LogManager::getSingleton ().logMessage (
                     "Caelum::DepthRenderer: Creating depth render texture size " +
-                    StringConverter::toString (width) + 
-                    "x" + 
+                    StringConverter::toString (width) +
+                    "x" +
                     StringConverter::toString (height));
 
         PixelFormat desiredFormat = PF_FLOAT32_R;
@@ -419,13 +419,13 @@ namespace Caelum
     bool DepthRenderer::renderableQueued(
                 Ogre::Renderable* rend,
                 Ogre::uint8 groupId,
-                Ogre::ushort priority, 
+                Ogre::ushort priority,
                 Ogre::Technique** ppTech)
 #else
     bool DepthRenderer::renderableQueued(
                 Ogre::Renderable* rend,
                 Ogre::uint8 groupId,
-                Ogre::ushort priority, 
+                Ogre::ushort priority,
                 Ogre::Technique** ppTech,
                 Ogre::RenderQueue* pQueue)
 #endif // OGRE_VERSION
@@ -435,7 +435,7 @@ namespace Caelum
         /*
         LogManager::getSingleton ().logMessage (
                 "Caelum: Renderable queued"
-                " group " + StringConverter::toString (groupId) + 
+                " group " + StringConverter::toString (groupId) +
                 " priority " + StringConverter::toString (priority));
         */
         if (groupId < mMinRenderGroupId || groupId > mMaxRenderGroupId) {
@@ -445,9 +445,9 @@ namespace Caelum
         if (this->getUseCustomDepthScheme () && (*ppTech)->getSchemeName () == this->getCustomDepthSchemeName ()) {
             /*
             LogManager::getSingleton().getDefaultLog()->logMessage (
-                    "Custom scheme with tech " + (*ppTech)->getName () + 
+                    "Custom scheme with tech " + (*ppTech)->getName () +
                     " passCount " + StringConverter::toString ((*ppTech)->getNumPasses ()) +
-                    " vp " + (*ppTech)->getPass (0)->getVertexProgramName () + 
+                    " vp " + (*ppTech)->getPass (0)->getVertexProgramName () +
                     " fp " + (*ppTech)->getPass (0)->getFragmentProgramName ());
              */
             return true;
