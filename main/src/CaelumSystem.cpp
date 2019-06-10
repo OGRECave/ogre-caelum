@@ -19,7 +19,7 @@ namespace Caelum
 
     CaelumSystem::CaelumSystem
     (
-        Ogre::Root *root, 
+        Ogre::Root *root,
         Ogre::SceneManager *sceneMgr,
         CaelumComponent componentsToCreate/* = CAELUM_COMPONENTS_DEFAULT*/
     ):
@@ -68,7 +68,7 @@ namespace Caelum
         setPrecipitationController (0);
         setDepthComposer (0);
         setGroundFog (0);
-        setMoon (0);   
+        setMoon (0);
         mSkyGradientsImage.reset ();
         mSunColoursImage.reset ();
 
@@ -147,7 +147,7 @@ namespace Caelum
                         "Caelum: Failed to initialize skydome: " + ex.getFullDescription());
             }
         }
-        
+
         // Init sun
         if (componentsToCreate & CAELUM_COMPONENT_SUN) {
             try {
@@ -202,7 +202,7 @@ namespace Caelum
         if (componentsToCreate & CAELUM_COMPONENT_CLOUDS) {
             try {
 			    this->setCloudSystem (new CloudSystem (mSceneMgr, getCaelumGroundNode ()));
-                getCloudSystem ()->createLayerAtHeight (3000);		
+                getCloudSystem ()->createLayerAtHeight (3000);
                 getCloudSystem ()->getLayer (0)->setCloudCover (0.3);
             } catch (Caelum::UnsupportedException& ex) {
                 LogManager::getSingleton ().logMessage (
@@ -248,7 +248,7 @@ namespace Caelum
     {
         LogManager::getSingleton().getDefaultLog ()->logMessage (
                 "CaelumSystem: Attached to"
-                " viewport " + StringConverter::toString ((long)vp) +
+                " viewport " + StringConverter::toString (reinterpret_cast<size_t>(vp)) +
                 " render target " + vp->getTarget ()->getName ());
         if (getAutoAttachViewportsToComponents ()) {
             if (getPrecipitationController ()) {
@@ -264,7 +264,7 @@ namespace Caelum
     {
         LogManager::getSingleton().getDefaultLog ()->logMessage (
                 "CaelumSystem: Detached from "
-                " viewport " + StringConverter::toString ((long)vp) +
+                " viewport " + StringConverter::toString (reinterpret_cast<size_t>(vp)) +
                 " render target " + vp->getTarget ()->getName ());
         if (getAutoAttachViewportsToComponents ()) {
             if (getPrecipitationController ()) {
@@ -275,7 +275,7 @@ namespace Caelum
             }
         }
     }
-    
+
     void CaelumSystem::attachViewport (Ogre::Viewport* vp)
     {
         bool found = !mAttachedViewports.insert (vp).second;
@@ -403,12 +403,12 @@ namespace Caelum
         if (getPointStarfield ()) {
             getPointStarfield ()->notifyCameraChanged (cam);
         }
-        
+
         if (getGroundFog ()) {
             getGroundFog ()->notifyCameraChanged (cam);
         }
     }
-                    
+
     bool CaelumSystem::frameStarted (const Ogre::FrameEvent &e) {
         if (mCleanup) {
             // Delayed destruction.
@@ -438,17 +438,17 @@ namespace Caelum
         Real secondDiff = timeSinceLastFrame * mUniversalClock->getTimeScale ();
 
         // Get astronomical parameters.
-        Ogre::Vector3 sunDir = getSunDirection(julDay);    
-        Ogre::Vector3 moonDir = getMoonDirection(julDay);  
-        Real moonPhase = getMoonPhase(julDay);    
+        Ogre::Vector3 sunDir = getSunDirection(julDay);
+        Ogre::Vector3 moonDir = getMoonDirection(julDay);
+        Real moonPhase = getMoonPhase(julDay);
 
         // Get parameters from sky colour model.
-        Real fogDensity = getFogDensity (relDayTime, sunDir);           
-        Ogre::ColourValue fogColour = getFogColour (relDayTime, sunDir);                  
+        Real fogDensity = getFogDensity (relDayTime, sunDir);
+        Ogre::ColourValue fogColour = getFogColour (relDayTime, sunDir);
         Ogre::ColourValue sunLightColour = getSunLightColour (relDayTime, sunDir);
         Ogre::ColourValue sunSphereColour = getSunSphereColour (relDayTime, sunDir);
         Ogre::ColourValue moonLightColour = getMoonLightColour (moonDir);
-        Ogre::ColourValue moonBodyColour = getMoonBodyColour (moonDir); 
+        Ogre::ColourValue moonBodyColour = getMoonBodyColour (moonDir);
 
         fogDensity *= mGlobalFogDensityMultiplier;
         fogColour = fogColour * mGlobalFogColourMultiplier;
@@ -476,7 +476,7 @@ namespace Caelum
 		if (mManageSceneFogMode != Ogre::FOG_NONE) {
             mSceneMgr->setFog (mManageSceneFogMode,
                     fogColour * mSceneFogColourMultiplier,
-                    fogDensity * mSceneFogDensityMultiplier, 
+                    fogDensity * mSceneFogDensityMultiplier,
 					mManageSceneFogFromDistance,
 					mManageSceneFogToDistance);
         }
@@ -492,7 +492,7 @@ namespace Caelum
             Ogre::Real moonBrightness = moonLightColour.r + moonLightColour.g + moonLightColour.b + moonLightColour.a;
             Ogre::Real sunBrightness = sunLightColour.r + sunLightColour.g + sunLightColour.b + sunLightColour.a;
             bool sunBrighterThanMoon = (sunBrightness > moonBrightness);
-            
+
             if (getEnsureSingleLightSource ()) {
                 getMoon()->setForceDisable (sunBrighterThanMoon);
                 getSun()->setForceDisable (!sunBrighterThanMoon);
@@ -565,7 +565,7 @@ namespace Caelum
 
     void CaelumSystem::setManageSceneFog (Ogre::FogMode v) {
         mManageSceneFogMode = v;
-		
+
         // Prevent having some stale values around.
 		// also important: we need to initialize this before using any terrain
         mSceneMgr->setFog (mManageSceneFogMode);
@@ -702,7 +702,7 @@ namespace Caelum
             Ogre::Degree azimuth, Ogre::Degree altitude)
     {
         Ogre::Vector3 res;
-        res.z = -Ogre::Math::Cos (azimuth) * Ogre::Math::Cos (altitude);  // North 
+        res.z = -Ogre::Math::Cos (azimuth) * Ogre::Math::Cos (altitude);  // North
         res.x =  Ogre::Math::Sin (azimuth) * Ogre::Math::Cos (altitude);  // East
         res.y = -Ogre::Math::Sin (altitude); // Zenith
         return res;
@@ -713,10 +713,10 @@ namespace Caelum
         Ogre::Degree azimuth, altitude;
         {
             ScopedHighPrecissionFloatSwitch precissionSwitch;
-    		                  
+
 		    Astronomy::getHorizontalSunPosition(jday,
                     getObserverLongitude(), getObserverLatitude(),
-                    azimuth, altitude);		
+                    azimuth, altitude);
         }
         Ogre::Vector3 res = makeDirection(azimuth, altitude);
 
@@ -728,16 +728,16 @@ namespace Caelum
         Ogre::Degree azimuth, altitude;
         {
             ScopedHighPrecissionFloatSwitch precissionSwitch;
-			
+
             Astronomy::getHorizontalNorthEclipticPolePosition(jday,
 					getObserverLongitude (), getObserverLatitude (),
 					azimuth, altitude);
-        }	
+        }
         Ogre::Vector3 res = -makeDirection(azimuth, altitude);
-		
+
 		return res;
 	}
-	
+
 	const Ogre::Vector3 CaelumSystem::getMoonDirection (LongReal jday)
     {
         Ogre::Degree azimuth, altitude;
@@ -747,7 +747,7 @@ namespace Caelum
             Astronomy::getHorizontalMoonPosition(jday,
                     getObserverLongitude (), getObserverLatitude (),
                     azimuth, altitude);
-        }	
+        }
         Ogre::Vector3 res = makeDirection(azimuth, altitude);
 
 		return res;
@@ -770,7 +770,7 @@ namespace Caelum
         if (getSun ()) getSun ()->setQueryFlags (flags);
         if (getMoon ()) getMoon ()->setQueryFlags (flags);
         if (getImageStarfield ()) getImageStarfield ()->setQueryFlags (flags);
-        if (getPointStarfield ()) getPointStarfield ()->setQueryFlags (flags);        
+        if (getPointStarfield ()) getPointStarfield ()->setQueryFlags (flags);
         if (getGroundFog ()) getGroundFog ()->setQueryFlags (flags);
         if (getCloudSystem ()) getCloudSystem ()->forceLayerQueryFlags (flags);
     }
@@ -781,7 +781,7 @@ namespace Caelum
         if (getSun ()) getSun ()->setVisibilityFlags (flags);
         if (getMoon ()) getMoon ()->setVisibilityFlags (flags);
         if (getImageStarfield ()) getImageStarfield ()->setVisibilityFlags (flags);
-        if (getPointStarfield ()) getPointStarfield ()->setVisibilityFlags (flags);        
+        if (getPointStarfield ()) getPointStarfield ()->setVisibilityFlags (flags);
         if (getGroundFog ()) getGroundFog ()->setVisibilityFlags (flags);
         if (getCloudSystem ()) getCloudSystem ()->forceLayerVisibilityFlags (flags);
     }
