@@ -62,6 +62,7 @@ public:
 
 protected:
     Camera* mCamera;
+    SceneNode* mCameraNode;
     SceneManager* mSceneMgr;
     OgreBites::InputListener* mFrameListener;
 
@@ -91,10 +92,13 @@ protected:
         // Create the camera
         mCamera = mSceneMgr->createCamera("PlayerCam");
 
+        mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        mCameraNode->attachObject(mCamera);
+
         // Position it at 500 in Z direction
-        mCamera->setPosition(Vector3(0,0,500));
+        mCameraNode->setPosition(Vector3(0,0,500));
         // Look back along -Z
-        mCamera->lookAt(Vector3(0,0,-300));
+        mCameraNode->lookAt(Vector3(0,0,-300), Node::TS_PARENT);
         mCamera->setNearClipDistance(5);
     }
     virtual void createFrameListener(void)

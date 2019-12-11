@@ -119,8 +119,10 @@ public:
         // Start the camera on a hill in the middle of the terrain
         // looking towards Z+ (north).
         // Sun should rise in the east(left) and set in the west(right).
-        mCamera->setPosition (Vector3 (775, 100, 1997));
-        mCamera->lookAt (Vector3 (0, 0, 0));
+        mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        mCameraNode->setPosition (Vector3 (775, 100, 1997));
+        mCameraNode->lookAt (Vector3 (0, 0, 0), Node::TS_PARENT);
+        mCameraNode->attachObject(mCamera);
 
         mCamera->setNearClipDistance(5);
 

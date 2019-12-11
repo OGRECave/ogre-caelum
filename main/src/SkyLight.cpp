@@ -30,6 +30,7 @@ namespace Caelum
         sceneMgr->getRenderQueue()->getQueueGroup(CAELUM_RENDER_QUEUE_SUN)->setShadowsEnabled(false);
 
         mNode = caelumRootNode->createChildSceneNode ();
+        mNode->attachObject(mMainLight);
     }
 
     BaseSkyLight::~BaseSkyLight () {
@@ -65,8 +66,8 @@ namespace Caelum
 
     void BaseSkyLight::setLightDirection (const Ogre::Vector3 &dir) {
         mDirection = dir;
-        if (mMainLight != 0) {
-            mMainLight->setDirection (mNode->_getDerivedOrientation() * dir);
+        if (mNode != 0) {
+            mNode->setDirection (dir, Ogre::Node::TS_PARENT);
         }
     }
 
