@@ -102,7 +102,7 @@ namespace Caelum
         setSunColoursImage(DEFAULT_SUN_COLOURS_IMAGE);
 
         // Fog defaults.
-		setManageSceneFog (Ogre::FOG_EXP2);
+		setManageSceneFog (Ogre::FOG_NONE);
 		setManageSceneFogStart(900);
 		setManageSceneFogEnd(1000);
         mGlobalFogDensityMultiplier = 1;
