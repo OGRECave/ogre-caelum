@@ -5,45 +5,20 @@
 #include "CaelumPrecompiled.h"
 #include "CaelumPlugin.h"
 
-// ms_Singleton was renamed to msSingleton in ogre 1.8
-#if OGRE_VERSION_MINOR < 8
-	#define SINGLETON_MEMBER ms_Singleton
-#else
-	#define SINGLETON_MEMBER msSingleton
-#endif
-
-#if OGRE_VERSION_MINOR >= 9
-    namespace Ogre
-    {
-        template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
-    }
-#else
-    template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::SINGLETON_MEMBER = 0;
-#endif
+namespace Ogre
+{
+    template<> Caelum::CaelumPlugin* Ogre::Singleton<Caelum::CaelumPlugin>::msSingleton = 0;
+}
 
 namespace Caelum
 {
 	CaelumPlugin* CaelumPlugin::getSingletonPtr () {
-        return SINGLETON_MEMBER;
+        return msSingleton;
     }
 
     CaelumPlugin& CaelumPlugin::getSingleton () {  
-        assert (SINGLETON_MEMBER);
-        return *SINGLETON_MEMBER;  
-    }
-
-    extern "C" void CAELUM_EXPORT dllStartPlugin () {
-        assert (CaelumPlugin::getSingletonPtr () == 0);
-        CaelumPlugin* plugin = new CaelumPlugin();
-        assert (CaelumPlugin::getSingletonPtr () == plugin);
-        Ogre::Root::getSingleton ().installPlugin (CaelumPlugin::getSingletonPtr ());
-    }
-
-    extern "C" void CAELUM_EXPORT dllStopPlugin () {
-        assert (CaelumPlugin::getSingletonPtr () != 0);
-        Ogre::Root::getSingleton ().uninstallPlugin (CaelumPlugin::getSingletonPtr ());
-        delete CaelumPlugin::getSingletonPtr ();
-        assert (CaelumPlugin::getSingletonPtr () == 0);
+        assert (msSingleton);
+        return *msSingleton;
     }
 
 #if CAELUM_SCRIPT_SUPPORT
@@ -52,19 +27,12 @@ namespace Caelum
     CaelumPlugin::CaelumPlugin()
 #endif
     {
-        mIsInstalled = false;
     }
 
     CaelumPlugin::~CaelumPlugin() {
     }
 
-    const Ogre::String CaelumPlugin::CAELUM_PLUGIN_NAME = "Caelum";
-
-    const Ogre::String& CaelumPlugin::getName () const {
-        return CAELUM_PLUGIN_NAME;
-    }
-
-    void CaelumPlugin::install ()
+    void CaelumPlugin::initialise ()
     {
         assert(!mIsInstalled && "Already installed");
 
@@ -84,17 +52,9 @@ namespace Caelum
         getScriptTranslatorManager()->_setPropScriptResourceManager (
                 &mPropScriptResourceManager);
 #endif // CAELUM_SCRIPT_SUPPORT
-
-        mIsInstalled = true;
     }
 
-    void CaelumPlugin::initialise () {
-    }
-
-    void CaelumPlugin::shutdown () {
-    }
-
-    void CaelumPlugin::uninstall ()
+    void CaelumPlugin::shutdown ()
     {
         assert(mIsInstalled && "Not installed");
 
@@ -121,14 +81,9 @@ namespace Caelum
         assert (sys);
         assert (this->isInstalled () && "Must install CaelumPlugin before loading scripts");
 
-        // Fetch raw resource ptr. Attempt to support explicit resource groups currently in Ogre trunk.
-#if OGRE_VERSION >= 0x00010900
-	Ogre::ResourcePtr res = getPropScriptResourceManager ()->createOrRetrieve (objectName, groupName).first;
-#elif OGRE_VERSION >= 0x00010700
-        Ogre::ResourcePtr res = getPropScriptResourceManager ()->getByName (objectName, groupName);
-#else
-        Ogre::ResourcePtr res = getPropScriptResourceManager ()->getByName (objectName);
-#endif
+        // Fetch raw resource ptr.
+        Ogre::ResourcePtr res = getPropScriptResourceManager ()->createOrRetrieve (objectName, groupName).first;
+
 
         // Check a PropScriptResource was found.
         PropScriptResource* propRes = static_cast<PropScriptResource*> (res.get ());

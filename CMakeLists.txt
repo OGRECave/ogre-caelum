@@ -88,13 +88,8 @@ endif ()
 #	ENDIF()
 #ENDIF()
 
-if(CAELUM_OGRE_PLUGIN)
-    set(LIB_DESTINATION ${OGRE_PLUGIN_DIR})
-    set(LIBNAME "Plugin_Caelum")
-else()
-    set(LIB_DESTINATION "lib")
-    set(LIBNAME "Caelum")
-endif()
+set(LIB_DESTINATION "lib")
+set(LIBNAME "Caelum")
 
 # now add the directories
 add_subdirectory(main)

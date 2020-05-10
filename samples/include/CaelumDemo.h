@@ -93,15 +93,14 @@ public:
 
 class CaelumSampleApplication : public ExampleApplication
 {
-    Ogre::Plugin* mPlugin;
 public:
     CaelumSampleApplication ()
     {
     }
 
     void loadResources() {
-        mPlugin = new CaelumPlugin();
-        mPlugin->install();
+        new CaelumPlugin();
+        CaelumPlugin::getSingleton().initialise();
         ExampleApplication::loadResources();
     }
 

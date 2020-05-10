@@ -8,10 +8,6 @@ add_definitions("-DCAELUM_LIB")
 ADD_LIBRARY(${LIBNAME} SHARED ${sources})
 
 if(UNIX)
-    # disable "lib" prefix on Unix
-    if(CAELUM_OGRE_PLUGIN)
-        set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
-    endif()
     set_target_properties(${LIBNAME} PROPERTIES VERSION ${OGRE_VERSION})
 endif()
 

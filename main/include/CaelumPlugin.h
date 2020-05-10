@@ -8,7 +8,6 @@
 #include "CaelumPrerequisites.h"
 #include "CaelumScriptTranslator.h"
 #include "TypeDescriptor.h"
-#include "OgrePlugin.h"
 
 namespace Caelum
 {
@@ -18,7 +17,7 @@ namespace Caelum
      *  various stuff in ogre managers. But you can also just link to the
      *  library normally and call install functions manually.
      */
-    class CAELUM_EXPORT CaelumPlugin: public Ogre::Singleton<CaelumPlugin>, public Ogre::Plugin
+    class CAELUM_EXPORT CaelumPlugin: public Ogre::Singleton<CaelumPlugin>
     {
     public:
         /// Get reference to singleton instance; or crash if N/A.
@@ -29,16 +28,13 @@ namespace Caelum
         CaelumPlugin();
         ~CaelumPlugin();
 
-        virtual void install ();
-        virtual void initialise ();
-        virtual void shutdown ();
-        virtual void uninstall ();
-
-        static const Ogre::String CAELUM_PLUGIN_NAME;
-        virtual const String& getName () const;
+        void install () { initialise(); }
+        void initialise ();
+        void shutdown ();
+        void uninstall() { shutdown(); }
 
         // Determine if the plugin was installed (if install was called).
-        inline bool isInstalled () const { return mIsInstalled; }
+        bool isInstalled () const { return mIsInstalled; }
 
    private:
         bool mIsInstalled;
