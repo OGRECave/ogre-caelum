@@ -36,7 +36,6 @@ namespace Caelum
             LogManager::getSingleton().logMessage ("Caelum: Plugin not installed; installing now.");
             new CaelumPlugin ();
             CaelumPlugin::getSingletonPtr ()->install ();
-            CaelumPlugin::getSingletonPtr ()->initialise ();
         }
 
         mCaelumCameraNode.reset(mSceneMgr->getRootSceneNode ()->createChildSceneNode ("Caelum/CameraNode/" + uniqueId));
