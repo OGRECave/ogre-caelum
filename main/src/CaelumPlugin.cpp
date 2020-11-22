@@ -52,6 +52,8 @@ namespace Caelum
         getScriptTranslatorManager()->_setPropScriptResourceManager (
                 &mPropScriptResourceManager);
 #endif // CAELUM_SCRIPT_SUPPORT
+	    
+	 mIsInstalled = true;   
     }
 
     void CaelumPlugin::shutdown ()
