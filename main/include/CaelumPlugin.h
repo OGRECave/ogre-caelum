@@ -37,7 +37,7 @@ namespace Caelum
         bool isInstalled () const { return mIsInstalled; }
 
    private:
-        bool mIsInstalled;
+        bool mIsInstalled = false;
 
 #if CAELUM_TYPE_DESCRIPTORS
    public:
