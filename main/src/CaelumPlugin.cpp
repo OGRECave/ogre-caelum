@@ -99,7 +99,7 @@ namespace Caelum
         const Ogre::String& scriptFileName = propRes->getOrigin();
         const Ogre::String& scriptFileGroup = propRes->getGroup();
         Ogre::DataStreamPtr streamPtr = Ogre::ResourceGroupManager::getSingleton ().openResource (
-                scriptFileName, scriptFileGroup, false);
+                scriptFileName, scriptFileGroup);
 
         // Feed it into the compiler.
         this->getScriptTranslatorManager()->getCaelumSystemTranslator()->setTranslationTarget (sys, objectName);

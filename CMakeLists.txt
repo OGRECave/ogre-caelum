@@ -34,7 +34,7 @@ SET(BUILD_SHARED_LIBS OFF)
 
 SET(CMAKE_USE_RELATIVE_PATHS OFF)
 
-find_package(OGRE 1.10 REQUIRED)
+find_package(OGRE REQUIRED CONFIG)
 link_directories(${OGRE_LIBRARY_DIRS})
 
 # setup paths

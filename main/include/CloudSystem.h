@@ -63,10 +63,10 @@ namespace Caelum
 				const Ogre::ColourValue &sunSphereColour);
 
         /// Similar to @see CaelumSystem::forceSubcomponentQueryFlags.
-        virtual void forceLayerQueryFlags (uint flags);
+        void forceLayerQueryFlags (uint flags);
 
         /// Similar to @see CaelumSystem::forceSubcomponentVisibilityFlags.
-        virtual void forceLayerVisibilityFlags (uint flags);
+        void forceLayerVisibilityFlags (uint flags);
 	};
 }
 

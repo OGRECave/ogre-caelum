@@ -230,8 +230,8 @@ namespace Caelum
                     prop->name + " must have at most 3 arguments");
             return false;
         } 
-        float floats[3];
-        if (!Ogre::ScriptTranslator::getFloats(prop->values.begin(), prop->values.end(), floats, 3)) {
+        std::vector<float> floats;
+        if (!Ogre::ScriptTranslator::getVector(prop->values.begin(), prop->values.end(), floats, 3)) {
             compiler->addError (ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,         
                     "incorrect vector parameters.");
             return false;
@@ -256,8 +256,8 @@ namespace Caelum
                     prop->name + " must have at most 3 arguments");
             return false;
         } 
-        float floats[2];
-        if (!Ogre::ScriptTranslator::getFloats(prop->values.begin(), prop->values.end(), floats, 2)) {
+        std::vector<float> floats;
+        if (!Ogre::ScriptTranslator::getVector(prop->values.begin(), prop->values.end(), floats, 2)) {
             compiler->addError (ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,         
                     "incorrect vector parameters.");
             return false;

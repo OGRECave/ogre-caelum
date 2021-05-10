@@ -111,8 +111,8 @@ namespace Caelum
         bool invalidate =
                 (mMeshWidthSegments != meshWidthSegments) ||
                 (mMeshHeightSegments != meshHeightSegments) ||
-                (abs(mMeshWidth - meshWidth) > 0.001) ||
-                (abs(mMeshHeight - meshHeight) > 0.001);
+                (std::abs(mMeshWidth - meshWidth) > 0.001) ||
+                (std::abs(mMeshHeight - meshHeight) > 0.001);
         mMeshWidth = meshWidth;
         mMeshHeight = meshHeight;
         mMeshWidthSegments = meshWidthSegments;
