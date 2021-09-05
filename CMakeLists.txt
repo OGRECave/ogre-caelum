@@ -7,7 +7,6 @@
 # cmake system for Caelum updated on 2-9-2021 by Edgar{at}AnotherFoxGuy{DOT}com
 
 cmake_minimum_required(VERSION 3.0.2)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # define the project
 project(
@@ -18,15 +17,10 @@ project(
 )
 
 # add some functions we use that are shipped with cmake
-include(CheckLibraryExists)
-include(CheckIncludeFile)
-include(CheckIncludeFileCXX)
 include(CheckCCompilerFlag)
-include(CheckCSourceCompiles)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
-option(CAELUM_OGRE_PLUGIN "Build Caelum as OGRE plugin" ON)
 option(CAELUM_SCRIPT_SUPPORT "Load CaelumSystem and it's components from a script file" ON)
 option(CAELUM_BUILD_SAMPLES "build samples" OFF)
 
@@ -35,8 +29,7 @@ SET(BUILD_SHARED_LIBS OFF)
 
 SET(CMAKE_USE_RELATIVE_PATHS OFF)
 
-find_package(OGRE REQUIRED)
-link_directories(${OGRE_LIBRARY_DIRS})
+find_package(OGRE REQUIRED CONFIG)
 
 # setup paths
 SET(RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")
@@ -57,21 +50,6 @@ if (NOT WIN32)
         ADD_DEFINITIONS(-Wextra -Wno-unused-parameter)
     endif ()
 endif ()
-
-# Set visibility options if available
-#IF(NOT WIN32)
-#	CHECK_C_SOURCE_COMPILES("int foo() __attribute__((destructor));
-#								int main() {return 0;}" HAVE_GCC_DESTRUCTOR)
-#
-#	CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_VISIBILITY_SWITCH)
-#	IF(HAVE_VISIBILITY_SWITCH)
-#		CHECK_C_SOURCE_COMPILES("int foo() __attribute__((visibility(\"default\")));
-#									int main() {return 0;}" HAVE_GCC_VISIBILITY)
-#		IF(HAVE_GCC_VISIBILITY)
-#			ADD_DEFINITIONS(-fvisibility=hidden -DHAVE_GCC_VISIBILITY)
-#		ENDIF()
-#	ENDIF()
-#ENDIF()
 
 set(LIB_DESTINATION "lib")
 
@@ -109,11 +87,11 @@ set(DOC_FILES Contributors.txt LICENSE ReadMe.md)
 install(FILES ${DOC_FILES} DESTINATION TYPE DOC)
 
 # install the PkgConfig file
-configure_file("${CMAKE_SOURCE_DIR}/Caelum.pc.in" "${CMAKE_BINARY_DIR}/Caelum.pc" @ONLY)
+configure_file("cmake/Caelum.pc.in" "${CMAKE_BINARY_DIR}/Caelum.pc" @ONLY)
 install(FILES "${CMAKE_BINARY_DIR}/Caelum.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
 configure_package_config_file(
-        CaelumConfig.cmake.in
+        cmake/CaelumConfig.cmake.in
         ${CMAKE_BINARY_DIR}/CaelumConfig.cmake
         INSTALL_DESTINATION ${CMAKEFILES_INSTALL_DIR}
 )

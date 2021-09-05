@@ -33,12 +33,5 @@ install(
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/main/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Caelum FILES_MATCHING PATTERN "*.h" PATTERN ".svn" EXCLUDE)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/main/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Caelum FILES_MATCHING PATTERN "*.h" PATTERN ".svn" EXCLUDE)
 
-
-# --- Threading support (still needed for GCC even with C++11)
-set(CMAKE_THREAD_PREFER_PTHREAD YES)
-find_package(Threads REQUIRED)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Threads::Threads)
-
 # --- Ogre 3D graphics engine ---
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${OGRE_LIBRARIES})
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${OGRE_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OgreMain)
