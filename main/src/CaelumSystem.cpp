@@ -2,13 +2,14 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-#include "CaelumPrecompiled.h"
 #include "CaelumSystem.h"
-#include "CaelumExceptions.h"
-#include "InternalUtilities.h"
 #include "Astronomy.h"
+#include "CaelumExceptions.h"
 #include "CaelumPlugin.h"
+#include "CaelumPrecompiled.h"
 #include "FlatCloudLayer.h"
+#include "InternalUtilities.h"
+#include <functional>
 
 using namespace Ogre;
 
