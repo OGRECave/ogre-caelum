@@ -154,10 +154,10 @@ namespace Caelum
         bool mEnsureSingleShadowSource;
 
 		/// The sky gradients image (for lookups).
-        std::auto_ptr<Ogre::Image> mSkyGradientsImage;
+        std::unique_ptr<Ogre::Image> mSkyGradientsImage;
 
         /// The sun gradients image (for lookups).
-        std::auto_ptr<Ogre::Image> mSunColoursImage;
+        std::unique_ptr<Ogre::Image> mSunColoursImage;
 
         /// Observer Latitude (on the earth).
         Ogre::Degree mObserverLatitude;
@@ -168,16 +168,16 @@ namespace Caelum
                 Ogre::Degree azimuth, Ogre::Degree altitude);
 		
 		// References to sub-components
-        std::auto_ptr<UniversalClock> mUniversalClock;
-        std::auto_ptr<SkyDome> mSkyDome;
-        std::auto_ptr<BaseSkyLight> mSun;
-        std::auto_ptr<Moon> mMoon;
-        std::auto_ptr<ImageStarfield> mImageStarfield;
-        std::auto_ptr<PointStarfield> mPointStarfield;
-        std::auto_ptr<GroundFog> mGroundFog;
-        std::auto_ptr<CloudSystem> mCloudSystem;
-		std::auto_ptr<PrecipitationController> mPrecipitationController;
-		std::auto_ptr<DepthComposer> mDepthComposer;
+        std::unique_ptr<UniversalClock> mUniversalClock;
+        std::unique_ptr<SkyDome> mSkyDome;
+        std::unique_ptr<BaseSkyLight> mSun;
+        std::unique_ptr<Moon> mMoon;
+        std::unique_ptr<ImageStarfield> mImageStarfield;
+        std::unique_ptr<PointStarfield> mPointStarfield;
+        std::unique_ptr<GroundFog> mGroundFog;
+        std::unique_ptr<CloudSystem> mCloudSystem;
+		std::unique_ptr<PrecipitationController> mPrecipitationController;
+		std::unique_ptr<DepthComposer> mDepthComposer;
 
     public:
         typedef std::set<Ogre::Viewport*> AttachedViewportSet;

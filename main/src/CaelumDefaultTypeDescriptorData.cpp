@@ -61,7 +61,7 @@ namespace Caelum
     {
         if (!CaelumSystemTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
 
             // Timing settings.
             td->add("time_scale",
@@ -144,7 +144,7 @@ namespace Caelum
 
         if (!PointStarfieldTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
             td->add("magnitude_scale",
                     new AccesorPropertyDescriptor<Caelum::PointStarfield, Real, Real, Real>(
                             &Caelum::PointStarfield::getMagnitudeScale,
@@ -178,7 +178,7 @@ namespace Caelum
 
         if (!BaseSkyLightTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
             td->add("ambient_multiplier",
                     new AccesorPropertyDescriptor<Caelum::BaseSkyLight, ColourValue>(
                             &Caelum::BaseSkyLight::getAmbientMultiplier,
@@ -212,7 +212,7 @@ namespace Caelum
 
         if (!GroundFogTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
             td->add("density",
                     new AccesorPropertyDescriptor<Caelum::GroundFog, Real, Real, Real>(
                             &Caelum::GroundFog::getDensity,
@@ -234,7 +234,7 @@ namespace Caelum
 
         if (!DepthComposerTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
             td->add("debug_depth_render",
                     new AccesorPropertyDescriptor<Caelum::DepthComposer, bool, bool, bool>(
                             &Caelum::DepthComposer::getDebugDepthRender,
@@ -281,7 +281,7 @@ namespace Caelum
 
         if (!PrecipitationTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
 
             td->add("texture",
                     new AccesorPropertyDescriptor<Caelum::PrecipitationController, String>(
@@ -321,7 +321,7 @@ namespace Caelum
 
         if (!FlatCloudLayerTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
 
             // Height.
             td->add("height",
@@ -420,7 +420,7 @@ namespace Caelum
 
         if (!SkyDomeTypeDescriptor)
         {
-            std::auto_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
+            std::unique_ptr<DefaultTypeDescriptor> td (new DefaultTypeDescriptor ());
 
             // SkyDome is slightly special because most properties are write-only.
 

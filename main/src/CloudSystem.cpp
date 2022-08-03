@@ -27,7 +27,7 @@ namespace Caelum
 
     FlatCloudLayer* CloudSystem::createLayer()
     {
-        std::auto_ptr<FlatCloudLayer> layer(new FlatCloudLayer(mSceneMgr, mCloudRoot));
+        std::unique_ptr<FlatCloudLayer> layer(new FlatCloudLayer(mSceneMgr, mCloudRoot));
         mLayers.push_back(layer.get());
         return layer.release();
     }
