@@ -34,4 +34,4 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/main/include/ DESTINATION ${CMAKE_INSTALL_
 install(DIRECTORY ${CMAKE_BINARY_DIR}/main/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Caelum FILES_MATCHING PATTERN "*.h" PATTERN ".svn" EXCLUDE)
 
 # --- Ogre 3D graphics engine ---
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OgreMain)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC OgreMain)
