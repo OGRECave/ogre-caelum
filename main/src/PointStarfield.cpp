@@ -13,7 +13,6 @@ using namespace Ogre;
 namespace Caelum
 {
 	const Ogre::String PointStarfield::STARFIELD_MATERIAL_NAME = "Caelum/StarPoint";
-    const Ogre::Degree PointStarfield::DEFAULT_OBSERVER_POSITION_REBUILD_DELTA = Ogre::Degree(0.1);
 
 	PointStarfield::PointStarfield (
 			Ogre::SceneManager *sceneMgr,
@@ -26,7 +25,6 @@ namespace Caelum
 		mMagnitudeScale = Math::Pow(100, 0.2);
 		mObserverLatitude = 45;
 		mObserverLongitude = 0;
-        mObserverPositionRebuildDelta = DEFAULT_OBSERVER_POSITION_REBUILD_DELTA;
 
         String uniqueSuffix = "/" + InternalUtilities::pointerToString(this);
 
@@ -162,19 +160,11 @@ namespace Caelum
         {
             const Star& star = mStars[i];
 
-			// Determine position at J2000
-			LongReal azm, alt;
-			Astronomy::convertEquatorialToHorizontal(
-					Astronomy::J2000,
-					mObserverLatitude.valueDegrees(),
-					mObserverLongitude.valueDegrees(),
-					star.RightAscension.valueDegrees(), star.Declination.valueDegrees(),
-					azm, alt);
-
-    		Ogre::Vector3 pos;
-		    pos.z = -Math::Cos (Ogre::Degree(azm)) * Math::Cos (Ogre::Degree(alt));
-		    pos.x =  Math::Sin (Ogre::Degree(azm)) * Math::Cos (Ogre::Degree(alt));
-		    pos.y = -Math::Sin (Ogre::Degree(alt));
+            // North celestial pole is at +Y, vernal equinox at -X
+            Ogre::Vector3 pos;
+            pos.z =  Math::Sin(star.RightAscension) * Math::Cos(star.Declination);
+            pos.x = -Math::Cos(star.RightAscension) * Math::Cos(star.Declination);
+            pos.y =  Math::Sin(star.Declination);
 
             //mManualObj->colour (Ogre::ColourValue::White);
             mManualObj->position (pos);
@@ -240,36 +230,13 @@ namespace Caelum
 	    mNode->setScale (Ogre::Vector3::UNIT_SCALE * radius);
 	}
 
-	void PointStarfield::_update (const float time) {
-		// This is probably wrong.
-		Ogre::Quaternion orientation = Ogre::Quaternion::IDENTITY;
-		orientation = orientation * Ogre::Quaternion (Ogre::Radian (-mObserverLatitude + Ogre::Degree (90)), Ogre::Vector3::UNIT_X);
-		orientation = orientation * Ogre::Quaternion (Ogre::Radian (-time * 2 * Ogre::Math::PI), Ogre::Vector3::UNIT_Y);
+	void PointStarfield::update (LongReal julDay) {
+		LongReal vernalEquinoxHourAngle;
+		Astronomy::getVernalEquinoxHourAngle(julDay, mObserverLongitude.valueDegrees(), vernalEquinoxHourAngle);
+		Ogre::Quaternion orientation = 
+			Ogre::Quaternion (Ogre::Radian (-mObserverLatitude + Ogre::Degree (90)), Ogre::Vector3::UNIT_X) *
+			Ogre::Quaternion(-Ogre::Degree(vernalEquinoxHourAngle + 90.0), Ogre::Vector3::UNIT_Y );
 		mNode->setOrientation (orientation);
         ensureGeometry ();
-	}
-
-	void PointStarfield::setObserverLatitude (Ogre::Degree value)
-    {
-		if (!Math::RealEqual (
-                mObserverLatitude.valueDegrees (),
-                value.valueDegrees (),
-                this->getObserverPositionRebuildDelta ().valueDegrees ()))
-        {
-			mObserverLatitude = value;
-			invalidateGeometry ();
-		}
-	}
-
-	void PointStarfield::setObserverLongitude (Ogre::Degree value)
-    {
-		if (!Math::RealEqual (
-                mObserverLongitude.valueDegrees (), 
-                value.valueDegrees (),
-                this->getObserverPositionRebuildDelta ().valueDegrees ()))
-        {
-			mObserverLongitude = value;
-			invalidateGeometry ();
-		}
 	}
 }
