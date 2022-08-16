@@ -406,11 +406,7 @@ namespace Caelum
             //LogManager::getSingleton ().logMessage (
             //        "Caelum: Saved " + objNode->cls + " name " + objNode->name + " as a resource");
             PropScriptResourceManager* mgr = this->getResourceManager ();
-#if OGRE_VERSION >= 0x00010900
             ResourcePtr resource = mgr->createResource (objNode->name, compiler->getResourceGroup());
-#else
-            ResourcePtr resource = mgr->create (objNode->name, compiler->getResourceGroup());
-#endif
             resource->_notifyOrigin (objNode->file);
             return;
         }
@@ -440,11 +436,7 @@ namespace Caelum
                 //        " base '" + childObjNode->base + "'");
                 
                 // Only allow declarations with one class token; like "moon { }"
-#if OGRE_VERSION < 0x010700
-                if (childObjNode->name.empty () == false || childObjNode->base.empty () == false) {
-#else
                 if (childObjNode->name.empty () == false || childObjNode->bases.size () != 0) {
-#endif
                     compiler->addError (
                             ScriptCompiler::CE_FEWERPARAMETERSEXPECTED,
                             childObjNode->file, childObjNode->line,
@@ -536,11 +528,7 @@ namespace Caelum
         
                 if (className == "cloud_layer") {
                     // Don't allow names.
-#if OGRE_VERSION < 0x010700
-                    if (childObjNode->base.empty () == false) {
-#else
                     if (childObjNode->bases.size () != 0) {
-#endif
                         compiler->addError (
                                 ScriptCompiler::CE_FEWERPARAMETERSEXPECTED,
                                 childObjNode->file, childObjNode->line,

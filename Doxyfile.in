@@ -1161,8 +1161,7 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 ## Local note: By default pretend we're compiling against a "full ogre".
-PREDEFINED             = "OGRE_VERSION=0x00010600" \
-                         "OGRE_USE_NEW_COMPILERS=1"
+PREDEFINED             = 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 

@@ -179,20 +179,12 @@ namespace Caelum
 		Ogre::MaterialPtr mDepthRenderMaterial;
 
         // Override materials during all rendering.
-#if OGRE_VERSION < 0x00010600
-        virtual bool renderableQueued(
-                Ogre::Renderable* rend,
-                Ogre::uint8 groupId,
-                Ogre::ushort priority, 
-                Ogre::Technique** ppTech);
-#else
         virtual bool renderableQueued(
                 Ogre::Renderable* rend,
                 Ogre::uint8 groupId,
                 Ogre::ushort priority, 
                 Ogre::Technique** ppTech,
                 Ogre::RenderQueue* pQueue);
-#endif // OGRE_VERSION
         inline Ogre::Material* getDepthRenderMaterial() const { return mDepthRenderMaterial.get(); }
 
         int mMinRenderGroupId;

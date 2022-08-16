@@ -127,10 +127,8 @@ private:
     void updateMaterialSchemeUI ();
     bool handleForceTerrainShadowsChanged (const CEGUI::EventArgs& args);
 
-#if OGRE_VERSION >= 0x010600
     void setupPSSM ();
     void updatePSSMCamera ();
-#endif
 
 public:
     CaelumLabFrameListener (RenderWindow* win, Camera* cam);

@@ -415,20 +415,12 @@ namespace Caelum
         camera->_notifyViewport (oldCameraViewport);
     }
 
-#if OGRE_VERSION < 0x00010600
-    bool DepthRenderer::renderableQueued(
-                Ogre::Renderable* rend,
-                Ogre::uint8 groupId,
-                Ogre::ushort priority,
-                Ogre::Technique** ppTech)
-#else
     bool DepthRenderer::renderableQueued(
                 Ogre::Renderable* rend,
                 Ogre::uint8 groupId,
                 Ogre::ushort priority,
                 Ogre::Technique** ppTech,
                 Ogre::RenderQueue* pQueue)
-#endif // OGRE_VERSION
     {
         assert (mDepthRenderingNow);
 

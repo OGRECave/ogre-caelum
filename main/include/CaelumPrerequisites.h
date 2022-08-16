@@ -36,27 +36,16 @@
 
 // By default only compile type descriptors for scripting.
 #ifndef CAELUM_TYPE_DESCRIPTORS
-    #if (OGRE_VERSION >= 0x00010600)
-        #define CAELUM_TYPE_DESCRIPTORS 1
-    #else
-        #define CAELUM_TYPE_DESCRIPTORS 0
-    #endif
+    #define CAELUM_TYPE_DESCRIPTORS 1
 #endif
 
 // Scripting support requires Ogre 1.6
 // Can be also configured on compiler command line
 #ifndef CAELUM_SCRIPT_SUPPORT
-    #if (OGRE_VERSION >= 0x00010600)
-        #define CAELUM_SCRIPT_SUPPORT 1
-    #else
-        #define CAELUM_SCRIPT_SUPPORT 0
-    #endif
+    #define CAELUM_SCRIPT_SUPPORT 1
 #endif
 
 #if CAELUM_SCRIPT_SUPPORT
-    #if !(OGRE_VERSION > 0x00010600)
-        #error "Caelum script support requires Ogre 1.6."
-    #endif
     #if !(CAELUM_TYPE_DESCRIPTORS)
         #error "Caelum script support also requires type descriptors."
     #endif
@@ -119,24 +108,6 @@ namespace Caelum
     class DepthComposer;
     class DepthComposerInstance;
     class DepthRenderer;
-}
-
-namespace Ogre 
-{
-#if OGRE_VERSION <= 0x010602
-    // Write an Ogre::Degree to a stream.
-    //
-    // Ogre::Any requires that the wrapped type can be written to a stream;
-    // otherwise it will fail on instantation. This function was placed here
-    // so it's available everywhere. This can't be placed in namespace Caelum.
-    //
-    // Ogre 1.6.3 and up already include this operator; so it's ifdefed out.
-    //
-    // This function is never actually used; the output does not matter.
-    inline std::ostream& operator << (std::ostream& out, Ogre::Degree deg) {
-        return out << deg.valueDegrees();
-    }
-#endif
 }
 
 #endif // CAELUM__CAELUM_PREREQUISITES_H

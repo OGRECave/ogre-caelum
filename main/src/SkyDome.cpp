@@ -77,13 +77,8 @@ namespace Caelum
 
         gradientsTus->setTextureAddressingMode (Ogre::TextureUnitState::TAM_CLAMP);
 
-        // Per 1.4 compatibility. Not tested with recent svn.
-        #if OGRE_VERSION < ((1 << 16) | (3 << 8))
-            gradientsTus->setTextureName (gradients, Ogre::TEX_TYPE_2D, -1, true);
-        #else
-            gradientsTus->setTextureName (gradients, Ogre::TEX_TYPE_2D);
-            gradientsTus->setIsAlpha (true);
-        #endif
+        gradientsTus->setTextureName (gradients, Ogre::TEX_TYPE_2D);
+        gradientsTus->setIsAlpha (true);
     }
 
     void SkyDome::setAtmosphereDepthImage (const Ogre::String& atmosphereDepth)

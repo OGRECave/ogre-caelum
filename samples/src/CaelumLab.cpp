@@ -593,11 +593,9 @@ void CaelumLabFrameListener::updateWidgets ()
 
         // See the effect of clip distances on PSSM in real-time.
         if (clipDistancesModified) {
-#if OGRE_VERSION >= 0x010600
             if (mMaterialScheme == SMS_PSSM) {
                 updatePSSMCamera();
             }
-#endif
         }
     }
 
@@ -1011,11 +1009,7 @@ void CaelumLabFrameListener::updateMaterialSchemeUI ()
     if (scheme != mMaterialScheme) {
         mMaterialScheme = scheme;
         if (mMaterialScheme == SMS_PSSM) {
-#if OGRE_VERSION >= 0x010600
             setupPSSM();
-#else
-            LogManager::getSingleton().logMessage("PSSM Requires Ogre 1.6");
-#endif
         } else {
             mSceneMgr->setShadowTechnique(SHADOWTYPE_NONE);
             forceTerrainShadows(mSceneMgr->getRootSceneNode(), false);
@@ -1027,7 +1021,6 @@ void CaelumLabFrameListener::updateMaterialSchemeUI ()
     this->setTerrainShadowsOn(forceTerrainShadowsCheckbox->isSelected());
 }
 
-#if OGRE_VERSION >= 0x010600
 void CaelumLabFrameListener::setupPSSM ()
 {
     mSceneMgr->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
@@ -1111,7 +1104,6 @@ void CaelumLabFrameListener::updatePSSMCamera ()
         }
     }
 }
-#endif
 
 bool CaelumLabFrameListener::frameStarted (const FrameEvent& evt)
 {
