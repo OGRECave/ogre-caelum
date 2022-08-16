@@ -188,7 +188,7 @@ namespace Caelum
             mPassFogParams.push_back(PassFogParams((*it)->getFragmentProgramParameters()));
         }
         std::sort(mPassFogParams.begin(), mPassFogParams.end(), PassFogParams::lessThanByParams);
-        std::unique(mPassFogParams.begin(), mPassFogParams.end(), PassFogParams::equalByParams);
+        mPassFogParams.erase(std::unique(mPassFogParams.begin(), mPassFogParams.end(), PassFogParams::equalByParams), mPassFogParams.end());
     }
 
     void GroundFog::FogParamsBase::setup(Ogre::GpuProgramParametersSharedPtr fpParams) {
