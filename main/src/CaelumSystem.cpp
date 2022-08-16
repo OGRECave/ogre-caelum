@@ -355,7 +355,7 @@ namespace Caelum
 
     void CaelumSystem::setDepthComposer (DepthComposer* ptr) {
         mDepthComposer.reset(ptr);
-        if (getAutoAttachViewportsToComponents() && getDepthComposer ()) {
+        if (getDepthComposer() && getAutoAttachViewportsToComponents()) {
             std::for_each (
                     mAttachedViewports.begin(), mAttachedViewports.end(),
                     std::bind1st (
