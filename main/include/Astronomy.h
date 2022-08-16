@@ -87,6 +87,14 @@ namespace Caelum
                 LongReal rasc,      LongReal decl,
                 LongReal &azimuth,  LongReal &altitude);
 
+        /** Hour angle is zero for objects on sky meridian, and grows to the east.
+         *  @param jday Astronomical time as julian day.
+         *  @param longitude Observer's longitude in degrees east.
+         *  @param hourAngle Hour angle in degrees east.
+         */
+        static void getVernalEquinoxHourAngle (
+                LongReal jday, LongReal longitude, LongReal& hourAngle);
+
         /** Get the sun's position in the sky in, relative to the horizon.
          *  @param jday Astronomical time as julian day.
          *  @param longitude Observer longitude

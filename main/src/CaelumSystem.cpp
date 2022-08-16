@@ -463,7 +463,7 @@ namespace Caelum
         if (getPointStarfield ()) {
             getPointStarfield ()->setObserverLatitude (getObserverLatitude ());
             getPointStarfield ()->setObserverLongitude (getObserverLongitude ());
-            getPointStarfield ()->_update (relDayTime);
+            getPointStarfield ()->update (julDay);
         }
 
         // Update skydome.

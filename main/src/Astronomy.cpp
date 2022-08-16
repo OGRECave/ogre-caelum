@@ -75,7 +75,22 @@ namespace Caelum
         z = dist * sinDeg (decl);
     }
 
-	void Astronomy::convertEquatorialToHorizontal (
+    void Astronomy::getVernalEquinoxHourAngle(
+            LongReal jday, LongReal longitude, LongReal& hourAngle)
+    {
+        // julian days since J2000
+        LongReal d = jday - 2451545.0;
+        // julian centuries since J2000
+        LongReal T = d / 36525.0;
+        // Greenweech Mean Sidereal Time in seconds  of a day of 86400s UT1 at 0h UT1
+        LongReal GMST0 = 24110.54841 + 8640184.812866 * T + 0.093104 * (T * T) - 0.0000062 * (T * T * T);
+        // Universal time of day in degrees.
+        LongReal UT = LongReal(fmod(d, 1) * 360);
+        // Hour angle, in degrees
+        hourAngle = GMST0 * (360.0 / 86400.0) + LongReal(180) + UT + longitude;
+    }
+
+    void Astronomy::convertEquatorialToHorizontal (
             LongReal jday,
             LongReal longitude,   LongReal latitude,
             LongReal rasc,        LongReal decl,

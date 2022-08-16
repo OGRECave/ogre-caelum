@@ -116,9 +116,9 @@ namespace Caelum
 
     public:
 	    /** Update function; called from CaelumSystem::updateSubcomponents
-            @param time Time of the day.
+            @param julDay Julian day and time.
 	     */
-	    void _update (float time);
+	    void update (LongReal julDay);
 
         /** Magnitude power scale.
          *  Star magnitudes are logarithming; one magnitude difference
@@ -137,31 +137,13 @@ namespace Caelum
         inline void setMaxPixelSize (Ogre::Real value) { mMaxPixelSize = value; }
         inline Ogre::Real getMaxPixelSize () const { return mMaxPixelSize; }
 
-        void setObserverLatitude (Ogre::Degree value);
+        void setObserverLatitude (Ogre::Degree value) { mObserverLatitude = value; }
         inline Ogre::Degree getObserverLatitude () const { return mObserverLatitude; }
 
-        void setObserverLongitude (Ogre::Degree value);
+        void setObserverLongitude (Ogre::Degree value) { mObserverLongitude = value; }
         inline Ogre::Degree getObserverLongitude () const { return mObserverLongitude; }
 
-    private:
-        Ogre::Degree mObserverPositionRebuildDelta;
-
     public:
-        /** Moving the observer position around causes a starfield rebuild.
-         *  Default value (DEFAULT_OBSERVER_POSITION_REBUILD_DELTA) is 0.1
-         *  degrees which is equivalent to around 170 meters on the earth.
-         *
-         *  This only matters if you compute the observer position every
-         *  frame. Caelum doesn't contain code for that.
-         */
-        inline Ogre::Degree getObserverPositionRebuildDelta () const {
-            return mObserverPositionRebuildDelta;
-        }
-        inline void setObserverPositionRebuildDelta (Ogre::Degree value) {
-            mObserverPositionRebuildDelta = value;
-        }
-
-	    static const Ogre::Degree DEFAULT_OBSERVER_POSITION_REBUILD_DELTA;
 
         /// Material used to draw all the points.
 	    static const Ogre::String STARFIELD_MATERIAL_NAME;
