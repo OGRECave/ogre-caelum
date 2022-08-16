@@ -51,7 +51,9 @@
     #else
         #define CAELUM_SCRIPT_SUPPORT 0
     #endif
-#else
+#endif
+
+#if CAELUM_SCRIPT_SUPPORT
     #if !(OGRE_VERSION > 0x00010600)
         #error "Caelum script support requires Ogre 1.6."
     #endif
