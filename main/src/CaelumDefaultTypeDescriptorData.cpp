@@ -169,10 +169,6 @@ namespace Caelum
                     new AccesorPropertyDescriptor<Caelum::PointStarfield, Degree, Degree, Degree>(
                             &Caelum::PointStarfield::getObserverLongitude,
                             &Caelum::PointStarfield::setObserverLongitude));
-            td->add("observer_position_rebuild_delta",
-                    new AccesorPropertyDescriptor<Caelum::PointStarfield, Degree, Degree, Degree>(
-                            &Caelum::PointStarfield::getObserverPositionRebuildDelta,
-                            &Caelum::PointStarfield::setObserverPositionRebuildDelta));
             PointStarfieldTypeDescriptor = td.release ();
         }
 
