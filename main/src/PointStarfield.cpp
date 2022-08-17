@@ -44,7 +44,7 @@ namespace Caelum
         mManualObj->setCastShadows(false);
 
 		mNode.reset (caelumRootNode->createChildSceneNode ());
-		mNode->attachObject (mManualObj.getPointer ());
+		mNode->attachObject (mManualObj.get ());
 
 		if (initWithCatalogue) {
 			addBrightStarCatalogue ();
