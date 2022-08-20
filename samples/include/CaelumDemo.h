@@ -4,6 +4,7 @@
 
 #include "CaelumDemoCommon.h"
 #include "ExampleApplication.h"
+#include "LegacyTerrainLoader.h"
 
 class CaelumSampleFrameListener : public OgreBites::InputListener
 {
@@ -119,8 +120,9 @@ public:
         // looking towards Z+ (north).
         // Sun should rise in the east(left) and set in the west(right).
         mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        mCameraNode->setPosition (Vector3 (775, 100, 1997));
-        mCameraNode->lookAt (Vector3 (0, 0, 0), Node::TS_PARENT);
+        mCameraNode->setPosition (Vector3 (775, 100, 997));
+        mCameraNode->setFixedYawAxis(true);
+        mCameraNode->lookAt (Vector3 (775, 99, 1000), Node::TS_PARENT);
         mCameraNode->attachObject(mCamera);
 
         mCamera->setNearClipDistance(5);
@@ -133,13 +135,13 @@ public:
 
     void createScene ()
     {
-        mSceneMgr->getRootSceneNode()->attachObject(
-                mSceneMgr->createEntity("House", "TudorHouse.mesh"));
-        // needs porting to new terrain system
-#if 0
+
+        SceneNode* houseNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        houseNode->setPosition(Vector3 (775, 60, 1150));
+        houseNode->setScale(0.05, 0.05, 0.05);
+        houseNode->yaw(Degree(45));
+        houseNode->attachObject(mSceneMgr->createEntity("House", "TudorHouse.mesh"));
         // Put some terrain in the scene
-        std::string terrain_cfg("CaelumDemoTerrain.cfg");
-        mSceneMgr->setWorldGeometry (terrain_cfg);
-#endif
+        loadLegacyTerrain("CaelumDemoTerrain.cfg", mSceneMgr);
     }
 };
