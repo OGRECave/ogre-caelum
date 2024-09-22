@@ -6,6 +6,7 @@
 #include "CaelumExceptions.h"
 #include "InternalUtilities.h"
 #include "PrivatePtr.h"
+#include <OgreString.h>
 #include <cstddef>
 
 namespace Caelum
@@ -40,28 +41,20 @@ namespace Caelum
         }
 
 	    // Calculate the interpolated pixel
-	    Ogre::ColourValue c1, c2, cf;
+	    Ogre::ColourValue c1, c2;
         c1 = img->getColourAt (px1, py, 0);
         c2 = img->getColourAt (px2, py, 0);
 
         // Blend the two pixels together.
         // diff is the weight between pixel 1 and pixel 2.
         float diff = px - px1;
-	    cf = c1 * (1 - diff) + c2 * diff;
 
-	    return cf;
+	    return Ogre::Math::lerp(c1, c2, diff);
     }
 
     const Ogre::String InternalUtilities::pointerToString (void* pointer)
     {
-        std::stringstream stream;
-		stream.width(2 * sizeof(void *));
-        stream.fill('0');
-        stream.unsetf(std::ios::dec);
-        stream.setf(std::ios::hex);
-        stream.setf(std::ios::uppercase);
-        stream << reinterpret_cast<ptrdiff_t>(pointer);
-        return stream.str();
+        return Ogre::StringUtil::format("%p", pointer);
     }
 
     Ogre::MaterialPtr InternalUtilities::checkLoadMaterialClone (
