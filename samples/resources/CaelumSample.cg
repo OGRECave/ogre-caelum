@@ -144,6 +144,7 @@ void MainFP
     uniform sampler mainTexture : register(s0),
     #if TERRAIN
         uniform sampler detailTexture : register(s1),
+        uniform sampler normalTexture : register(s2),
     #endif
 #endif
 
@@ -203,9 +204,15 @@ void MainFP
     oColour += baseColour * derived_scene_colour;
 #endif
 
-#if ONE_LIGHT
-    float3 normal = normalize(iNormal);
+#if ONE_LIGHT || TWO_LIGHTS
+    #if TERRAIN
+        float3 normal = tex2D(normalTexture, iTexcoord).rgb * 2 - 1;
+    #else
+        float3 normal = normalize(iNormal);
+    #endif
+#endif
 
+#if ONE_LIGHT
     float diffuse_factor = max(0, dot(float4(normal, 1), light_position_view_space));
     float4 light_colour = diffuse_factor * derived_light_diffuse_colour * shadowing;
 
@@ -213,8 +220,6 @@ void MainFP
 #endif
 
 #if TWO_LIGHTS
-    float3 normal = normalize(iNormal);
-
     // Accumulate two lights
     float4 light_colour = float4(0, 0, 0, 0);
 
