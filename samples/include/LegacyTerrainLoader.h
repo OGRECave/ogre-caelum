@@ -18,13 +18,13 @@ same license as the rest of the engine.
 
 namespace Ogre
 {
-class CustomMatProfile : public Ogre::TerrainMaterialGenerator::Profile
+class CustomMatGenerator : public Ogre::TerrainMaterialGenerator
 {
     MaterialPtr mMaterial;
     bool mIsInit;
     bool mNormalMapRequired;
 public:
-    CustomMatProfile(const String& matName) : Profile(NULL, "", ""), mIsInit(false), mNormalMapRequired(true)
+    CustomMatGenerator(const String& matName) : mIsInit(false), mNormalMapRequired(true)
     {
         auto terrainGlobals = TerrainGlobalOptions::getSingletonPtr();
         mMaterial =
@@ -86,9 +86,9 @@ inline Ogre::TerrainGroup* loadLegacyTerrain(const Ogre::String& cfgFileName, Og
 
     if(!customMatName.empty())
     {
-        auto profile = new CustomMatProfile(customMatName);
-        profile->setNormalMapRequired(StringConverter::parseBool(cfg.getSetting("VertexNormals")));
-        terrainGlobals->getDefaultMaterialGenerator()->setActiveProfile(profile);
+        auto generator = new CustomMatGenerator(customMatName);
+        generator->setNormalMapRequired(StringConverter::parseBool(cfg.getSetting("VertexNormals")));
+        terrainGlobals->setDefaultMaterialGenerator(Ogre::TerrainMaterialGeneratorPtr(generator));
     }
 
 #if OGRE_VERSION >= ((1 << 16) | (11 << 8) | 6)
