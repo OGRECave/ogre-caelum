@@ -23,7 +23,7 @@ MAIN_PARAMETERS
     IN(vec4 in_position, POSITION)
 	IN(vec3 in_texcoord, TEXCOORD0)
 	
-	OUT(float2 out_texcoord, TEXCOORD0)
+	OUT(vec2 out_texcoord, TEXCOORD0)
 	OUT(vec4 out_color, COLOR)
 MAIN_DECLARATION
 {
@@ -45,5 +45,5 @@ MAIN_DECLARATION
     gl_Position.xy +=
             gl_Position.w *
             in_texcoord.xy *
-            float2(size, size * aspect_ratio * render_target_flipping);
+            vec2(size, size * aspect_ratio * render_target_flipping);
 }

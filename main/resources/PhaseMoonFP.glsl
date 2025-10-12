@@ -13,7 +13,7 @@ OGRE_UNIFORMS(
 // Get how much of a certain point on the moon is seen (or not) because of the phase.
 // uv is the rect position on moon; as seen from the earth.
 // phase ranges from 0 (full moon) to 1 (again fool moon)
-float MoonPhaseFactor(float2 uv, float phase)
+float MoonPhaseFactor(vec2 uv, float phase)
 {
     // 1. In phase interval [0..1/2) day-to-night terminator appeared on the right side of the moon and moves to the left by cosine law
     // 2. In phase interval [1/2..1) night-to-day terminator appeared on the right side of the moon and moves to the left by cosine law
@@ -32,7 +32,7 @@ float MoonPhaseFactor(float2 uv, float phase)
 }
 
 MAIN_PARAMETERS
-    int(vec2 uv, TEXCOORD0)
+    IN(vec2 uv, TEXCOORD0)
 MAIN_DECLARATION
 {
     gl_FragColor = tex2D(moonDisc, uv);

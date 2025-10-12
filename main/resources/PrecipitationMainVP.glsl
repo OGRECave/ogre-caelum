@@ -19,5 +19,5 @@ MAIN_DECLARATION
 
     // Convert to image-space
     in_pos.xy = sign(in_pos.xy);
-    out_uv0 = (float2(in_pos.x, -in_pos.y) + 1.0f) * 0.5f;    
+    out_uv0 = (vec2(in_pos.x, -in_pos.y) + 1.0f) * 0.5f;    
 }

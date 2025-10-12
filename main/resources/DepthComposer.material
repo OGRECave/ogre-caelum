@@ -16,11 +16,11 @@ fragment_program Caelum/DepthComposerFP_DebugDepthRender glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DDEBUG_DEPTH_RENDER=1
+	preprocessor_defines DEBUG_DEPTH_RENDER=1
 	
 	default_params
 	{
-        param_named invViewProjMatrix mat4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+        param_named invViewProjMatrix matrix4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
     }
 }
 
@@ -28,18 +28,18 @@ fragment_program Caelum/DepthComposerFP_ExpGroundFog glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DEXP_GROUND_FOG=1
+	preprocessor_defines EXP_GROUND_FOG=1
 	
 	default_params
 	{
-        param_named invViewProjMatrix mat4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+        param_named invViewProjMatrix matrix4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
 
-        param_named worldCameraPos vec4 0 0 0 0
+        param_named worldCameraPos float4 0 0 0 0
 
         param_named groundFogDensity float 0.1
         param_named groundFogVerticalDecay float 0.2
         param_named groundFogBaseLevel float 5
-		param_named groundFogColour vec4 1 0 1 1
+		param_named groundFogColour float4 1 0 1 1
     }
 }
 
@@ -47,13 +47,13 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DSKY_DOME_HAZE=1
+	preprocessor_defines SKY_DOME_HAZE=1
 	
 	default_params
 	{
-        param_named invViewProjMatrix mat4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
+        param_named invViewProjMatrix matrix4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
 
-        param_named worldCameraPos vec4 0 0 0 0
+        param_named worldCameraPos float4 0 0 0 0
 
         param_named sunDirection vec3 0 1 0
         param_named hazeColour vec3 0.1 0.2 0.6
@@ -64,13 +64,13 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DEXP_GROUND_FOG=1 -DSKY_DOME_HAZE=1
+	preprocessor_defines EXP_GROUND_FOG=1,SKY_DOME_HAZE=1
 	
 	default_params
 	{
-        param_named invViewProjMatrix mat4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+        param_named invViewProjMatrix matrix4x4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
-        param_named worldCameraPos vec4 0 0 0 0
+        param_named worldCameraPos float4 0 0 0 0
 
         param_named sunDirection vec3 0 1 0
         param_named hazeColour vec3 0.1 0.2 0.6
@@ -78,7 +78,7 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl hlsl
         param_named groundFogDensity float 0.1
         param_named groundFogVerticalDecay float 0.2
         param_named groundFogBaseLevel float 5
-		param_named groundFogColour vec4 1 0 1 1
+		param_named groundFogColour float4 1 0 1 1
     }
 }
 

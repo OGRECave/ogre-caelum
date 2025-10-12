@@ -17,7 +17,7 @@ vertex_program CaelumHazeVP glsl hlsl
 fragment_program CaelumHazeFP glsl hlsl
 {
 	source HazeFP.glsl
-	//profiles ps_2_0 arbfp1 fp30
+	profiles ps_2_0 arbfp1 fp30
 
 	default_params
 	{

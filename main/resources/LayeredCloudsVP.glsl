@@ -13,9 +13,9 @@ OGRE_UNIFORMS(
 
 MAIN_PARAMETERS
 		IN(vec4 position, POSITION)
-		IN(float2 uv, TEXCOORD0)
+		IN(vec2 uv, TEXCOORD0)
 		
-		OUT(float2 oUv, TEXCOORD0)
+		OUT(vec2 oUv, TEXCOORD0)
 		OUT(vec3 relPosition, TEXCOORD1)
 		OUT(float sunGlow, TEXCOORD2)
 		OUT(vec4 worldPosition, TEXCOORD3)

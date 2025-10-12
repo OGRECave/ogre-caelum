@@ -8,14 +8,14 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 
 OGRE_UNIFORMS(
     uniform SAMPLER2D(gradientsMap, 0);
-    uniform SAMPLER2D(atmRelativeDepth, 1); ~ changed from sampler1D
+    uniform SAMPLER2D(atmRelativeDepth, 1); //~ changed from sampler1D
     uniform vec4 hazeColour;
     uniform float offset;
 )
 
 MAIN_PARAMETERS
     IN(vec4 col, COLOR)
-    IN(float2 uv, TEXCOORD0)
+    IN(vec2 uv, TEXCOORD0)
     IN(float incidenceAngleCos, TEXCOORD1)
     IN(float y, TEXCOORD2)
     IN(vec3 normal, TEXCOORD3)
@@ -31,7 +31,7 @@ MAIN_DECLARATION
 #endif // HAZE
 
 	// Pass the colour
-	oCol = tex2D (gradientsMap, uv + float2 (offset, 0)) * col;
+	gl_FragColor = tex2D (gradientsMap, uv + vec2 (offset, 0)) * col;
 
 	// Sunlight inscatter
 	if (incidenceAngleCos > 0)
@@ -40,9 +40,9 @@ MAIN_DECLARATION
 		float sunlightScatteringLossFactor = 0.1;
 		float atmLightAbsorptionFactor = 0.1;
 		
-		oCol.rgb += sunlightInscatter (
+		gl_FragColor.rgb += sunlightInscatter (
                 sunColour, 
-                clamp (atmLightAbsorptionFactor * (1 - tex1D (atmRelativeDepth, y).r), 0, 1), 
+                clamp (atmLightAbsorptionFactor * (1 - tex2D (atmRelativeDepth, y).r), 0, 1), 
                 clamp (incidenceAngleCos, 0, 1), 
                 sunlightScatteringFactor).rgb * (1 - sunlightScatteringLossFactor);
 	}
@@ -50,6 +50,6 @@ MAIN_DECLARATION
 #ifdef HAZE
 	// Haze pass
 	hazeColour.a = 1;
-	oCol = oCol * (1 - haze) + hazeColour * haze;
+	gl_FragColor = gl_FragColor * (1 - haze) + hazeColour * haze;
 #endif // HAZE
 }

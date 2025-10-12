@@ -13,8 +13,8 @@ OGRE_UNIFORMS(
 
         uniform float   cloudMassInvScale;
         uniform float   cloudDetailInvScale;
-        uniform float2  cloudMassOffset;
-        uniform float2  cloudDetailOffset;
+        uniform vec2  cloudMassOffset;
+        uniform vec2  cloudDetailOffset;
         uniform float   cloudMassBlend;
         uniform float   cloudDetailBlend;
 
@@ -40,18 +40,18 @@ OGRE_UNIFORMS(
 // Get cloud layer intensity at a certain point.
 float LayeredClouds_intensity
 (
-        in float2   pos,
+        in vec2   pos,
         float       cloudMassInvScale,
         float       cloudDetailInvScale,
-        float2      cloudMassOffset,
-        float2      cloudDetailOffset,
+        vec2      cloudMassOffset,
+        vec2      cloudDetailOffset,
         float       cloudMassBlend,
         float       cloudDetailBlend,
         float       cloudCoverageThreshold
 )
 {
 	// Calculate the base alpha
-	float2 finalMassOffset = cloudMassOffset + pos;
+	vec2 finalMassOffset = cloudMassOffset + pos;
 	float aCloud = lerp(tex2D(cloud_shape1, finalMassOffset * cloudMassInvScale).r,
 						tex2D(cloud_shape2, finalMassOffset * cloudMassInvScale).r, 
 						cloudMassBlend);
@@ -62,14 +62,14 @@ float LayeredClouds_intensity
 
 vec4 OldCloudColor
 (
-		float2       uv,
+		vec2       uv,
 		vec3       relPosition,
 		float        sunGlow,
 
         float   cloudMassInvScale,
         float   cloudDetailInvScale,
-        float2  cloudMassOffset,
-        float2  cloudDetailOffset,
+        vec2  cloudMassOffset,
+        vec2  cloudDetailOffset,
         float   cloudMassBlend,
         float   cloudDetailBlend,
 
@@ -135,7 +135,7 @@ vec3 MagicColorMix(vec3 col1, vec3 col2)
 }
 
 MAIN_PARAMETERS
-		IN(float2       uv, TEXCOORD0)
+		IN(vec2       uv, TEXCOORD0)
 		IN(vec3       relPosition, TEXCOORD1)
 		IN(float        sunGlow, TEXCOORD2)
 		IN(vec4 worldPosition, TEXCOORD3)		

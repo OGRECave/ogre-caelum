@@ -113,7 +113,7 @@ vec4 CalcHaze
 
         vec4 sunlightInscatterColour = sunlightInscatter (
                 sunColour, 
-                clamp ((1 - tex1D (atmRelativeDepth, y).r) * hazeAbsorption, 0, 1), 
+                clamp ((1 - tex2D (atmRelativeDepth, y).r) * hazeAbsorption, 0, 1), 
                 clamp (incidenceAngleCos, 0, 1), 
                 sunlightScatteringFactor) * (1 - sunlightScatteringLossFactor);
         hazeColour =
@@ -127,7 +127,7 @@ vec4 CalcHaze
 #endif // SKY_DOME_HAZE
 
 MAIN_PARAMETERS
-    IN(float2 screenPos, TEXCOORD0)
+    IN(vec2 screenPos, TEXCOORD0)
 MAIN_DECLARATION
 {
     vec4 inColor = tex2D(screenTexture, screenPos);

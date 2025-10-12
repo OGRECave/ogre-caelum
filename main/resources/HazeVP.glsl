@@ -16,7 +16,7 @@ MAIN_PARAMETERS
 		IN(vec4 normal, NORMAL)
 
         OUT(float haze, TEXCOORD0)
-        OUT(float2 sunlight, TEXCOORD1)
+        OUT(vec2 sunlight, TEXCOORD1)
 MAIN_DECLARATION
 {
 	sunDirection = normalize (sunDirection);

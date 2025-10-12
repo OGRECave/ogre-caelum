@@ -14,7 +14,7 @@ OGRE_UNIFORMS(
 
 MAIN_PARAMETERS
         IN(float haze, TEXCOORD0)
-        IN(float2 sunlight, TEXCOORD1)
+        IN(vec2 sunlight, TEXCOORD1)
 MAIN_DECLARATION
 {
 	float incidenceAngleCos = sunlight.x;
@@ -42,7 +42,7 @@ MAIN_DECLARATION
 
 		vec4 sunlightInscatterColour = sunlightInscatter (
                 sunColour, 
-                clamp ((1 - tex1D (atmRelativeDepth, y).r) * hazeAbsorption, 0, 1), 
+                clamp ((1 - tex2D (atmRelativeDepth, y).r) * hazeAbsorption, 0, 1), 
                 clamp (incidenceAngleCos, 0, 1), 
                 sunlightScatteringFactor) * (1 - sunlightScatteringLossFactor);
 		hazeColour.rgb =
