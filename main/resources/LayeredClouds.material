@@ -5,7 +5,7 @@
 vertex_program CaelumLayeredCloudsVP glsl hlsl
 {
 	source LayeredCloudsVP.glsl
-	//profiles vs_3_0 vp40 arbvp1 glslv
+	profiles vs_3_0 vp40 arbvp1
 	
 	default_params
 	{
@@ -18,7 +18,7 @@ vertex_program CaelumLayeredCloudsVP glsl hlsl
 fragment_program CaelumLayeredCloudsFP glsl hlsl
 {
 	source LayeredCloudsFP.glsl
-    //profiles ps_3_0 fp40 arbfp1 glslf
+    profiles ps_3_0 fp40 arbfp1
 
     default_params
     {

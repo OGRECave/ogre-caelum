@@ -5,8 +5,8 @@
 fragment_program CaelumSkyDomeFP glsl hlsl
 {
 	source SkyDomeFP.glsl
-	compile_arguments -DHAZE
-	//profiles ps_2_0 arbfp1
+	preprocessor_defines HAZE
+	profiles ps_2_0 arbfp1
 
 	default_params
 	{
@@ -19,7 +19,7 @@ fragment_program CaelumSkyDomeFP glsl hlsl
 fragment_program CaelumSkyDomeFP_NoHaze glsl hlsl
 {
 	source SkyDomeFP.glsl
-	//profiles ps_2_0 arbfp1
+	profiles ps_2_0 arbfp1
 
 	default_params
 	{

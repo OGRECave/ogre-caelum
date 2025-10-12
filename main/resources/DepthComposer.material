@@ -5,7 +5,7 @@
 fragment_program Caelum/DepthComposerFP_Dummy glsl hlsl
 {
 	source DepthComposerMainFP.glsl
-	//profiles ps_3_0 arbfp1
+	profiles ps_3_0 arbfp1
 	
 	default_params
 	{
@@ -15,7 +15,7 @@ fragment_program Caelum/DepthComposerFP_Dummy glsl hlsl
 fragment_program Caelum/DepthComposerFP_DebugDepthRender glsl hlsl
 {
 	source DepthComposerMainFP.glsl
-	//profiles ps_3_0 arbfp1
+	profiles ps_3_0 arbfp1
 	preprocessor_defines DEBUG_DEPTH_RENDER=1
 	
 	default_params
@@ -27,7 +27,7 @@ fragment_program Caelum/DepthComposerFP_DebugDepthRender glsl hlsl
 fragment_program Caelum/DepthComposerFP_ExpGroundFog glsl hlsl
 {
 	source DepthComposerMainFP.glsl
-	//profiles ps_3_0 arbfp1
+	profiles ps_3_0 arbfp1
 	preprocessor_defines EXP_GROUND_FOG=1
 	
 	default_params
@@ -46,7 +46,7 @@ fragment_program Caelum/DepthComposerFP_ExpGroundFog glsl hlsl
 fragment_program Caelum/DepthComposerFP_SkyDomeHaze glsl hlsl
 {
 	source DepthComposerMainFP.glsl
-	//profiles ps_3_0 arbfp1
+	profiles ps_3_0 arbfp1
 	preprocessor_defines SKY_DOME_HAZE=1
 	
 	default_params
@@ -63,7 +63,7 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze glsl hlsl
 fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl hlsl
 {
 	source DepthComposerMainFP.glsl
-	//profiles ps_3_0 arbfp1
+	profiles ps_3_0 arbfp1
 	preprocessor_defines EXP_GROUND_FOG=1,SKY_DOME_HAZE=1
 	
 	default_params

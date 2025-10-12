@@ -5,7 +5,7 @@
 fragment_program Caelum/PrecipitationFP glsl hlsl
 {
 	source PrecipitationMainFP.glsl
-	//profiles ps_3_0 fp40 arbfp1
+	profiles ps_3_0 fp40 arbfp1
 	
 	default_params
 	{
@@ -15,7 +15,7 @@ fragment_program Caelum/PrecipitationFP glsl hlsl
 vertex_program Caelum/PrecipitationVP glsl hlsl
 {
 	source PrecipitationMainVP.glsl
-	//profiles vs_3_0 vp40 arbvp1
+	profiles vs_3_0 vp40 arbvp1
 	
 	default_params
 	{
