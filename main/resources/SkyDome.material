@@ -2,12 +2,11 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program CaelumSkyDomeFP cg
+fragment_program CaelumSkyDomeFP glsl hlsl
 {
-	source CaelumSkyDome.cg
-	entry_point SkyDomeFP
+	source SkyDomeFP.glsl
 	compile_arguments -DHAZE
-	profiles ps_2_0 arbfp1
+	//profiles ps_2_0 arbfp1
 
 	default_params
 	{
@@ -17,11 +16,10 @@ fragment_program CaelumSkyDomeFP cg
 	}
 }
 
-fragment_program CaelumSkyDomeFP_NoHaze cg
+fragment_program CaelumSkyDomeFP_NoHaze glsl hlsl
 {
-	source CaelumSkyDome.cg
-	entry_point SkyDomeFP
-	profiles ps_2_0 arbfp1
+	source SkyDomeFP.glsl
+	//profiles ps_2_0 arbfp1
 
 	default_params
 	{
@@ -30,11 +28,10 @@ fragment_program CaelumSkyDomeFP_NoHaze cg
 	}
 }
 
-vertex_program CaelumSkyDomeVP cg
+vertex_program CaelumSkyDomeVP glsl hlsl
 {
-	source CaelumSkyDome.cg
-	entry_point SkyDomeVP
-	profiles vs_2_0 arbvp1
+	source SkyDomeVP.glsl
+	//profiles vs_2_0 arbvp1
 	
 	default_params
 	{
