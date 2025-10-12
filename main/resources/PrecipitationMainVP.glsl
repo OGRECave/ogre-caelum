@@ -1,0 +1,23 @@
+// This file is part of the Caelum project.
+// It is subject to the license terms in the LICENSE file found in the top-level directory
+// of this distribution.
+
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+#include <OgreUnifiedShader.h>
+
+OGRE_UNIFORMS(
+    uniform mat4 worldviewproj_matrix
+)
+
+MAIN_PARAMETERS
+    IN(vec4 in_pos, POSITION)
+    OUT(vec2 out_uv0, TEXCOORD0)
+MAIN_DECLARATION
+{
+    // Use standard transform.
+    gl_Position = mul(worldviewproj_matrix, in_pos);
+
+    // Convert to image-space
+    in_pos.xy = sign(in_pos.xy);
+    out_uv0 = (float2(in_pos.x, -in_pos.y) + 1.0f) * 0.5f;    
+}
