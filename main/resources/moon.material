@@ -2,11 +2,10 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program Caelum/PhaseMoonFP cg
+fragment_program Caelum/PhaseMoonFP glsl hlsl
 {
-	source CaelumPhaseMoon.cg
-	entry_point PhaseMoonFP
-	profiles ps_2_0 arbfp1 fp30 glslf
+	source PhaseMoonFP.glsl
+	//profiles ps_2_0 arbfp1 fp30 glslf
 
 	default_params
 	{
@@ -14,10 +13,9 @@ fragment_program Caelum/PhaseMoonFP cg
 	}
 }
 
-vertex_program Caelum/PhaseMoonVP cg
+vertex_program Caelum/PhaseMoonVP glsl hlsl
 {
-    source CaelumPhaseMoon.cg
-    entry_point PhaseMoonVP
+    source PhaseMoonVP.glsl
     profiles vs_2_0 arbvp1 glslv
 
     default_params

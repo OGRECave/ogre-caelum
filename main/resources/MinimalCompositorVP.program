@@ -2,11 +2,9 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program Caelum/MinimalCompositorVP cg
+vertex_program Caelum/MinimalCompositorVP glsl hlsl
 {
-	source MinimalCompositorVP.cg
-	entry_point MinimalCompositorVP
-	profiles vs_1_1 arbvp1
+	source MinimalCompositorVP.glsl
 	
 	default_params
 	{

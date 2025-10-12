@@ -25,6 +25,7 @@ Description: Base class for all the OGRE examples
 #include "OgreConfigFile.h"
 #include <OgreInput.h>
 #include <OgreApplicationContext.h>
+#include <OgreMaterialManager.h>
 
 using namespace Ogre;
 
@@ -67,8 +68,7 @@ protected:
     OgreBites::InputListener* mFrameListener;
 
     // These internal methods package up the stages in the startup process
-    /** Sets up the application - returns false if the user chooses to abandon configuration. */
-    virtual void setup(void)
+    void setup(void) override
     {
 		OgreBites::ApplicationContext::setup();
 
@@ -86,6 +86,9 @@ protected:
     {
         // Create the SceneManager, in this case a generic one
         mSceneMgr = mRoot->createSceneManager("DefaultSceneManager", "ExampleSMInstance");
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+        mShaderGenerator->addSceneManager(mSceneMgr);
+#endif
     }
     virtual void createCamera(void)
     {
@@ -117,6 +120,13 @@ protected:
         // Create one viewport, entire window
         Viewport* vp = getRenderWindow()->addViewport(mCamera);
         vp->setBackgroundColour(ColourValue(0,0,0));
+
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+        // Make this viewport work with shader generator scheme.
+        vp->setMaterialScheme(MSN_SHADERGEN);
+        // update scheme for FFP supporting rendersystems
+        MaterialManager::getSingleton().setActiveScheme(vp->getMaterialScheme());
+#endif
 
         // Alter the camera aspect ratio to match the viewport
         mCamera->setAspectRatio(
