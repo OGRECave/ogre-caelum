@@ -6,8 +6,8 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-    uniform SAMPLER2D scene//: register(s0);
-    uniform SAMPLER2D samplerPrec//: register(s1);
+    uniform SAMPLER2D(scene, 0);
+    uniform SAMPLER2D(samplerPrec, 0);
 
     uniform float intensity;
     uniform vec4 ambient_light_colour;

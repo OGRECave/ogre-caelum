@@ -6,9 +6,9 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-        uniform mat4 worldViewProj
-        uniform vec4 camPos
-        uniform vec3 sunDirection
+        uniform mat4 worldViewProj;
+        uniform vec4 camPos;
+        uniform vec3 sunDirection;
 )
 
 MAIN_PARAMETERS

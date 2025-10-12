@@ -9,7 +9,8 @@ MAIN_PARAMETERS
     IN(vec4 magic, TEXCOORD0)
 MAIN_DECLARATION
 {
-    gl_FragColor = vec4(magic.z / magic.w);
+    //ORIG Cg// output = vec4(magic.z / magic.w); ~ error X3014: incorrect number of arguments to numeric-type constructor
+    gl_FragColor = vec4_splat(magic.z / magic.w);
     //output = vec4(magic.xy / magic.w, 1, 1);
 }
 

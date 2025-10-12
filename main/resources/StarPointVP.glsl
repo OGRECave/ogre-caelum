@@ -6,17 +6,17 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-	uniform mat4 worldviewproj_matrix,
+	uniform mat4 worldviewproj_matrix;
 
     // These params are in clipspace; not pixels
-    uniform float mag_scale,
-    uniform float mag0_size,
-    uniform float min_size,
-    uniform float max_size,
-    uniform float render_target_flipping,
+    uniform float mag_scale;
+    uniform float mag0_size;
+    uniform float min_size;
+    uniform float max_size;
+    uniform float render_target_flipping;
 
     // width/height
-    uniform float aspect_ratio,
+    uniform float aspect_ratio;
 )
 
 MAIN_PARAMETERS

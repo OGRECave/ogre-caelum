@@ -16,11 +16,11 @@ float ExpGroundFogInf (
 
 
 OGRE_UNIFORMS(
-		uniform float cameraHeight
-		uniform vec4 fogColour
-		uniform float fogDensity
-		uniform float fogVerticalDecay
-		uniform float fogGroundLevel
+		uniform float cameraHeight;
+		uniform vec4 fogColour;
+		uniform float fogDensity;
+		uniform float fogVerticalDecay;
+		uniform float fogGroundLevel;
 )
 
 MAIN_PARAMETERS

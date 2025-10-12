@@ -4,11 +4,12 @@
 
 OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
+#include <SkyDomeFPCommon.h>
 
 OGRE_UNIFORMS(
-        uniform SAMPLER1D atmRelativeDepth //: register(s0), 
-        uniform SAMPLER2D gradientsMap //: register (s1), 
-        uniform vec4 fogColour
+        uniform SAMPLER2D(atmRelativeDepth, 0); //  ~ changed from sampler1D
+        uniform SAMPLER2D(gradientsMap, 1);
+        uniform vec4 fogColour;
 )
 
 MAIN_PARAMETERS

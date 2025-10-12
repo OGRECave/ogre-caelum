@@ -6,7 +6,7 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-    uniform mat4 wvpMatrix
+    uniform mat4 wvpMatrix;
 )
 
 MAIN_PARAMETERS
@@ -18,6 +18,6 @@ MAIN_DECLARATION
     gl_Position = mul(wvpMatrix, inPos);
 
     // Depth buffer is z/w.
-    // Let the GPU lerp the components of outPos.
-    magic = outPos;
+    // Let the GPU lerp the components of gl_Position.
+    magic = gl_Position;
 }

@@ -6,7 +6,7 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-    uniform mat4 worldviewproj_matrix
+    uniform mat4 worldviewproj_matrix;
 )
 
 MAIN_PARAMETERS

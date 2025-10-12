@@ -6,7 +6,7 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-    uniform SAMPLER2D mainTex
+    uniform SAMPLER2D(mainTex, 0);
 )
 
 MAIN_PARAMETERS

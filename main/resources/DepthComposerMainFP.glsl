@@ -2,6 +2,30 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+#include <OgreUnifiedShader.h>
+
+OGRE_UNIFORMS(
+    uniform SAMPLER2D(screenTexture, 0);
+    uniform SAMPLER2D(depthTexture, 1);
+    uniform SAMPLER2D(atmRelativeDepth, 2); // ~ changed from sampler1D
+    
+    uniform mat4 invViewProjMatrix;
+    uniform vec4 worldCameraPos;
+
+#if EXP_GROUND_FOG
+    uniform float groundFogDensity;
+    uniform float groundFogVerticalDecay;
+    uniform float groundFogBaseLevel;
+    uniform vec4 groundFogColour;
+#endif // EXP_GROUND_FOG
+
+#if SKY_DOME_HAZE
+    uniform vec3 hazeColour;
+    uniform vec3 sunDirection;
+#endif // SKY_DOME_HAZE    
+)
+
 #ifdef EXP_GROUND_FOG
 
 // Returns (exp(x) - 1) / x; avoiding division by 0.
@@ -101,28 +125,6 @@ vec4 CalcHaze
 }
 
 #endif // SKY_DOME_HAZE
-
-//void MainFP
-OGRE_UNIFORMS(
-    uniform SAMPLER2D screenTexture //: register(s0),
-    uniform SAMPLER2D depthTexture //: register(s1),
-    uniform SAMPLER1D atmRelativeDepth // : register(HAZE_DEPTH_TEXTURE);
-    
-    uniform mat4 invViewProjMatrix,
-    uniform vec4 worldCameraPos,
-
-#if EXP_GROUND_FOG
-    uniform float groundFogDensity,
-    uniform float groundFogVerticalDecay,
-    uniform float groundFogBaseLevel,
-    uniform vec4 groundFogColour,
-#endif // EXP_GROUND_FOG
-
-#if SKY_DOME_HAZE
-    uniform vec3 hazeColour,
-    uniform vec3 sunDirection,
-#endif // SKY_DOME_HAZE    
-)
 
 MAIN_PARAMETERS
     IN(float2 screenPos, TEXCOORD0)

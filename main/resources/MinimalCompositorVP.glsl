@@ -8,17 +8,16 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 // Fixed function does not always work.
 // This is a the minimal compositor VP required.
 OGRE_UNIFORMS(
-    uniform mat4 worldviewproj_matrix
+    uniform mat4 worldviewproj_matrix;
 )
 
 MAIN_PARAMETERS
     IN(vec4 in_pos, POSITION)
     OUT(vec2 out_uv0, TEXCOORD0)
-    OUT(vec4 out_pos, POSITION)
 MAIN_DECLARATION
 {
     // Use standard transform.
-    out_pos = mul(worldviewproj_matrix, in_pos);
+    gl_Position = mul(worldviewproj_matrix, in_pos);
 
     // Convert to image-space
     in_pos.xy = sign(in_pos.xy);

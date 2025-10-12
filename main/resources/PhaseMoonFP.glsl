@@ -6,8 +6,8 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-    uniform float phase
-    uniform SAMPLER2D moonDisc //: register(s0), 
+    uniform float phase;
+    uniform SAMPLER2D(moonDisc, 0);
 )
 
 // Get how much of a certain point on the moon is seen (or not) because of the phase.

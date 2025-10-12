@@ -7,34 +7,34 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 
 OGRE_UNIFORMS(
         // Global cloud textures
-        uniform SAMPLER2D cloud_shape1 //: register(s0);
-        uniform SAMPLER2D cloud_shape2 //: register(s1);
-        uniform SAMPLER2D cloud_detail //: register(s2);
+        uniform SAMPLER2D(cloud_shape1, 0);
+        uniform SAMPLER2D(cloud_shape2, 1);
+        uniform SAMPLER2D(cloud_detail, 2);
 
-        uniform float   cloudMassInvScale
-        uniform float   cloudDetailInvScale
-        uniform float2  cloudMassOffset
-        uniform float2  cloudDetailOffset
-        uniform float   cloudMassBlend
-        uniform float   cloudDetailBlend
+        uniform float   cloudMassInvScale;
+        uniform float   cloudDetailInvScale;
+        uniform float2  cloudMassOffset;
+        uniform float2  cloudDetailOffset;
+        uniform float   cloudMassBlend;
+        uniform float   cloudDetailBlend;
 
-        uniform float   cloudCoverageThreshold
+        uniform float   cloudCoverageThreshold;
 
-        uniform vec4  sunLightColour
-        uniform vec4  sunSphereColour
-        uniform vec4  fogColour
-        uniform vec4	sunDirection
-        uniform float   cloudSharpness
-        uniform float   cloudThickness
-        uniform vec3	camera_position
+        uniform vec4  sunLightColour;
+        uniform vec4  sunSphereColour;
+        uniform vec4  fogColour;
+        uniform vec4	sunDirection;
+        uniform float   cloudSharpness;
+        uniform float   cloudThickness;
+        uniform vec3	camera_position;
 
-        uniform vec3	fadeDistMeasurementVector
-        uniform float	layerHeight
-        uniform float	cloudUVFactor
-        uniform float	heightRedFactor
+        uniform vec3	fadeDistMeasurementVector;
+        uniform float	layerHeight;
+        uniform float	cloudUVFactor;
+        uniform float	heightRedFactor;
 
-        uniform float   nearFadeDist
-        uniform float   farFadeDist
+        uniform float   nearFadeDist;
+        uniform float   farFadeDist;
 )
 
 // Get cloud layer intensity at a certain point.

@@ -47,7 +47,7 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DSKY_DOME_HAZE=1 -DHAZE_DEPTH_TEXTURE=s2
+	compile_arguments -DSKY_DOME_HAZE=1
 	
 	default_params
 	{
@@ -64,7 +64,7 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl hlsl
 {
 	source DepthComposerMainFP.glsl
 	//profiles ps_3_0 arbfp1
-	compile_arguments -DEXP_GROUND_FOG=1 -DSKY_DOME_HAZE=1 -DHAZE_DEPTH_TEXTURE=s2
+	compile_arguments -DEXP_GROUND_FOG=1 -DSKY_DOME_HAZE=1
 	
 	default_params
 	{

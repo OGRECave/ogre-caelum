@@ -7,10 +7,10 @@ OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
 #include <SkyDomeFPCommon.h>
 
 OGRE_UNIFORMS(
-    uniform SAMPLER2D gradientsMap //: register(s0), 
-    uniform SAMPLER1D atmRelativeDepth //: register(s1), 
-    uniform vec4 hazeColour
-    uniform float offset
+    uniform SAMPLER2D(gradientsMap, 0);
+    uniform SAMPLER2D(atmRelativeDepth, 1); ~ changed from sampler1D
+    uniform vec4 hazeColour;
+    uniform float offset;
 )
 
 MAIN_PARAMETERS
