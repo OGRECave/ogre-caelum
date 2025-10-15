@@ -123,7 +123,7 @@ protected:
 
 #ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
         // Make this viewport work with shader generator scheme.
-        vp->setMaterialScheme(MSN_SHADERGEN);
+        vp->setMaterialScheme(RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
         // update scheme for FFP supporting rendersystems
         MaterialManager::getSingleton().setActiveScheme(vp->getMaterialScheme());
 #endif
