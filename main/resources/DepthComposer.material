@@ -2,23 +2,23 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program Caelum/DepthComposerFP_Dummy cg
+fragment_program Caelum/DepthComposerFP_Dummy cg hlsl
 {
 	source DepthComposer.cg
 	entry_point MainFP
-	profiles ps_3_0 arbfp1
+	target ps_3_0 arbfp1
 	
 	default_params
 	{
     }
 }
 
-fragment_program Caelum/DepthComposerFP_DebugDepthRender cg
+fragment_program Caelum/DepthComposerFP_DebugDepthRender cg hlsl
 {
 	source DepthComposer.cg
 	entry_point MainFP
-	profiles ps_3_0 arbfp1
-	compile_arguments -DDEBUG_DEPTH_RENDER=1
+	target ps_3_0 arbfp1
+	preprocessor_defines DEBUG_DEPTH_RENDER=1
 	
 	default_params
 	{
@@ -26,12 +26,12 @@ fragment_program Caelum/DepthComposerFP_DebugDepthRender cg
     }
 }
 
-fragment_program Caelum/DepthComposerFP_ExpGroundFog cg
+fragment_program Caelum/DepthComposerFP_ExpGroundFog cg hlsl
 {
 	source DepthComposer.cg
 	entry_point MainFP
-	profiles ps_3_0 arbfp1
-	compile_arguments -DEXP_GROUND_FOG=1
+	target ps_3_0 arbfp1
+	preprocessor_defines EXP_GROUND_FOG=1
 	
 	default_params
 	{
@@ -46,12 +46,12 @@ fragment_program Caelum/DepthComposerFP_ExpGroundFog cg
     }
 }
 
-fragment_program Caelum/DepthComposerFP_SkyDomeHaze cg
+fragment_program Caelum/DepthComposerFP_SkyDomeHaze cg hlsl
 {
 	source DepthComposer.cg
 	entry_point MainFP
-	profiles ps_3_0 arbfp1
-	compile_arguments -DSKY_DOME_HAZE=1 -DHAZE_DEPTH_TEXTURE=s2
+	target ps_3_0 arbfp1
+	preprocessor_defines SKY_DOME_HAZE=1 HAZE_DEPTH_TEXTURE=s2
 	
 	default_params
 	{
@@ -64,12 +64,12 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze cg
     }
 }
 
-fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog cg
+fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog cg hlsl
 {
 	source DepthComposer.cg
 	entry_point MainFP
-	profiles ps_3_0 arbfp1
-	compile_arguments -DEXP_GROUND_FOG=1 -DSKY_DOME_HAZE=1 -DHAZE_DEPTH_TEXTURE=s2
+	target ps_3_0 arbfp1
+	preprocessor_defines SKY_DOME_HAZE=1 HAZE_DEPTH_TEXTURE=s2 EXP_GROUND_FOG=1
 	
 	default_params
 	{

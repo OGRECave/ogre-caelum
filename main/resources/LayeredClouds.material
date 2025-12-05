@@ -2,11 +2,11 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program CaelumLayeredCloudsVP cg
+vertex_program CaelumLayeredCloudsVP cg hlsl
 {
 	source CaelumLayeredClouds.cg
 	entry_point LayeredClouds_vp
-	profiles vs_3_0 vp40 arbvp1 glslv
+	target vs_3_0 vp40 arbvp1 glslv
 	
 	default_params
 	{
@@ -16,11 +16,11 @@ vertex_program CaelumLayeredCloudsVP cg
 	}
 }
 
-fragment_program CaelumLayeredCloudsFP cg
+fragment_program CaelumLayeredCloudsFP cg hlsl
 {
 	source CaelumLayeredClouds.cg
     entry_point LayeredClouds_fp
-    profiles ps_3_0 fp40 arbfp1 glslf
+    target ps_3_0 fp40 arbfp1 glslf
 
     default_params
     {

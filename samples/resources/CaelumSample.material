@@ -2,12 +2,12 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program CaelumSample/PSSM/ShadowCaster/VP cg
+vertex_program CaelumSample/PSSM/ShadowCaster/VP cg hlsl
 {
     source CaelumSample.cg
-    profiles vs_1_1 arbvp1
+    target vs_1_1 arbvp1
     entry_point PssmShadowCasterVP
-    compile_arguments -DPSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
+    preprocessor_defines PSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
 
     default_params
     {
@@ -15,12 +15,12 @@ vertex_program CaelumSample/PSSM/ShadowCaster/VP cg
     }
 }
 
-fragment_program CaelumSample/PSSM/ShadowCaster/FP cg
+fragment_program CaelumSample/PSSM/ShadowCaster/FP cg hlsl
 {
     source CaelumSample.cg
-    profiles ps_2_0 arbfp1
+    target ps_2_0 arbfp1
     entry_point PssmShadowCasterFP
-    compile_arguments -DPSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
+    preprocessor_defines PSSM_SHADOW_CASTER_PROPAGATE_ALPHA=1
 
     default_params
     {
@@ -57,12 +57,12 @@ material CaelumSample/PSSM/ShadowCaster
     }
 }
 
-vertex_program CaelumSample/BasicVP cg
+vertex_program CaelumSample/BasicVP cg hlsl
 {
     source CaelumSample.cg
     entry_point MainVP
-    profiles vs_2_0 arbvp1 glslv
-    compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
+    target vs_2_0 arbvp1 glslv
+    preprocessor_defines AMBIENT=1 TWO_LIGHTS=1
 
     default_params
     {
@@ -71,12 +71,12 @@ vertex_program CaelumSample/BasicVP cg
     }
 }
 
-fragment_program CaelumSample/BasicFP cg
+fragment_program CaelumSample/BasicFP cg hlsl
 {
     source CaelumSample.cg
     entry_point MainFP
-    profiles ps_2_x arbfp1 glslf
-    compile_arguments -DAMBIENT=1 -DTWO_LIGHTS=1
+    target ps_2_a ps_2_x arbfp1 glslf
+    preprocessor_defines AMBIENT=1 TWO_LIGHTS=1
     
     default_params
     {
@@ -89,12 +89,12 @@ fragment_program CaelumSample/BasicFP cg
     }
 }
 
-fragment_program CaelumSample/BasicFP/Terrain cg
+fragment_program CaelumSample/BasicFP/Terrain cg hlsl
 {
     source CaelumSample.cg
     entry_point MainFP
-    profiles ps_2_x arbfp1
-    compile_arguments -DTERRAIN=1 -DAMBIENT=1 -DTWO_LIGHTS=1
+    target ps_2_a ps_2_x arbfp1
+    preprocessor_defines TERRAIN=1 AMBIENT=1 TWO_LIGHTS=1
     
     default_params
     {
@@ -107,12 +107,12 @@ fragment_program CaelumSample/BasicFP/Terrain cg
     }
 }
 
-vertex_program CaelumSample/PSSM/AmbientVP cg
+vertex_program CaelumSample/PSSM/AmbientVP cg hlsl
 {
     source CaelumSample.cg
-    profiles vs_1_1 arbvp1
+    target vs_1_1 arbvp1
     entry_point MainVP
-    compile_arguments -DPSSM=0 -DAMBIENT=1
+    preprocessor_defines PSSM=0 AMBIENT=1
 
     default_params
     {
@@ -120,12 +120,12 @@ vertex_program CaelumSample/PSSM/AmbientVP cg
     }
 }
 
-fragment_program CaelumSample/PSSM/AmbientFP cg
+fragment_program CaelumSample/PSSM/AmbientFP cg hlsl
 {
     source CaelumSample.cg
-    profiles ps_2_x arbfp1
+    target ps_2_0 arbfp1
     entry_point MainFP
-    compile_arguments -DPSSM=0 -DAMBIENT=1
+    preprocessor_defines PSSM=0 AMBIENT=1
 
     default_params
     {
@@ -134,12 +134,12 @@ fragment_program CaelumSample/PSSM/AmbientFP cg
     }
 }
 
-fragment_program CaelumSample/PSSM/AmbientFP/Terrain cg
+fragment_program CaelumSample/PSSM/AmbientFP/Terrain cg hlsl
 {
     source CaelumSample.cg
-    profiles ps_2_x arbfp1
+    target ps_2_a ps_2_x arbfp1
     entry_point MainFP
-    compile_arguments -DPSSM=0 -DAMBIENT=1 -DTERRAIN=1
+    preprocessor_defines PSSM=0 AMBIENT=1 TERRAIN=1
 
     default_params
     {
@@ -148,12 +148,12 @@ fragment_program CaelumSample/PSSM/AmbientFP/Terrain cg
     }
 }
 
-vertex_program CaelumSample/PSSM/OneLightVP cg
+vertex_program CaelumSample/PSSM/OneLightVP cg hlsl
 {
     source CaelumSample.cg
-    profiles vs_1_1 arbvp1
+    target vs_1_1 arbvp1
     entry_point MainVP
-    compile_arguments -DPSSM=1 -DONE_LIGHT=1
+    preprocessor_defines PSSM=1 ONE_LIGHT=1
 
     default_params
     {
@@ -166,12 +166,12 @@ vertex_program CaelumSample/PSSM/OneLightVP cg
     }
 }
 
-fragment_program CaelumSample/PSSM/OneLightFP cg
+fragment_program CaelumSample/PSSM/OneLightFP cg hlsl
 {
     source CaelumSample.cg
-    profiles ps_2_x arbfp1
+    target ps_2_a ps_2_x arbfp1
     entry_point MainFP
-    compile_arguments -DPSSM=1 -DONE_LIGHT=1
+    preprocessor_defines PSSM=1 ONE_LIGHT=1
 
     default_params
     {
@@ -189,12 +189,12 @@ fragment_program CaelumSample/PSSM/OneLightFP cg
     }
 }
 
-fragment_program CaelumSample/PSSM/OneLightFP/Terrain cg
+fragment_program CaelumSample/PSSM/OneLightFP/Terrain cg hlsl
 {
     source CaelumSample.cg
-    profiles ps_2_x arbfp1
+    target ps_2_a ps_2_x arbfp1
     entry_point MainFP
-    compile_arguments -DPSSM=1 -DONE_LIGHT=1 -DTERRAIN
+    preprocessor_defines PSSM=1 ONE_LIGHT=1 TERRAIN
 
     default_params
     {

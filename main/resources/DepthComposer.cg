@@ -57,6 +57,10 @@ float fogExp (float z, float density) {
     return 1 - clamp (pow (2.71828, -z * density), 0, 1);
 }
 
+#ifndef HAZE_DEPTH_TEXTURE
+#define HAZE_DEPTH_TEXTURE s2
+#endif
+
 uniform sampler1D atmRelativeDepth : register(HAZE_DEPTH_TEXTURE);
 
 float4 CalcHaze
@@ -111,14 +115,14 @@ void MainFP
     uniform float4x4 invViewProjMatrix,
     uniform float4 worldCameraPos,
 
-#if EXP_GROUND_FOG
+#ifdef EXP_GROUND_FOG
     uniform float groundFogDensity,
     uniform float groundFogVerticalDecay,
     uniform float groundFogBaseLevel,
     uniform float4 groundFogColour,
 #endif // EXP_GROUND_FOG
 
-#if SKY_DOME_HAZE
+#ifdef SKY_DOME_HAZE
     uniform float3 hazeColour,
     uniform float3 sunDirection,
 #endif // SKY_DOME_HAZE
@@ -161,7 +165,7 @@ void MainFP
     color = lerp(color, groundFogColour, fogFactor);
 #endif // EXP_GROUND_FOG
 
-#if SKY_DOME_HAZE
+#ifdef SKY_DOME_HAZE
     float4 hazeValue = CalcHaze (
             worldPos.xyz,
             worldCameraPos.xyz,
@@ -197,7 +201,7 @@ void DepthRenderFP
     out float4 output : COLOR   
 )
 {
-    output = float4(magic.z / magic.w);
+    output = float4(magic.z / magic.w, magic.z / magic.w, magic.z / magic.w, magic.z / magic.w);
     //output = float4(magic.xy / magic.w, 1, 1);
 }
 
@@ -233,5 +237,5 @@ void DepthRenderAlphaRejectionFP
 {
     float4 texvalue = tex2D(mainTex, texcoord.xy);
 //    texvalue.a = sin(100 * texcoord.x) + sin(100 * texcoord.y);
-    output = float4(float3(magic.z / magic.w), texvalue.a);
+    output = float4(float3(magic.z / magic.w, magic.z / magic.w, magic.z / magic.w), texvalue.a);
 }

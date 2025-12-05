@@ -2,11 +2,11 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program CaelumGroundFogVP cg
+vertex_program CaelumGroundFogVP cg hlsl
 {
 	source CaelumGroundFog.cg
 	entry_point GroundFog_vp
-	profiles vs_2_x arbvp1 vp30
+	target vs_2_x arbvp1 vp30
 
 	default_params
 	{
@@ -15,11 +15,11 @@ vertex_program CaelumGroundFogVP cg
 	}
 }
 
-fragment_program CaelumGroundFogFP cg
+fragment_program CaelumGroundFogFP cg hlsl
 {
 	source CaelumGroundFog.cg
 	entry_point GroundFog_fp
-	profiles ps_2_x arbfp1 fp30
+	target ps_2_a ps_2_x arbfp1 fp30
 	
 	default_params
 	{
@@ -34,11 +34,11 @@ fragment_program CaelumGroundFogFP cg
 	}
 }
 
-vertex_program CaelumGroundFogDomeVP cg
+vertex_program CaelumGroundFogDomeVP cg hlsl
 {
 	source CaelumGroundFog.cg
 	entry_point GroundFogDome_vp
-	profiles vs_2_0 arbvp1
+	target vs_2_0 arbvp1
 	
 	default_params
 	{
@@ -46,11 +46,11 @@ vertex_program CaelumGroundFogDomeVP cg
 	}
 }
 
-fragment_program CaelumGroundFogDomeFP cg
+fragment_program CaelumGroundFogDomeFP cg hlsl
 {
 	source CaelumGroundFog.cg
 	entry_point GroundFogDome_fp
-	profiles ps_2_0 arbfp1
+	target ps_2_0 arbfp1
 
 	default_params
 	{

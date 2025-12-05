@@ -5,13 +5,13 @@
 void PssmShadowCasterVP
 (
     float4 iPosition : POSITION,
-#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+#ifdef PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
     in float2 iTexCoord : TEXCOORD0,
 #endif
 
     uniform float4x4 wvpMat,
 
-#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+#ifdef PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
     out float2 oTexCoord : TEXCOORD1,
 #endif
     out float2 oDepth : TEXCOORD0,
@@ -25,7 +25,7 @@ void PssmShadowCasterVP
     oDepth.x = oPosition.z;
     oDepth.y = oPosition.w;
 
-#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+#ifdef PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
     // Careful: texture coordinate is moved from TEXCOORD0 to TEXCOORD1
     oTexCoord = iTexCoord;
 #endif
@@ -37,7 +37,7 @@ void PssmShadowCasterVP
 void PssmShadowCasterFP
 (
     in float2 depth : TEXCOORD0,
-#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+#ifdef PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
     in float2 texCoord : TEXCOORD1,
     uniform sampler2D mainTexture : register(s0),
 #endif
@@ -48,7 +48,7 @@ void PssmShadowCasterFP
 )
 {
     float finalDepth = depth.x / depth.y;
-#if PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
+#ifdef PSSM_SHADOW_CASTER_PROPAGATE_ALPHA
     float4 texColour = tex2D (mainTexture, texCoord.xy);
     oColour = float4(finalDepth, finalDepth, finalDepth, texColour.a);
 #else
@@ -80,7 +80,7 @@ void MainVP
         in float2 iTexCoord : TEXCOORD0,
         in float4 iNormal : NORMAL,
         
-#if PSSM
+#ifdef PSSM
         uniform float4x4 texWorldViewProjMatrix0,
         uniform float4x4 texWorldViewProjMatrix1,
         uniform float4x4 texWorldViewProjMatrix2,
@@ -88,7 +88,7 @@ void MainVP
         uniform float4x4 worldviewproj_matrix,
         uniform float4x4 inverse_transpose_worldview_matrix,
 
-#if PSSM
+#ifdef PSSM
         out float4 oLightPosition2 : TEXCOORD5,
         out float4 oLightPosition1 : TEXCOORD4,
         out float4 oLightPosition0 : TEXCOORD3,
@@ -102,7 +102,7 @@ void MainVP
     oTexCoord = iTexCoord;
     oNormal = normalize(mul(inverse_transpose_worldview_matrix, iNormal).xyz);
 
-#if PSSM
+#ifdef PSSM
     // Split point is eye-space z.
     oSplitPoint = oPosition.z;
 
@@ -119,14 +119,14 @@ void MainFP
     in float2 iTexcoord : TEXCOORD0,
     in float3 iNormal : TEXCOORD1,
 
-#if PSSM
+#ifdef PSSM
     in float iSplitPoint : TEXCOORD2,
     in float4 iLightPosition0 : TEXCOORD3,
     in float4 iLightPosition1 : TEXCOORD4,
     in float4 iLightPosition2 : TEXCOORD5,
 #endif
 
-#if PSSM
+#ifdef PSSM
     uniform float4 invShadowMapSize0,
     uniform float4 invShadowMapSize1,
     uniform float4 invShadowMapSize2,
@@ -137,28 +137,28 @@ void MainFP
     uniform sampler2D shadowMap2 : register(s2),
     uniform sampler2D shadowMap1 : register(s1),
     uniform sampler mainTexture : register(s3),
-    #if TERRAIN
+    #ifdef TERRAIN
         uniform sampler detailTexture : register(s4),
     #endif
 #else
     uniform sampler mainTexture : register(s0),
-    #if TERRAIN
+    #ifdef TERRAIN
         uniform sampler detailTexture : register(s1),
     #endif
 #endif
 
-#if AMBIENT
+#ifdef AMBIENT
     uniform float4 derived_scene_colour,
 #endif
 
     uniform float4 surface_diffuse_colour,
 
-#if ONE_LIGHT
+#ifdef ONE_LIGHT
     uniform float4 light_position_view_space,
     uniform float4 derived_light_diffuse_colour,
 #endif 
 
-#if TWO_LIGHTS
+#ifdef TWO_LIGHTS
     uniform float4 light_position_view_space_0,
     uniform float4 derived_light_diffuse_colour_0,
     uniform float4 light_position_view_space_1,
@@ -173,7 +173,7 @@ void MainFP
 
     // calculate shadow
     float shadowing = 1.0f;
-#if PSSM
+#ifdef PSSM
     float4 splitColour;
     if (iSplitPoint <= pssmSplitPoints.y) {
         splitColour = float4(0.1, 0, 0, 1);
@@ -190,7 +190,7 @@ void MainFP
     //oColour += splitColour;
 #endif
 
-#if TERRAIN
+#ifdef TERRAIN
     // Modulate two scaled textures.
     float4 baseColour =
             tex2D(mainTexture, iTexcoord * 20) *
@@ -199,11 +199,11 @@ void MainFP
     float4 baseColour = tex2D(mainTexture, iTexcoord);
 #endif
 
-#if AMBIENT
+#ifdef AMBIENT
     oColour += baseColour * derived_scene_colour;
 #endif
 
-#if ONE_LIGHT
+#ifdef ONE_LIGHT
     float3 normal = normalize(iNormal);
 
     float diffuse_factor = max(0, dot(float4(normal, 1), light_position_view_space));
@@ -212,7 +212,7 @@ void MainFP
     oColour += baseColour * light_colour;
 #endif
 
-#if TWO_LIGHTS
+#ifdef TWO_LIGHTS
     float3 normal = normalize(iNormal);
 
     // Accumulate two lights

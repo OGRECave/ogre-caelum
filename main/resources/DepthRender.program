@@ -2,11 +2,11 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program Caelum/DepthRenderVP cg
+vertex_program Caelum/DepthRenderVP cg hlsl hlsl
 {
     source DepthComposer.cg
     entry_point DepthRenderVP
-	profiles vs_2_0 arbvp1
+	target vs_2_0 arbvp1
 
     default_params
     {
@@ -14,18 +14,18 @@ vertex_program Caelum/DepthRenderVP cg
     }
 }
 
-fragment_program Caelum/DepthRenderFP cg
+fragment_program Caelum/DepthRenderFP cg hlsl
 {
     source DepthComposer.cg
     entry_point DepthRenderFP
-	profiles ps_3_0 fp40 arbfp1
+	target ps_3_0 fp40 arbfp1
 }
 
-vertex_program Caelum/DepthRenderAlphaRejectionVP cg
+vertex_program Caelum/DepthRenderAlphaRejectionVP cg hlsl
 {
     source DepthComposer.cg
     entry_point DepthRenderAlphaRejectionVP
-	profiles vs_2_0 arbvp1
+	target vs_2_0 arbvp1
 
     default_params
     {
@@ -33,9 +33,9 @@ vertex_program Caelum/DepthRenderAlphaRejectionVP cg
     }
 }
 
-fragment_program Caelum/DepthRenderAlphaRejectionFP cg
+fragment_program Caelum/DepthRenderAlphaRejectionFP cg hlsl
 {
     source DepthComposer.cg
     entry_point DepthRenderAlphaRejectionFP
-	profiles ps_3_0 fp40 arbfp1
+	target ps_3_0 fp40 arbfp1
 }
