@@ -59,16 +59,10 @@ namespace Caelum
 	}
 
 	void GroundFog::findFogPassesByName (const Ogre::String& passName) {
-		Ogre::MaterialManager *matManager = Ogre::MaterialManager::getSingletonPtr();
-		Ogre::MaterialManager::ResourceMapIterator matIt = matManager->getResourceIterator();
-		while (matIt.hasMoreElements()) {
-			Ogre::MaterialPtr mat = matIt.getNext().staticCast<Ogre::Material>();
-			Ogre::Material::TechniqueIterator techIt = mat->getTechniqueIterator();
-			while (techIt.hasMoreElements()) {
-				Ogre::Technique *tech = techIt.getNext();
-				Ogre::Technique::PassIterator passIt = tech->getPassIterator();
-				while (passIt.hasMoreElements()) {
-					Ogre::Pass *pass = passIt.getNext();
+		for (const auto& res : Ogre::MaterialManager::getSingleton().getResourceIterator()) {
+			Ogre::Material *mat = static_cast<Ogre::Material*>(res.second.get());
+			for (Ogre::Technique *tech : mat->getTechniques()) {
+				for (Ogre::Pass *pass : tech->getPasses()) {
 					if (pass->getName() == passName) {
 						mPasses.insert(pass);
 					}

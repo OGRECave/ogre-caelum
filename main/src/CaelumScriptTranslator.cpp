@@ -357,7 +357,7 @@ namespace Caelum
 
         // Fetch target object.
 		ObjectAbstractNode *objNode = reinterpret_cast<ObjectAbstractNode*>(node.get());
-        assert (!objNode->context.isEmpty ());
+        assert (objNode->context.has_value ());
         void* targetObject = any_cast<void*> (objNode->context);
         assert (targetObject);
 
@@ -526,7 +526,7 @@ namespace Caelum
         //LogManager::getSingleton ().logMessage ("SkySystemScriptTranslator::translate begin");
 
 		ObjectAbstractNode *objNode = reinterpret_cast<ObjectAbstractNode*>(node.get());
-        assert (!objNode->context.isEmpty ());
+        assert (objNode->context.has_value ());
         void* rawTargetObject = any_cast<void*> (objNode->context);
         assert (rawTargetObject);
 

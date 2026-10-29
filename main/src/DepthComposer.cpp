@@ -371,9 +371,9 @@ namespace Caelum
         TextureManager* texMgr = TextureManager::getSingletonPtr();
 
         // Destroy render texture.
-        if (!mDepthRenderTexture.isNull ()) {
+        if (mDepthRenderTexture) {
             texMgr->remove (mDepthRenderTexture->getHandle ());
-            mDepthRenderTexture.setNull ();
+            mDepthRenderTexture.reset ();
         }
     }
 
