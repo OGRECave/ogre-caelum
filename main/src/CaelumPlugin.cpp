@@ -102,8 +102,24 @@ namespace Caelum
                 scriptFileName, scriptFileGroup);
 
         // Feed it into the compiler.
+        // Only compile the caelum_sky_system objects; recreating the other objects of the file would fail.
+        struct SkySystemFilter : public Ogre::ScriptCompilerListener
+        {
+            bool postConversion (Ogre::ScriptCompiler*, const Ogre::AbstractNodeListPtr& nodes)
+            {
+                nodes->remove_if ([] (const Ogre::AbstractNodePtr& node) {
+                    return node->type != Ogre::ANT_OBJECT ||
+                           static_cast<Ogre::ObjectAbstractNode*> (node.get ())->cls != "caelum_sky_system";
+                });
+                return true;
+            }
+        } filter;
+        Ogre::ScriptCompilerManager& compilerMgr = Ogre::ScriptCompilerManager::getSingleton ();
+        Ogre::ScriptCompilerListener* oldListener = compilerMgr.getListener ();
+        compilerMgr.setListener (&filter);
         this->getScriptTranslatorManager()->getCaelumSystemTranslator()->setTranslationTarget (sys, objectName);
-        Ogre::ScriptCompilerManager::getSingleton ().parseScript (streamPtr, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        compilerMgr.parseScript (streamPtr, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+        compilerMgr.setListener (oldListener);
         bool found = this->getScriptTranslatorManager()->getCaelumSystemTranslator()->foundTranslationTarget ();
 
         // This shouldn't normally happen.
