@@ -86,6 +86,10 @@ protected:
     {
         // Create the SceneManager, in this case a generic one
         mSceneMgr = mRoot->createSceneManager("DefaultSceneManager", "ExampleSMInstance");
+#ifdef OGRE_BUILD_COMPONENT_RTSHADERSYSTEM
+        // the sample materials rely on the RTSS for lighting
+        mShaderGenerator->addSceneManager(mSceneMgr);
+#endif
     }
     virtual void createCamera(void)
     {
@@ -118,9 +122,8 @@ protected:
         Viewport* vp = getRenderWindow()->addViewport(mCamera);
         vp->setBackgroundColour(ColourValue(0,0,0));
 
-        // Alter the camera aspect ratio to match the viewport
-        mCamera->setAspectRatio(
-            Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+        // Keep the camera aspect ratio matching the viewport, also on resize
+        mCamera->setAutoAspectRatio(true);
     }
 
 	/// Optional override method where you can create resource listeners (e.g. for loading screens)
