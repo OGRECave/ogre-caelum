@@ -170,8 +170,8 @@ namespace Caelum
         Pass* pass = mat->getBestTechnique ()->getPass (0);
 
         TextureUnitState *depthTus = pass->getTextureUnitState(1);
-        if (depthTus->getTextureName () != mDepthRenderer->getDepthRenderTexture ()->getName()) {
-            depthTus->setTextureName (mDepthRenderer->getDepthRenderTexture ()->getName ());
+        if (depthTus->_getTexturePtr () != mDepthRenderer->getDepthRenderTexture ()) {
+            depthTus->setTexture (mDepthRenderer->getDepthRenderTexture ());
             LogManager::getSingleton ().logMessage (
                         "Caelum::DepthComposer: Assigned depth texture in compositor material");
         }

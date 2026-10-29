@@ -196,7 +196,7 @@ namespace Caelum
         ~DepthRenderer ();
 
         inline Ogre::Viewport* getMasterViewport() { return mMasterViewport; }
-        inline Ogre::Texture* getDepthRenderTexture () { return mDepthRenderTexture.get(); }
+        inline const Ogre::TexturePtr& getDepthRenderTexture () { return mDepthRenderTexture; }
         inline Ogre::Viewport* getDepthRenderViewport () { return mDepthRenderViewport; }
         inline Ogre::RenderTexture* getDepthRenderTarget () {
             return mDepthRenderTexture->getBuffer()->getRenderTarget ();
