@@ -26,6 +26,7 @@ namespace Caelum
         const GpuConstantDefinition* def = params->_findNamedConstantDefinition(name, throwIfNotFound);
         if (def) {
             mPhysicalIndex = def->physicalIndex;
+            mElementSize = std::min<size_t>(def->elementSize, 4);
             assert(this->isBound());
         } else {
             mPhysicalIndex = InvalidPhysicalIndex;
