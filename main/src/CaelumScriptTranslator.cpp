@@ -267,6 +267,32 @@ namespace Caelum
         return true;
     }
 
+    bool TypeDescriptorScriptTranslator::getPropValueOrAddError (
+            ScriptCompiler* compiler,
+            PropertyAbstractNode* prop,
+            Ogre::FogMode& value)
+    {
+        Ogre::String str;
+        if (!getPropValueOrAddError (compiler, prop, str)) {
+            return false;
+        }
+        // Same keywords as the fog_override of materials
+        if (str == "none") {
+            value = Ogre::FOG_NONE;
+        } else if (str == "linear") {
+            value = Ogre::FOG_LINEAR;
+        } else if (str == "exp") {
+            value = Ogre::FOG_EXP;
+        } else if (str == "exp2") {
+            value = Ogre::FOG_EXP2;
+        } else {
+            compiler->addError (ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+                    str + " is not a valid fog mode; expected none, linear, exp or exp2");
+            return false;
+        }
+        return true;
+    }
+
     template<class T>
     static bool tryHandlePropertyType (
             ScriptCompiler* compiler, PropertyAbstractNode* propNode,
@@ -312,7 +338,8 @@ namespace Caelum
                 || tryHandlePropertyType<Ogre::String> (compiler, prop, targetObject, propDesc)
                 || tryHandlePropertyType<Ogre::Vector3> (compiler, prop, targetObject, propDesc)
                 || tryHandlePropertyType<Ogre::Vector2> (compiler, prop, targetObject, propDesc)
-                || tryHandlePropertyType<Ogre::ColourValue> (compiler, prop, targetObject, propDesc);
+                || tryHandlePropertyType<Ogre::ColourValue> (compiler, prop, targetObject, propDesc)
+                || tryHandlePropertyType<Ogre::FogMode> (compiler, prop, targetObject, propDesc);
 
         if (!handled) {
             compiler->addError (ScriptCompiler::CE_UNEXPECTEDTOKEN, prop->file, prop->line, 
