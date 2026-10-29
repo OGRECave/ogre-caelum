@@ -6,7 +6,9 @@ compositor Caelum/DepthComposer_DebugDepthRender
 {
     technique
     {
-        texture rt0 target_width target_height PF_A8R8G8B8
+        // colour and depth of the original scene
+        // DEPTH16 for OpenGL support; make sure the camera clip distances allow for the precision
+        texture rt0 target_width target_height PF_A8R8G8B8 PF_DEPTH16
 
         target rt0
         {
@@ -20,7 +22,8 @@ compositor Caelum/DepthComposer_DebugDepthRender
             pass render_quad
             {
                 material Caelum/DepthComposer_DebugDepthRender
-                input 0 rt0
+                input 0 rt0 0
+                input 1 rt0 1
             }
         }
     }
@@ -30,7 +33,9 @@ compositor Caelum/DepthComposer_Dummy
 {
     technique
     {
-        texture rt0 target_width target_height PF_A8R8G8B8
+        // colour and depth of the original scene
+        // DEPTH16 for OpenGL support; make sure the camera clip distances allow for the precision
+        texture rt0 target_width target_height PF_A8R8G8B8 PF_DEPTH16
 
         target rt0
         {
@@ -44,7 +49,8 @@ compositor Caelum/DepthComposer_Dummy
             pass render_quad
             {
                 material Caelum/DepthComposer_Dummy
-                input 0 rt0
+                input 0 rt0 0
+                input 1 rt0 1
             }
         }
     }
@@ -54,7 +60,9 @@ compositor Caelum/DepthComposer_ExpGroundFog
 {
     technique
     {
-        texture rt0 target_width target_height PF_A8R8G8B8
+        // colour and depth of the original scene
+        // DEPTH16 for OpenGL support; make sure the camera clip distances allow for the precision
+        texture rt0 target_width target_height PF_A8R8G8B8 PF_DEPTH16
 
         target rt0
         {
@@ -68,7 +76,8 @@ compositor Caelum/DepthComposer_ExpGroundFog
             pass render_quad
             {
                 material Caelum/DepthComposer_ExpGroundFog
-                input 0 rt0
+                input 0 rt0 0
+                input 1 rt0 1
             }
         }
     }
@@ -78,7 +87,9 @@ compositor Caelum/DepthComposer_SkyDomeHaze
 {
     technique
     {
-        texture rt0 target_width target_height PF_A8R8G8B8
+        // colour and depth of the original scene
+        // DEPTH16 for OpenGL support; make sure the camera clip distances allow for the precision
+        texture rt0 target_width target_height PF_A8R8G8B8 PF_DEPTH16
 
         target rt0
         {
@@ -92,7 +103,8 @@ compositor Caelum/DepthComposer_SkyDomeHaze
             pass render_quad
             {
                 material Caelum/DepthComposer_SkyDomeHaze
-                input 0 rt0
+                input 0 rt0 0
+                input 1 rt0 1
             }
         }
     }
@@ -102,7 +114,9 @@ compositor Caelum/DepthComposer_SkyDomeHaze_ExpGroundFog
 {
     technique
     {
-        texture rt0 target_width target_height PF_A8R8G8B8
+        // colour and depth of the original scene
+        // DEPTH16 for OpenGL support; make sure the camera clip distances allow for the precision
+        texture rt0 target_width target_height PF_A8R8G8B8 PF_DEPTH16
 
         target rt0
         {
@@ -116,7 +130,8 @@ compositor Caelum/DepthComposer_SkyDomeHaze_ExpGroundFog
             pass render_quad
             {
                 material Caelum/DepthComposer_SkyDomeHaze_ExpGroundFog
-                input 0 rt0
+                input 0 rt0 0
+                input 1 rt0 1
             }
         }
     }
