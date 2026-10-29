@@ -22,6 +22,7 @@ uniform float cloudCoverageThreshold;
 uniform vec4 sunLightColour;
 uniform vec4 sunSphereColour;
 uniform vec4 fogColour;
+// direction the sun light travels in; i.e. pointing away from the sun
 uniform vec3 sunDirection;
 uniform float cloudSharpness;
 uniform float cloudThickness;
@@ -47,6 +48,15 @@ float LayeredClouds_intensity(vec2 pos)
     float aDetail = texture2D(cloud_detail, (cloudDetailOffset + pos) * cloudDetailInvScale).r;
     aCloud = (aCloud + aDetail * cloudDetailBlend) / (1.0 + cloudDetailBlend);
     return max(0.0, aCloud - cloudCoverageThreshold);
+}
+
+// Henyey-Greenstein phase function normalized to 1 in forward direction.
+// cosTheta is the cosine of the angle between the view ray and the direction towards the sun.
+float ForwardScattering(float cosTheta)
+{
+    // asymmetry parameter of the Mie scattering by cloud droplets
+    const float g = 0.85;
+    return pow((1.0 - g) * (1.0 - g) / (1.0 + g * g - 2.0 * g * cosTheta), 1.5);
 }
 
 vec4 OldCloudColor(vec2 uv, float sunGlow)
@@ -90,11 +100,14 @@ vec3 MagicColorMix(vec3 col1, vec3 col2)
 
 MAIN_PARAMETERS
 IN(vec2 oUv, TEXCOORD0)
-IN(vec3 relPosition, TEXCOORD1)
-IN(float sunGlow, TEXCOORD2)
-IN(f32vec4 worldPosition, TEXCOORD3)
+IN(f32vec4 worldPosition, TEXCOORD1)
 MAIN_DECLARATION
 {
+    // view ray from the eye to this point of the cloud layer
+    vec3 viewDir = normalize(worldPosition.xyz - camera_position);
+    // ranges from 1 when looking at the sun to -1 when looking away from it
+    float sunGlow = dot(viewDir, -normalize(sunDirection));
+
     vec4 oCol = OldCloudColor(oUv * cloudUVFactor, sunGlow);
     oCol.r += layerHeight / heightRedFactor;
 
@@ -105,11 +118,10 @@ MAIN_DECLARATION
     }
     float alfa = oCol.a * aMod;
 
-    vec3 cloudDir = normalize(
-             vec3(worldPosition.x, layerHeight, worldPosition.y) - camera_position);
-    float angleDiff = saturate(dot(cloudDir, normalize(sunDirection)));
+    // thin clouds take on the colour of the sun light scattered towards the eye
+    float scattering = ForwardScattering(sunGlow);
 
-    vec3 lCol = mix(oCol.rgb, MagicColorMix(oCol.rgb, sunSphereColour.rgb), angleDiff);
+    vec3 lCol = mix(oCol.rgb, MagicColorMix(oCol.rgb, sunSphereColour.rgb), scattering);
     oCol.rgb = mix(lCol, oCol.rgb, alfa);
     oCol.a = alfa;
 
