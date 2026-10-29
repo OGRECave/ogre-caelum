@@ -105,7 +105,7 @@ namespace Caelum
     void InternalUtilities::generateSphericDome (const Ogre::String &name, int segments, DomeType type)
     {
         // Return now if already exists
-        if (Ogre::MeshManager::getSingleton ().resourceExists (name)) {
+        if (Ogre::MeshManager::getSingleton ().resourceExists (name, RESOURCE_GROUP_NAME)) {
             return;
         }
 
