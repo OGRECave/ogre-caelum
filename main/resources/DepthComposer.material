@@ -71,7 +71,7 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl glsles gls
 {
 	source DepthComposer.frag
 	target ps_3_0
-	preprocessor_defines SKY_DOME_HAZE=1 EXP_GROUND_FOG=1
+	preprocessor_defines SKY_DOME_HAZE=1,EXP_GROUND_FOG=1
 	
 	default_params
 	{
