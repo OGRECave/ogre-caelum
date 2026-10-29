@@ -57,10 +57,13 @@ namespace Caelum
 		/** Constructor.
 			@param sceneMgr The scene manager where the lights will be created.
             @param caelumRootNode Root node to attach to. Should be bound to the camera.
+            @param lightOrder Ogre orders directional lights by name, so lights
+                with a lower value come first; e.g. for materials using only one light.
 		 */
 		BaseSkyLight (
                 Ogre::SceneManager *sceneMgr,
-                Ogre::SceneNode *caelumRootNode);
+                Ogre::SceneNode *caelumRootNode,
+                int lightOrder = 0);
 
 		/// Destructor.
 		virtual ~BaseSkyLight () = 0;

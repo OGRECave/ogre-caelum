@@ -28,7 +28,7 @@ abstract caelum_sky_system DefaultBase
     manage_ambient_light true
     minimum_ambient_light 0.1 0.1 0.3
 
-    manage_scene_fog yes
+    manage_scene_fog_mode exp2
     ground_fog_density_multiplier 0.03
 
     sun {

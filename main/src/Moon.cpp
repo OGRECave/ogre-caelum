@@ -19,7 +19,7 @@ namespace Caelum
 		    const Ogre::String& moonTextureName,
 		    Ogre::Degree angularSize
     ):
-		    BaseSkyLight(sceneMgr, caelumRootNode),
+		    BaseSkyLight(sceneMgr, caelumRootNode, 1), // after the sun
 		    mAngularSize(angularSize)
     {
         Ogre::String uniqueSuffix = "/" + InternalUtilities::pointerToString(this);

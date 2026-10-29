@@ -19,13 +19,14 @@ namespace Caelum
             const Ogre::String& name,
             bool throwIfNotFound/* = false*/)
     {
-        assert(!params.isNull());
+        assert(params);
         #if CAELUM_DEBUG_PARAM_REF
             mParams = params;
         #endif
         const GpuConstantDefinition* def = params->_findNamedConstantDefinition(name, throwIfNotFound);
         if (def) {
             mPhysicalIndex = def->physicalIndex;
+            mElementSize = std::min<size_t>(def->elementSize, 4);
             assert(this->isBound());
         } else {
             mPhysicalIndex = InvalidPhysicalIndex;
@@ -35,7 +36,7 @@ namespace Caelum
 
     void FastGpuParamRef::unbind() {
         #if CAELUM_DEBUG_PARAM_REF
-            mParams.setNull();
+            mParams.reset();
         #endif
         mPhysicalIndex = InvalidPhysicalIndex;
         assert(!this->isBound());

@@ -34,7 +34,7 @@ namespace Caelum
     {
     public:
         /// Default constructor. Starts as unbound
-        FastGpuParamRef(): mPhysicalIndex(InvalidPhysicalIndex)
+        FastGpuParamRef(): mPhysicalIndex(InvalidPhysicalIndex), mElementSize(0)
         {
             // mParams needs no initialization; SharedPtrs start as 0.
         }
@@ -109,9 +109,10 @@ namespace Caelum
         /// @copydoc FastGpuParamRef::doSet
         inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::Vector3& val) const { doSet<const Ogre::Vector3&>(params, val); }
         /// @copydoc FastGpuParamRef::doSet
-        inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::Vector4& val) const { doSet<const Ogre::Vector4&>(params, val); }
+        inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::Vector4& val) const { doSet<const Ogre::Vector4&>(params, val, mElementSize); }
         /// @copydoc FastGpuParamRef::doSet
-        inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::ColourValue& val) const { doSet<const Ogre::ColourValue&>(params, val); }
+        /// Only writes as many components as the constant has; e.g. rgb for a float3
+        inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::ColourValue& val) const { doSet<const Ogre::ColourValue&>(params, val, mElementSize); }
         /// @copydoc FastGpuParamRef::doSet
         inline void set(const Ogre::GpuProgramParametersSharedPtr& params, const Ogre::Matrix4& val) const { doSet<const Ogre::Matrix4*>(params, &val, 1); }
 
@@ -121,6 +122,8 @@ namespace Caelum
         #endif
         static const size_t InvalidPhysicalIndex = 0xFFFFFFFF;
         size_t mPhysicalIndex;
+        /// Number of components of the bound constant; writing more would overwrite the next one.
+        size_t mElementSize;
     };
 }
 

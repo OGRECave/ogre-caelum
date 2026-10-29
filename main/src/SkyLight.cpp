@@ -4,12 +4,13 @@
 
 #include "CaelumPrecompiled.h"
 #include "SkyLight.h"
+#include "InternalUtilities.h"
 
 namespace Caelum
 {
     const Ogre::Real BaseSkyLight::DEFAULT_AUTO_DISABLE_THRESHOLD = 0.1;
 
-    BaseSkyLight::BaseSkyLight (Ogre::SceneManager *sceneMgr, Ogre::SceneNode *caelumRootNode):
+    BaseSkyLight::BaseSkyLight (Ogre::SceneManager *sceneMgr, Ogre::SceneNode *caelumRootNode, int lightOrder):
             mDirection(Ogre::Vector3::ZERO),
             mBodyColour(Ogre::ColourValue::White),
             mLightColour(Ogre::ColourValue::White),
@@ -22,7 +23,8 @@ namespace Caelum
             mAutoDisableThreshold(DEFAULT_AUTO_DISABLE_THRESHOLD),
             mForceDisableLight(false)
     {
-        Ogre::String lightName = "CaelumSkyLight" + Ogre::StringConverter::toString((size_t)this);
+        Ogre::String lightName = "Caelum/SkyLight/" + Ogre::StringConverter::toString(lightOrder) + "/" +
+                InternalUtilities::pointerToString(this);
 
         mMainLight = sceneMgr->createLight (lightName);
         mMainLight->setType (Ogre::Light::LT_DIRECTIONAL);

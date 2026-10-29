@@ -84,6 +84,7 @@ namespace Caelum
         static bool getPropValueOrAddError (Ogre::ScriptCompiler* compiler, Ogre::PropertyAbstractNode* prop, Ogre::String& value);
         static bool getPropValueOrAddError (Ogre::ScriptCompiler* compiler, Ogre::PropertyAbstractNode* prop, Ogre::Vector3& value);
         static bool getPropValueOrAddError (Ogre::ScriptCompiler* compiler, Ogre::PropertyAbstractNode* prop, Ogre::Vector2& value);
+        static bool getPropValueOrAddError (Ogre::ScriptCompiler* compiler, Ogre::PropertyAbstractNode* prop, Ogre::FogMode& value);
 
         /** Translate a property using a TypeDescriptor; or report error to compiler.
          */
