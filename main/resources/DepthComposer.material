@@ -2,39 +2,40 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program Caelum/DepthComposerFP_Dummy cg hlsl
+fragment_program Caelum/DepthComposerFP_Dummy glsl glsles glslang hlsl
 {
-	source DepthComposer.cg
-	entry_point MainFP
-	target ps_3_0 arbfp1
+	source DepthComposer.frag
+	target ps_3_0
 	
 	default_params
 	{
+        param_named screenTexture int 0
     }
 }
 
-fragment_program Caelum/DepthComposerFP_DebugDepthRender cg hlsl
+fragment_program Caelum/DepthComposerFP_DebugDepthRender glsl glsles glslang hlsl
 {
-	source DepthComposer.cg
-	entry_point MainFP
-	target ps_3_0 arbfp1
+	source DepthComposer.frag
+	target ps_3_0
 	preprocessor_defines DEBUG_DEPTH_RENDER=1
 	
 	default_params
 	{
+        param_named depthTexture int 1
         param_named invViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
     }
 }
 
-fragment_program Caelum/DepthComposerFP_ExpGroundFog cg hlsl
+fragment_program Caelum/DepthComposerFP_ExpGroundFog glsl glsles glslang hlsl
 {
-	source DepthComposer.cg
-	entry_point MainFP
-	target ps_3_0 arbfp1
+	source DepthComposer.frag
+	target ps_3_0
 	preprocessor_defines EXP_GROUND_FOG=1
 	
 	default_params
 	{
+        param_named screenTexture int 0
+        param_named depthTexture int 1
         param_named invViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
 
         param_named worldCameraPos float4 0 0 0 0
@@ -46,37 +47,41 @@ fragment_program Caelum/DepthComposerFP_ExpGroundFog cg hlsl
     }
 }
 
-fragment_program Caelum/DepthComposerFP_SkyDomeHaze cg hlsl
+fragment_program Caelum/DepthComposerFP_SkyDomeHaze glsl glsles glslang hlsl
 {
-	source DepthComposer.cg
-	entry_point MainFP
-	target ps_3_0 arbfp1
-	preprocessor_defines SKY_DOME_HAZE=1 HAZE_DEPTH_TEXTURE=s2
+	source DepthComposer.frag
+	target ps_3_0
+	preprocessor_defines SKY_DOME_HAZE=1
 	
 	default_params
 	{
+        param_named screenTexture int 0
+        param_named depthTexture int 1
         param_named invViewProjMatrix float4x4 0 0 0 0  0 0 0 0  0 0 0 0  0 0 0 0
 
         param_named worldCameraPos float4 0 0 0 0
 
+        param_named atmRelativeDepth int 2
         param_named sunDirection float3 0 1 0
         param_named hazeColour float3 0.1 0.2 0.6
     }
 }
 
-fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog cg hlsl
+fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl glsles glslang hlsl
 {
-	source DepthComposer.cg
-	entry_point MainFP
-	target ps_3_0 arbfp1
-	preprocessor_defines SKY_DOME_HAZE=1 HAZE_DEPTH_TEXTURE=s2 EXP_GROUND_FOG=1
+	source DepthComposer.frag
+	target ps_3_0
+	preprocessor_defines SKY_DOME_HAZE=1 EXP_GROUND_FOG=1
 	
 	default_params
 	{
+        param_named screenTexture int 0
+        param_named depthTexture int 1
         param_named invViewProjMatrix float4x4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
         param_named worldCameraPos float4 0 0 0 0
 
+        param_named atmRelativeDepth int 2
         param_named sunDirection float3 0 1 0
         param_named hazeColour float3 0.1 0.2 0.6
 
@@ -244,7 +249,7 @@ material Caelum/DepthComposer_SkyDomeHaze
 
 			texture_unit AtmosphereDepth
 			{			
-				texture AtmosphereDepth.png 1d
+				texture AtmosphereDepth.png
 				tex_address_mode clamp
 			}
 		}
@@ -277,7 +282,7 @@ material Caelum/DepthComposer_SkyDomeHaze_ExpGroundFog
 
 			texture_unit AtmosphereDepth
 			{			
-				texture AtmosphereDepth.png 1d
+				texture AtmosphereDepth.png
 			    filtering bilinear		
 				tex_address_mode clamp
 			}

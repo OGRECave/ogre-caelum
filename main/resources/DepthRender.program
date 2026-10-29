@@ -2,11 +2,10 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program Caelum/DepthRenderVP cg hlsl hlsl
+vertex_program Caelum/DepthRenderVP glsl glsles glslang hlsl
 {
-    source DepthComposer.cg
-    entry_point DepthRenderVP
-	target vs_2_0 arbvp1
+    source DepthRender.vert
+    target vs_3_0
 
     default_params
     {
@@ -14,18 +13,17 @@ vertex_program Caelum/DepthRenderVP cg hlsl hlsl
     }
 }
 
-fragment_program Caelum/DepthRenderFP cg hlsl
+fragment_program Caelum/DepthRenderFP glsl glsles glslang hlsl
 {
-    source DepthComposer.cg
-    entry_point DepthRenderFP
-	target ps_3_0 fp40 arbfp1
+    source DepthRender.frag
+    target ps_3_0
 }
 
-vertex_program Caelum/DepthRenderAlphaRejectionVP cg hlsl
+vertex_program Caelum/DepthRenderAlphaRejectionVP glsl glsles glslang hlsl
 {
-    source DepthComposer.cg
-    entry_point DepthRenderAlphaRejectionVP
-	target vs_2_0 arbvp1
+    source DepthRender.vert
+    target vs_3_0
+    preprocessor_defines ALPHA_REJECTION
 
     default_params
     {
@@ -33,9 +31,14 @@ vertex_program Caelum/DepthRenderAlphaRejectionVP cg hlsl
     }
 }
 
-fragment_program Caelum/DepthRenderAlphaRejectionFP cg hlsl
+fragment_program Caelum/DepthRenderAlphaRejectionFP glsl glsles glslang hlsl
 {
-    source DepthComposer.cg
-    entry_point DepthRenderAlphaRejectionFP
-	target ps_3_0 fp40 arbfp1
+    source DepthRender.frag
+    target ps_3_0
+    preprocessor_defines ALPHA_REJECTION
+
+    default_params
+    {
+        param_named mainTex int 0
+    }
 }
