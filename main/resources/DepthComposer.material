@@ -92,56 +92,6 @@ fragment_program Caelum/DepthComposerFP_SkyDomeHaze_ExpGroundFog glsl glsles gls
     }
 }
 
-material Caelum/DepthRender
-{
-    technique Default
-    {
-        pass Main
-        {
-            // This is required!
-            depth_write on
-            depth_check on
-            
-            vertex_program_ref Caelum/DepthRenderVP
-            {
-            }
-
-            fragment_program_ref Caelum/DepthRenderFP
-            {
-            }
-        }
-    }
-}
-
-// Material for rendering depth of an alpha-rejection material.
-//
-// Unlike the regular Caelum/DepthRender this also outputs alpha from a texture.
-// The shaders (VP/FP) can be trivially used in more complex materials.
-material Caelum/DepthRenderAlphaRejection
-{
-    technique Default
-    {
-        pass Main
-        {
-            depth_write on
-            depth_check on
-            
-            vertex_program_ref Caelum/DepthRenderAlphaRejectionVP
-            {
-            }
-
-            fragment_program_ref Caelum/DepthRenderAlphaRejectionFP
-            {
-            }
-
-            alpha_rejection greater 128
-            texture_unit Main
-            {
-            }
-        }
-    }
-}
-
 material Caelum/DepthComposer_Dummy
 {
 	technique Default

@@ -197,7 +197,6 @@ namespace Caelum
         cloudMassOffset.bind(fpParams, "cloudMassOffset");
         cloudDetailOffset.bind(fpParams, "cloudDetailOffset");
         cloudMassBlend.bind(fpParams, "cloudMassBlend");
-        vpSunDirection.bind(vpParams, "sunDirection");
         fpSunDirection.bind(fpParams, "sunDirection");
         sunLightColour.bind(fpParams, "sunLightColour");
         sunSphereColour.bind(fpParams, "sunSphereColour");
@@ -299,7 +298,6 @@ namespace Caelum
 
 	void FlatCloudLayer::setSunDirection (const Ogre::Vector3 &sunDirection) {
         mSunDirection = sunDirection;
-		mParams.vpSunDirection.set(mParams.vpParams, sunDirection);
 		mParams.fpSunDirection.set(mParams.fpParams, sunDirection);
 	}
 

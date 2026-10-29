@@ -107,7 +107,6 @@ namespace Caelum
             FastGpuParamRef cloudMassOffset;
             FastGpuParamRef cloudDetailOffset;
             FastGpuParamRef cloudMassBlend;
-            FastGpuParamRef vpSunDirection;
             FastGpuParamRef fpSunDirection;
             FastGpuParamRef sunLightColour;
             FastGpuParamRef sunSphereColour;

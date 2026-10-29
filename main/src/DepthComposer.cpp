@@ -15,6 +15,7 @@ namespace Caelum
         Ogre::SceneManager *sceneMgr
     ):
 		mSceneMgr (sceneMgr),
+        mCompositorChanged (false),
         mDebugDepthRender (false),
         mSkyDomeHazeEnabled (false),
         mGroundFogEnabled (false),
@@ -90,25 +91,21 @@ namespace Caelum
 
     void DepthComposer::onCompositorMaterialChanged ()
     {
-        ViewportInstanceMap::const_iterator it;
-        ViewportInstanceMap::const_iterator begin = mViewportInstanceMap.begin();
-        ViewportInstanceMap::const_iterator end = mViewportInstanceMap.end();
-        for (it = begin; it != end; ++it) {
-            it->second->removeCompositor ();
-            it->second->addCompositor ();
-        }
+        mCompositorChanged = true;
     }
 
-	void DepthComposer::update ()
+    void DepthComposer::update ()
     {
-        ViewportInstanceMap::const_iterator it;
-        ViewportInstanceMap::const_iterator begin = mViewportInstanceMap.begin();
-        ViewportInstanceMap::const_iterator end = mViewportInstanceMap.end();
-        for (it = begin; it != end; ++it) {
-            assert(it->first == it->second->getViewport());
-            it->second->_update ();
+        if (!mCompositorChanged) {
+            return;
         }
-	}
+        mCompositorChanged = false;
+
+        for (auto& it : mViewportInstanceMap) {
+            it.second->removeCompositor ();
+            it.second->addCompositor ();
+        }
+    }
 
     DepthComposerInstance::DepthComposerInstance
     (
@@ -125,13 +122,11 @@ namespace Caelum
                 " of render target \'" + getViewport()->getTarget ()->getName () + "\'");
 
         addCompositor ();
-        mDepthRenderer.reset (new DepthRenderer (getViewport ()));
     }
 
     DepthComposerInstance::~DepthComposerInstance()
     {
         removeCompositor ();
-        mDepthRenderer.reset ();
 
         LogManager::getSingleton().logMessage (
                 "Caelum::DepthComposer: Detached screen-space fog instance"
@@ -144,7 +139,8 @@ namespace Caelum
         CompositorManager* compMgr = CompositorManager::getSingletonPtr();
 
         const String& compositorName = getParent ()->getCompositorName ();
-        mCompInst = compMgr->addCompositor(mViewport, compositorName);
+        // First in the chain, as the depth of the original scene is needed
+        mCompInst = compMgr->addCompositor(mViewport, compositorName, 0);
         if (!mCompInst) {
             CAELUM_THROW_UNSUPPORTED_EXCEPTION (
                     "Can't add \'" + compositorName + "\' compositor.",
@@ -168,14 +164,6 @@ namespace Caelum
         //            "Caelum::DepthComposer: Material setup");
 
         Pass* pass = mat->getBestTechnique ()->getPass (0);
-
-        TextureUnitState *depthTus = pass->getTextureUnitState(1);
-        if (depthTus->_getTexturePtr () != mDepthRenderer->getDepthRenderTexture ()) {
-            depthTus->setTexture (mDepthRenderer->getDepthRenderTexture ());
-            LogManager::getSingleton ().logMessage (
-                        "Caelum::DepthComposer: Assigned depth texture in compositor material");
-        }
-
         mParams.setup(pass->getFragmentProgramParameters ());
 	}
 
@@ -216,11 +204,6 @@ namespace Caelum
         mParams.sunDirection.set(mParams.fpParams, getParent ()->getSunDirection ());
         mParams.hazeColour.set(mParams.fpParams, getParent ()->getHazeColour ());
 	}
-
-	void DepthComposerInstance::_update ()
-    {
-        mDepthRenderer->update ();
-    }
 
     DepthComposerInstance* DepthComposer::createViewportInstance(Ogre::Viewport* vp)
     {
@@ -263,205 +246,5 @@ namespace Caelum
             delete it->second;
         }
         mViewportInstanceMap.clear();
-    }
-
-	const String DepthRenderer::DEFAULT_CUSTOM_DEPTH_SCHEME_NAME = "CaelumDepth";
-
-    DepthRenderer::DepthRenderer
-    (
-        Viewport* masterViewport
-    ):
-        mMasterViewport (masterViewport),
-        mDepthRenderViewport (0),
-        mDepthRenderingNow (false),
-        mViewportVisibilityMask (~0),
-        mUseCustomDepthScheme (true),
-        mCustomDepthSchemeName (DEFAULT_CUSTOM_DEPTH_SCHEME_NAME)
-    {
-        disableRenderGroupRangeFilter ();
-
-		Ogre::String uniqueId = Ogre::StringConverter::toString ((size_t)this);
-
-        // Not cloned!
-        mDepthRenderMaterial = MaterialManager::getSingleton ().getByName ("Caelum/DepthRender");
-        mDepthRenderMaterial->load();
-        if (!mDepthRenderMaterial->getBestTechnique ()) {
-            CAELUM_THROW_UNSUPPORTED_EXCEPTION (
-                    "Can't load depth render material: " +
-                    mDepthRenderMaterial->getUnsupportedTechniquesExplanation(),
-                    "DepthComposer");
-        }
-
-        TextureManager* texMgr = TextureManager::getSingletonPtr();
-
-        int width = getMasterViewport ()->getActualWidth ();
-        int height = getMasterViewport ()->getActualHeight ();
-        LogManager::getSingleton ().logMessage (
-                    "Caelum::DepthRenderer: Creating depth render texture size " +
-                    StringConverter::toString (width) +
-                    "x" +
-                    StringConverter::toString (height));
-
-        PixelFormat desiredFormat = PF_FLOAT32_R;
-        PixelFormat requestFormat = desiredFormat;
-        if (texMgr->isFormatSupported (TEX_TYPE_2D, desiredFormat, TU_RENDERTARGET)) {
-            LogManager::getSingleton ().logMessage (
-                    "Caelum::DepthRenderer: RenderSystem has native support for " +
-                    PixelUtil::getFormatName (desiredFormat));
-        } else if (texMgr->isEquivalentFormatSupported (TEX_TYPE_2D, desiredFormat, TU_RENDERTARGET)) {
-            PixelFormat equivFormat = texMgr->getNativeFormat (TEX_TYPE_2D, desiredFormat, TU_RENDERTARGET);
-            LogManager::getSingleton ().logMessage (
-                    "Caelum::DepthRenderer: RenderSystem supports " +
-                    PixelUtil::getFormatName (equivFormat) +
-                    " instead of " +
-                    PixelUtil::getFormatName (desiredFormat));
-            requestFormat = equivFormat;
-        } else {
-            CAELUM_THROW_UNSUPPORTED_EXCEPTION (
-                    PixelUtil::getFormatName(desiredFormat) + " or equivalent not supported",
-                    "DepthRenderer");
-        }
-
-        if (texMgr->isHardwareFilteringSupported (TEX_TYPE_2D, requestFormat, TU_RENDERTARGET)) {
-            LogManager::getSingleton ().logMessage (
-                    "Caelum::DepthRenderer: RenderSystem supports hardware filtering for " +
-                    PixelUtil::getFormatName (requestFormat));
-        } else {
-            LogManager::getSingleton ().logMessage (
-                    "Caelum::DepthRenderer: RenderSystem does not support hardware filtering for " +
-                    PixelUtil::getFormatName (requestFormat));
-        }
-
-        // Create depth texture.
-        // This depends on the size of the viewport.
-        mDepthRenderTexture = texMgr->createManual(
-                "Caelum/DepthComposer/" + uniqueId + "/DepthTexture",
-                Caelum::RESOURCE_GROUP_NAME,
-                TEX_TYPE_2D,
-                width, height, 1,
-                0,
-                requestFormat,
-                TU_RENDERTARGET,
-                0);
-
-        assert(getDepthRenderTarget());
-
-        // Should be the same format
-        LogManager::getSingleton().logMessage (
-                "Caelum::DepthRenderer: Created depth render texture"
-                " actual format " + PixelUtil::getFormatName (getDepthRenderTexture()->getFormat ()) +
-                " desired format " + PixelUtil::getFormatName (getDepthRenderTexture()->getDesiredFormat ()));
-
-        // We do our updates by hand.
-        getDepthRenderTarget()->setAutoUpdated (false);
-
-        // Viewport for the depth rtt. Don't set camera here; it can mess Camera::getViewport();
-        mDepthRenderViewport = getDepthRenderTarget()->addViewport(0);
-        getDepthRenderViewport ()->setShadowsEnabled (false);
-        getDepthRenderViewport ()->setOverlaysEnabled (false);
-        getDepthRenderViewport ()->setClearEveryFrame (true);
-
-        // Depth buffer values range from 0 to 1 in both OpenGL and Directx; unless depth ranges are used.
-        // Clear to the maximum value.
-        getDepthRenderViewport ()->setBackgroundColour (Ogre::ColourValue (1, 1, 1, 1));
-    }
-
-    DepthRenderer::~DepthRenderer()
-    {
-        TextureManager* texMgr = TextureManager::getSingletonPtr();
-
-        // Destroy render texture.
-        if (mDepthRenderTexture) {
-            texMgr->remove (mDepthRenderTexture->getHandle ());
-            mDepthRenderTexture.reset ();
-        }
-    }
-
-    void DepthRenderer::update ()
-    {
-        Camera* camera = getMasterViewport ()->getCamera ();
-        Viewport* oldCameraViewport = camera->getViewport ();
-        SceneManager *sceneManager = camera->getSceneManager ();
-
-        assert (oldCameraViewport == getMasterViewport ());
-        assert (getDepthRenderViewport ()->getActualWidth () == getMasterViewport()->getActualWidth ());
-        assert (getDepthRenderViewport ()->getActualHeight () == getMasterViewport()->getActualHeight ());
-
-        getDepthRenderViewport ()->setVisibilityMask (mViewportVisibilityMask);
-        getDepthRenderViewport ()->setCamera (camera);
-        if (this->getUseCustomDepthScheme ()) {
-            getDepthRenderViewport ()->setMaterialScheme (this->getCustomDepthSchemeName ());
-        }
-
-        // Restore old listener after we're done.
-        // Hopefully this will not break horribly.
-        RenderQueue::RenderableListener* oldListener = sceneManager->getRenderQueue ()->getRenderableListener();
-        if (oldListener) {
-            //LogManager::getSingleton ().logMessage (
-            //        "Caelum: Found another render queue listener. This could be bad.");
-        }
-        sceneManager->getRenderQueue ()->setRenderableListener (this);
-
-        mDepthRenderingNow = true;
-        //LogManager::getSingleton ().logMessage ("Caelum: Begin depth rendering");
-        getDepthRenderTarget ()->update ();
-        //LogManager::getSingleton ().logMessage ("Caelum: End depth rendering");
-        mDepthRenderingNow = false;
-
-        sceneManager->getRenderQueue ()->setRenderableListener (oldListener);
-        oldListener = 0;
-
-        // Restore the camera's viewport. Ogre compositors do the same thing.
-        camera->_notifyViewport (oldCameraViewport);
-    }
-
-    bool DepthRenderer::renderableQueued(
-                Ogre::Renderable* rend,
-                Ogre::uint8 groupId,
-                Ogre::ushort priority,
-                Ogre::Technique** ppTech,
-                Ogre::RenderQueue* pQueue)
-    {
-        assert (mDepthRenderingNow);
-
-        /*
-        LogManager::getSingleton ().logMessage (
-                "Caelum: Renderable queued"
-                " group " + StringConverter::toString (groupId) +
-                " priority " + StringConverter::toString (priority));
-        */
-        if (groupId < mMinRenderGroupId || groupId > mMaxRenderGroupId) {
-            return false;
-        }
-
-        if (this->getUseCustomDepthScheme () && (*ppTech)->getSchemeName () == this->getCustomDepthSchemeName ()) {
-            /*
-            LogManager::getSingleton().getDefaultLog()->logMessage (
-                    "Custom scheme with tech " + (*ppTech)->getName () +
-                    " passCount " + StringConverter::toString ((*ppTech)->getNumPasses ()) +
-                    " vp " + (*ppTech)->getPass (0)->getVertexProgramName () +
-                    " fp " + (*ppTech)->getPass (0)->getFragmentProgramName ());
-             */
-            return true;
-        }
-
-        // Get depth material
-        Material* depthMaterial = getDepthRenderMaterial ();
-        Technique* tech = depthMaterial->getBestTechnique ();
-
-        // Replace ALL techniques.
-        *ppTech = tech;
-        return true;
-    }
-
-    void DepthRenderer::setRenderGroupRangeFilter (int minGroup, int maxGroup)
-    {
-        mMinRenderGroupId = minGroup;
-        mMaxRenderGroupId = maxGroup;
-    }
-
-    void DepthRenderer::disableRenderGroupRangeFilter()
-    {
-        setRenderGroupRangeFilter(Ogre::RENDER_QUEUE_BACKGROUND, Ogre::RENDER_QUEUE_MAX);
     }
 }

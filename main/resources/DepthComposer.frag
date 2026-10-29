@@ -2,6 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include "CaelumCommon.h"
 
 SAMPLER2D(screenTexture, 0);
@@ -76,6 +78,10 @@ MAIN_DECLARATION
 {
     vec4 inColor = texture2D(screenTexture, oUv0);
     float32_t inDepth = texture2D(depthTexture, oUv0).r;
+#if !defined(OGRE_HLSL) && !defined(OGRE_REVERSED_Z) && !defined(VULKAN)
+    // OpenGL maps the [-1, 1] device depth to the [0, 1] depth buffer
+    inDepth = inDepth * 2.0 - 1.0;
+#endif
 
     // Build normalized device coords; after the perspective divide.
     f32vec4 devicePos = vec4(oUv0.x * 2.0 - 1.0, 1.0 - oUv0.y * 2.0, inDepth, 1.0);
@@ -84,7 +90,14 @@ MAIN_DECLARATION
     f32vec4 worldPos = mul(invViewProjMatrix, devicePos);
 
     // Now undo the perspective divide and go back to "normal" space.
-    worldPos /= worldPos.w;
+    if (worldPos.w > 1e-6) {
+        worldPos /= worldPos.w;
+    } else {
+        // The far plane is at infinity; pick a point far away along the view ray
+        f32vec4 rayPos = mul(invViewProjMatrix, vec4(devicePos.xy, 0.0, 1.0));
+        f32vec3 rayDir = normalize(rayPos.xyz / rayPos.w - worldCameraPos.xyz);
+        worldPos = vec4(worldCameraPos.xyz + rayDir * 1e6, 1.0);
+    }
 
     vec4 color = inColor;
 

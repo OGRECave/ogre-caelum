@@ -48,33 +48,6 @@ abstract material CaelumSample/AlphaRejectionBase: CaelumSample/Base
             alpha_rejection greater_equal 128
         }
     }
-
-    technique CaelumDepth
-    {
-        scheme CaelumDepth
-
-        pass AlphaRejectionDepth
-        {
-            depth_write on
-            depth_check on
-            
-            cull_hardware none
-            alpha_rejection greater_equal 128
-            fog_override true none
-
-            vertex_program_ref Caelum/DepthRenderAlphaRejectionVP
-            {
-            }
-
-            fragment_program_ref Caelum/DepthRenderAlphaRejectionFP
-            {
-            }
-
-            texture_unit Main
-            {
-            }
-        }
-    }
 }
 
 abstract material CaelumSample/AlphaBlendBase: CaelumSample/Base
@@ -86,16 +59,6 @@ abstract material CaelumSample/AlphaBlendBase: CaelumSample/Base
             cull_hardware none
             scene_blend alpha_blend
             depth_write off
-        }
-    }
-
-    technique CaelumDepth
-    {
-        scheme CaelumDepth
-        pass Main
-        {
-            depth_write off
-            colour_write off
         }
     }
 }

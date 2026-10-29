@@ -2,6 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include "CaelumCommon.h"
 
 SAMPLER2D(atmRelativeDepth, 0);
@@ -11,7 +13,7 @@ uniform vec4 fogColour;
 )
 
 MAIN_PARAMETERS
-IN(float haze, TEXCOORD0)
+IN(float32_t haze, TEXCOORD0)
 IN(vec2 sunlight, TEXCOORD1)
 MAIN_DECLARATION
 {

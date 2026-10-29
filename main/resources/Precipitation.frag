@@ -2,6 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include "CaelumCommon.h"
 
 SAMPLER2D(scene, 0);
@@ -20,17 +22,17 @@ uniform vec4 corner3;
 uniform vec4 corner4;
 
 // The x and y coordinal deviations for all 3 layers of precipitation
-uniform vec4 deltaX;
-uniform vec4 deltaY;
+uniform f32vec4 deltaX;
+uniform f32vec4 deltaY;
 
 uniform vec4 precColor;
 )
 
 // Cartesian to cylindrical coordinates
-vec2 CylindricalCoordinates(vec3 dir)
+f32vec2 CylindricalCoordinates(vec3 dir)
 {
     float R = 0.5;
-    vec2 res;
+    f32vec2 res;
     //cubical root is used to counteract top/bottom circle effect
     dir *= R / pow(length(dir.xz), 0.33);
     res.y = -dir.y;
@@ -40,7 +42,7 @@ vec2 CylindricalCoordinates(vec3 dir)
 
 // Returns alpha value of a precipitation
 // view_direction is the direction vector resulting from the eye direction,wind direction and possibly other factors
-float Precipitation(vec2 cCoords, float intensity, vec2 delta)
+float Precipitation(f32vec2 cCoords, float intensity, f32vec2 delta)
 {
     cCoords -= delta;
     vec4 raincol = texture2D(samplerPrec, cCoords);
@@ -57,7 +59,7 @@ MAIN_DECLARATION
         oUv0.x);
 
     vec4 scenecol = texture2D(scene, oUv0);
-    vec2 cCoords = CylindricalCoordinates(eye);
+    f32vec2 cCoords = CylindricalCoordinates(eye);
     float prec1 = Precipitation(cCoords, intensity / 4.0, vec2(deltaX.x, deltaY.x));
     float prec2 = Precipitation(cCoords, intensity / 4.0, vec2(deltaX.y, deltaY.y));
     float prec3 = Precipitation(cCoords, intensity / 4.0, vec2(deltaX.z, deltaY.z));

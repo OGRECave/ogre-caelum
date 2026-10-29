@@ -21,6 +21,8 @@ namespace Caelum
 	private:
 		Ogre::SceneManager *mSceneMgr;
 
+        /// The compositor must not be replaced while rendering; this is done in update
+        bool mCompositorChanged;
         void onCompositorMaterialChanged ();
         const String& getCompositorName ();
 
@@ -33,6 +35,7 @@ namespace Caelum
 		DepthComposer(Ogre::SceneManager *sceneMgr);
 		virtual ~DepthComposer();
 
+        /// Applies changes of the enabled effects. Called by CaelumSystem::updateSubcomponents.
         void update ();
 
     public:
@@ -116,7 +119,6 @@ namespace Caelum
         DepthComposer* mParent;
         Ogre::Viewport* mViewport;
         Ogre::CompositorInstance* mCompInst;
-        std::unique_ptr<DepthRenderer> mDepthRenderer;
 
         virtual void notifyMaterialSetup(uint pass_id, Ogre::MaterialPtr &mat);
         virtual void notifyMaterialRender(uint pass_id, Ogre::MaterialPtr &mat);
@@ -136,9 +138,6 @@ namespace Caelum
         } mParams;
 
     protected:
-        /// Called from DepthComposer::update
-        void _update ();
-
         void addCompositor ();
         void removeCompositor ();
         bool isCompositorEnabled () { return mCompInst != 0; }
@@ -155,101 +154,8 @@ namespace Caelum
         /// Get compositor instance; attached to the viewport.
         Ogre::CompositorInstance* getCompositorInstance() const { return mCompInst; }
 
-        /** Get the underlying depth renderer.
-         *  Allow the user to tweak the depth renderer.
-         */
-        Caelum::DepthRenderer* getDepthRenderer () const { return mDepthRenderer.get(); }
-
         DepthComposerInstance(DepthComposer* parent, Ogre::Viewport* view);
         virtual ~DepthComposerInstance();
-    };
-    
-    /** Render the depth buffer to a texture.
-     *
-     *  This class tries to be as generic and flexible as possible; but it 
-     *  is currently only used by the depth composer.
-     */
-    class CAELUM_EXPORT DepthRenderer: private Ogre::RenderQueue::RenderableListener
-    {
-    private:
-        Ogre::Viewport* mMasterViewport;
-        Ogre::Viewport* mDepthRenderViewport;
-        Ogre::TexturePtr mDepthRenderTexture;
-        bool mDepthRenderingNow;
-		Ogre::MaterialPtr mDepthRenderMaterial;
-
-        // Override materials during all rendering.
-        virtual bool renderableQueued(
-                Ogre::Renderable* rend,
-                Ogre::uint8 groupId,
-                Ogre::ushort priority, 
-                Ogre::Technique** ppTech,
-                Ogre::RenderQueue* pQueue);
-        inline Ogre::Material* getDepthRenderMaterial() const { return mDepthRenderMaterial.get(); }
-
-        int mMinRenderGroupId;
-        int mMaxRenderGroupId;
-        int mViewportVisibilityMask;
-
-    public:
-        DepthRenderer (Ogre::Viewport* viewport);
-        ~DepthRenderer ();
-
-        inline Ogre::Viewport* getMasterViewport() { return mMasterViewport; }
-        inline const Ogre::TexturePtr& getDepthRenderTexture () { return mDepthRenderTexture; }
-        inline Ogre::Viewport* getDepthRenderViewport () { return mDepthRenderViewport; }
-        inline Ogre::RenderTexture* getDepthRenderTarget () {
-            return mDepthRenderTexture->getBuffer()->getRenderTarget ();
-        }
-
-        /// Render the depth buffer now!
-        void update ();
-
-        /** Render only the render groups in a certain range.
-         *  Call this to only render objects in certain render queue groups.
-         *  The range is inclusive.
-         *  This is a very primitive sort of filter.
-         */
-        void setRenderGroupRangeFilter (int minGroup, int maxGroup);
-
-        /// @see setRenderGroupRangeFilter
-        int getRenderGroupRangeFilterMin () { return mMinRenderGroupId; }
-        int getRenderGroupRangeFilterMax () { return mMaxRenderGroupId; }
-
-        /** Disable the effects of @see setRenderGroupRangeFilter
-         */
-        void disableRenderGroupRangeFilter ();
-
-        /** Query mask for the depth rendering viewport.
-         *  Enforces on every update ();
-         */
-        void setViewportVisibilityMask (uint value) { mViewportVisibilityMask = value; }
-        uint getViewportVisibilityMask () { return mViewportVisibilityMask; }
-        void disableViewportVisibilityMask () { mViewportVisibilityMask = ~0; }
-
-    public:
-        /** If true then use a user-supplied material scheme which outputs depth.
-         *
-         *  The depth output of most materials is obvious and can be guessed most of the time.
-         *  When that fails you can provide a custom material scheme for certain materials which
-         *  renders the depth buffer.
-         *
-         *  This is enabled by default for a scheme called CaelumDepth.
-         */
-        inline void setUseCustomDepthScheme (bool value) { mUseCustomDepthScheme = value; }
-        inline bool getUseCustomDepthScheme () { return mUseCustomDepthScheme; }
-
-        /** Set the name of the custom depth scheme (default is CaelumDepth).
-         */
-        inline void setCustomDepthSchemeName (const Ogre::String& value) { mCustomDepthSchemeName = value; }
-        inline const Ogre::String& getCustomDepthSchemeName () { return mCustomDepthSchemeName; }
-
-        /// Default name of the custom scheme.
-        static const String DEFAULT_CUSTOM_DEPTH_SCHEME_NAME;
-
-    private:
-        bool mUseCustomDepthScheme;
-        Ogre::String mCustomDepthSchemeName;
     };
 }
 

@@ -107,7 +107,6 @@ namespace Caelum
     class GroundFog;
     class DepthComposer;
     class DepthComposerInstance;
-    class DepthRenderer;
 }
 
 #endif // CAELUM__CAELUM_PREREQUISITES_H
