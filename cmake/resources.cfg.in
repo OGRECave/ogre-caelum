@@ -2,6 +2,5 @@
 # Bites uses the next entry to discover the platform shaders
 FileSystem=@OGRE_MEDIA_DIR@
 FileSystem=@CMAKE_SOURCE_DIR@/samples/resources
-
-[Caelum]
+# must be in a global pool group (like General) so the shaders find OgreUnifiedShader.h
 FileSystem=@CMAKE_SOURCE_DIR@/main/resources

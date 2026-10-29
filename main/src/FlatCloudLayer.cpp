@@ -213,7 +213,7 @@ namespace Caelum
 	void FlatCloudLayer::setCloudCoverLookup (const Ogre::String& fileName) {
         mCloudCoverLookup.reset(0);
         mCloudCoverLookup.reset(new Ogre::Image());
-        mCloudCoverLookup->load(fileName, RESOURCE_GROUP_NAME);
+        mCloudCoverLookup->load(fileName, Ogre::RGN_AUTODETECT);
 
         mCloudCoverLookupFileName = fileName;
     }
