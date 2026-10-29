@@ -2,11 +2,10 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program Caelum/StarPointVP cg hlsl
+vertex_program Caelum/StarPointVP glsl glsles glslang hlsl
 {
-	source CaelumPointStarfield.cg
-	entry_point StarPointVP
-	target vs_2_0 arbvp1 vp30 glslv
+	source PointStarfield.vert
+	target vs_3_0
 
 	default_params
 	{
@@ -22,11 +21,10 @@ vertex_program Caelum/StarPointVP cg hlsl
 	}
 }
 
-fragment_program Caelum/StarPointFP cg hlsl
+fragment_program Caelum/StarPointFP glsl glsles glslang hlsl
 {
-	source CaelumPointStarfield.cg
-	entry_point StarPointFP
-	target ps_2_0 arbfp1 fp30 glslf
+	source PointStarfield.frag
+	target ps_3_0
 
 	default_params
 	{

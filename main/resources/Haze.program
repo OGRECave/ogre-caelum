@@ -2,11 +2,10 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program CaelumHazeVP cg hlsl
+vertex_program CaelumHazeVP glsl glsles glslang hlsl
 {
-	source CaelumSkyDome.cg
-	entry_point HazeVP
-	target vs_2_0 arbvp1 vp30
+	source Haze.vert
+	target vs_3_0
 
 	default_params
 	{
@@ -15,14 +14,14 @@ vertex_program CaelumHazeVP cg hlsl
 	}
 }
 
-fragment_program CaelumHazeFP cg hlsl
+fragment_program CaelumHazeFP glsl glsles glslang hlsl
 {
-	source CaelumSkyDome.cg
-	entry_point HazeFP
-	target ps_2_0 arbfp1 fp30
+	source Haze.frag
+	target ps_3_0
 
 	default_params
 	{
+		param_named atmRelativeDepth int 0
 		param_named_auto fogColour fog_colour
 	}
 }

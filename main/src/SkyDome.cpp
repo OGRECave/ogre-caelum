@@ -89,7 +89,7 @@ namespace Caelum
         Ogre::TextureUnitState* atmosphereTus =
                 mMaterial->getTechnique (0)->getPass (0)->getTextureUnitState(1);
 
-        atmosphereTus->setTextureName (atmosphereDepth, Ogre::TEX_TYPE_1D);
+        atmosphereTus->setTextureName (atmosphereDepth);
         atmosphereTus->setTextureAddressingMode (Ogre::TextureUnitState::TAM_CLAMP, Ogre::TextureUnitState::TAM_WRAP, Ogre::TextureUnitState::TAM_WRAP);
     }
 

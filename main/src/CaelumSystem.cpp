@@ -623,12 +623,12 @@ namespace Caelum
 
     void CaelumSystem::setSkyGradientsImage (const Ogre::String &filename) {
         mSkyGradientsImage.reset(new Ogre::Image ());
-        mSkyGradientsImage->load (filename, RESOURCE_GROUP_NAME);
+        mSkyGradientsImage->load (filename, Ogre::RGN_AUTODETECT);
     }
 
     void CaelumSystem::setSunColoursImage (const Ogre::String &filename) {
         mSunColoursImage.reset(new Ogre::Image ());
-        mSunColoursImage->load (filename, RESOURCE_GROUP_NAME);
+        mSunColoursImage->load (filename, Ogre::RGN_AUTODETECT);
     }
 
     Ogre::ColourValue CaelumSystem::getFogColour (Real time, const Ogre::Vector3 &sunDir) {

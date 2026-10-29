@@ -2,12 +2,11 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program Caelum/MinimalCompositorVP cg hlsl
+vertex_program Caelum/MinimalCompositorVP glsl glsles glslang hlsl
 {
-	source MinimalCompositorVP.cg
-	entry_point MinimalCompositorVP
-	target vs_1_1 arbvp1
-	
+	source MinimalCompositor.vert
+	target vs_3_0
+
 	default_params
 	{
 		param_named_auto worldviewproj_matrix worldviewproj_matrix

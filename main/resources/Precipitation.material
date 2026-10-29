@@ -2,26 +2,15 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program Caelum/PrecipitationFP cg hlsl
+fragment_program Caelum/PrecipitationFP glsl glsles glslang hlsl
 {
-	source Precipitation.cg
-	entry_point MainFP
-	target ps_3_0 fp40 arbfp1
-	
-	default_params
-	{
-	}
-}
+	source Precipitation.frag
+	target ps_3_0
 
-vertex_program Caelum/PrecipitationVP cg hlsl
-{
-	source Precipitation.cg
-	entry_point MainVP
-	target vs_3_0 vp40 arbvp1
-	
 	default_params
 	{
-		param_named_auto worldviewproj_matrix worldviewproj_matrix
+		param_named scene int 0
+		param_named samplerPrec int 1
 	}
 }
 
@@ -31,7 +20,7 @@ material Caelum/PrecipitationMaterial
 	{
 		pass Main
 		{			
-			vertex_program_ref Caelum/PrecipitationVP
+			vertex_program_ref Caelum/MinimalCompositorVP
 			{
 			}
 			
