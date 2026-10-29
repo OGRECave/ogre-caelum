@@ -11,6 +11,11 @@ SAMPLER2D(atmRelativeDepth, 2);
 #endif
 
 OGRE_UNIFORMS_BEGIN
+#ifdef SKY_DOME_HAZE
+uniform vec3 hazeColour;
+uniform vec3 sunDirection;
+#endif // SKY_DOME_HAZE
+
 uniform mat4 invViewProjMatrix;
 uniform f32vec4 worldCameraPos;
 
@@ -20,11 +25,6 @@ uniform float groundFogVerticalDecay;
 uniform float groundFogBaseLevel;
 uniform vec4 groundFogColour;
 #endif // EXP_GROUND_FOG
-
-#ifdef SKY_DOME_HAZE
-uniform vec3 hazeColour;
-uniform vec3 sunDirection;
-#endif // SKY_DOME_HAZE
 OGRE_UNIFORMS_END
 
 #ifdef SKY_DOME_HAZE
@@ -78,7 +78,7 @@ MAIN_DECLARATION
     float32_t inDepth = texture2D(depthTexture, oUv0).r;
 
     // Build normalized device coords; after the perspective divide.
-    f32vec4 devicePos = f32vec4(oUv0.x * 2.0 - 1.0, 1.0 - oUv0.y * 2.0, inDepth, 1.0);
+    f32vec4 devicePos = vec4(oUv0.x * 2.0 - 1.0, 1.0 - oUv0.y * 2.0, inDepth, 1.0);
 
     // Go back from device to world coordinates.
     f32vec4 worldPos = mul(invViewProjMatrix, devicePos);

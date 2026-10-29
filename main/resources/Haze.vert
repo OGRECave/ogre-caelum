@@ -5,9 +5,9 @@
 #include <OgreUnifiedShader.h>
 
 OGRE_UNIFORMS(
-uniform mat4 worldViewProj;
 uniform vec3 camPos;
 uniform vec3 sunDirection;
+uniform mat4 worldViewProj;
 )
 
 MAIN_PARAMETERS
