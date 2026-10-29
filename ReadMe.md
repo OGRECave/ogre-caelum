@@ -23,6 +23,6 @@ There is also a page on the ogre wiki (might be out of date):
 
 # Usage
 
-See CaelumDemo's source code; it should contain some minimal initialisation and tweaking. CaelumLab is more complicated and can be used to visually tweak different sky elements.
+See CaelumLab's source code for the initialisation and tweaking of the different sky elements; it can also be used to tweak them visually. It requires Ogre with the ImGui overlay.
 
 There is no %Caelum "SDK"; the recommended way to use it is to build it yourself.
