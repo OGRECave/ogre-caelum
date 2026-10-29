@@ -2,11 +2,10 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-vertex_program CaelumLayeredCloudsVP cg hlsl
+vertex_program CaelumLayeredCloudsVP glsl glsles glslang hlsl
 {
-	source CaelumLayeredClouds.cg
-	entry_point LayeredClouds_vp
-	target vs_3_0 vp40 arbvp1 glslv
+	source LayeredClouds.vert
+	target vs_3_0
 	
 	default_params
 	{
@@ -16,18 +15,21 @@ vertex_program CaelumLayeredCloudsVP cg hlsl
 	}
 }
 
-fragment_program CaelumLayeredCloudsFP cg hlsl
+fragment_program CaelumLayeredCloudsFP glsl glsles glslang hlsl
 {
-	source CaelumLayeredClouds.cg
-    entry_point LayeredClouds_fp
-    target ps_3_0 fp40 arbfp1 glslf
+    source LayeredClouds.frag
+    target ps_3_0
 
     default_params
     {
+        param_named cloud_shape1 int 0
+        param_named cloud_shape2 int 1
+        param_named cloud_detail int 2
+
         // Caelum sky properties
         param_named sunLightColour float4 1 1 1 1
         param_named sunSphereColour float4 1 1 1 1
-        param_named sunDirection float4 1 1 1 1
+        param_named sunDirection float3 1 1 1
         
         // Fog colour; used as the base cloud colour.
         param_named fogColour float4 0 0 0 0
