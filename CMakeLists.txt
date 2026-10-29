@@ -6,7 +6,7 @@
 ######################################################################
 # cmake system for Caelum updated on 2-9-2021 by Edgar{at}AnotherFoxGuy{DOT}com
 
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.10)
 
 # define the project
 project(
