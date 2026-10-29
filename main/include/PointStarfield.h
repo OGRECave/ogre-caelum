@@ -25,8 +25,9 @@ namespace Caelum
         float magn;
     };
 
-    /// There are exactly 9110 stars in our version of the BSC.
-    const int BrightStarCatalogueSize = 9110;
+    /// There are exactly 9096 stars in our version of the BSC;
+    /// the 14 non-stellar objects without a magnitude are left out.
+    const int BrightStarCatalogueSize = 9096;
 
     /// Hardcoded bright star catalogue (BrightStarCatalogue.cpp)
     extern const BrightStarCatalogueEntry BrightStarCatalogue[BrightStarCatalogueSize];
