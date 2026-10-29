@@ -2,10 +2,12 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include "CaelumCommon.h"
 
 OGRE_UNIFORMS(
-uniform float cameraHeight;
+uniform float32_t cameraHeight;
 uniform vec4 fogColour;
 uniform float fogDensity;
 uniform float fogVerticalDecay;
@@ -17,8 +19,8 @@ IN(vec3 relPosition, TEXCOORD0)
 MAIN_DECLARATION
 {
     // Fog magic.
-    float invSinView = 1.0 / (relPosition.y);
-    float h1 = cameraHeight;
+    float32_t invSinView = 1.0 / (relPosition.y);
+    float32_t h1 = cameraHeight;
     float aFog;
 
     if (fogVerticalDecay < 1e-7) {

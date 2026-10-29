@@ -2,6 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include <OgreUnifiedShader.h>
 
 // Global cloud textures
@@ -12,8 +14,8 @@ SAMPLER2D(cloud_detail, 2);
 OGRE_UNIFORMS(
 uniform float cloudMassInvScale;
 uniform float cloudDetailInvScale;
-uniform vec2 cloudMassOffset;
-uniform vec2 cloudDetailOffset;
+uniform f32vec2 cloudMassOffset;
+uniform f32vec2 cloudDetailOffset;
 uniform float cloudMassBlend;
 uniform float cloudDetailBlend;
 
@@ -38,10 +40,10 @@ uniform float32_t farFadeDist;
 )
 
 // Get cloud layer intensity at a certain point.
-float LayeredClouds_intensity(vec2 pos)
+float LayeredClouds_intensity(f32vec2 pos)
 {
     // Calculate the base alpha
-    vec2 finalMassOffset = cloudMassOffset + pos;
+    f32vec2 finalMassOffset = cloudMassOffset + pos;
     float aCloud = mix(texture2D(cloud_shape1, finalMassOffset * cloudMassInvScale).r,
                        texture2D(cloud_shape2, finalMassOffset * cloudMassInvScale).r,
                        cloudMassBlend);
@@ -59,7 +61,7 @@ float ForwardScattering(float cosTheta)
     return pow((1.0 - g) * (1.0 - g) / (1.0 + g * g - 2.0 * g * cosTheta), 1.5);
 }
 
-vec4 OldCloudColor(vec2 uv, float sunGlow)
+vec4 OldCloudColor(f32vec2 uv, float sunGlow)
 {
     // Get cloud intensity.
     float intensity = LayeredClouds_intensity(uv);

@@ -2,6 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
+OGRE_NATIVE_GLSL_VERSION_DIRECTIVE
+
 #include "CaelumCommon.h"
 
 OGRE_UNIFORMS(
