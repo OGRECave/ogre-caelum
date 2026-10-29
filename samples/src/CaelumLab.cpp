@@ -4,30 +4,56 @@
 
 #include "CaelumLab.h"
 
-CaelumLabFrameListener::CaelumLabFrameListener (RenderWindow* win, Camera* cam):
-        ExampleFrameListener (win, cam, true, true),
-        mSceneMgr (cam->getSceneManager ()),
-        mShutdownRequested (false),
-        mLastMousePositionSet (false),
-        mMaterialScheme (SMS_DEFAULT),
-        mTerrainShadowsOn (false),
-        mScriptingUI (this)
+#include <OgreOverlayManager.h>
+#include <OgreOverlaySystem.h>
+#include <OgreShaderGenerator.h>
+#include <OgreShaderSubRenderState.h>
+#include <OgreTerrainMaterialGeneratorA.h>
+
+bool CaelumLabInputListener::keyPressed (const OgreBites::KeyboardEvent& evt)
 {
-    mMouse->setEventCallback (this);
-    mKeyboard->setEventCallback (this);
-    initGui ();
-    initCaelum ();
+    if (evt.keysym.sym == OgreBites::SDLK_ESCAPE) {
+        mApp->getRoot ()->queueEndRendering ();
+        return true;
+    }
+    return mCameraMan->keyPressed (evt);
 }
 
-CaelumLabFrameListener::~CaelumLabFrameListener() {
-    destroyCaelum ();
+bool CaelumLabInputListener::mouseMoved (const OgreBites::MouseMotionEvent& evt)
+{
+    return mMouseLook && mCameraMan->mouseMoved (evt);
+}
+
+bool CaelumLabInputListener::mousePressed (const OgreBites::MouseButtonEvent& evt)
+{
+    if (evt.button == OgreBites::BUTTON_RIGHT) {
+        mMouseLook = true;
+        mApp->setWindowGrab (true);
+    }
+    return true;
+}
+
+bool CaelumLabInputListener::mouseReleased (const OgreBites::MouseButtonEvent& evt)
+{
+    if (evt.button == OgreBites::BUTTON_RIGHT) {
+        mMouseLook = false;
+        mApp->setWindowGrab (false);
+    }
+    return true;
+}
+
+CaelumLabApplication::CaelumLabApplication ():
+        mFollowSun (false),
+        mFollowMoon (false),
+        mShadowsEnabled (false)
+{
 }
 
 static void logUnsupportedException (Caelum::UnsupportedException& ex) {
     Ogre::LogManager::getSingletonPtr()->logMessage("CaelumLab: UnsupportedException: " + ex.getFullDescription ());
 }
 
-void CaelumLabFrameListener::initCaelum ()
+void CaelumLabApplication::initCaelum ()
 {
     // Initialise Caelum
     mCaelumSystem.reset(new CaelumSystem (
@@ -63,9 +89,9 @@ void CaelumLabFrameListener::initCaelum ()
     }
 
     // Register caelum.
-    // Don't make it a frame listener; update it by hand.
-    //Root::getSingletonPtr ()->addFrameListener (mCaelumSystem.get ());
     mCaelumSystem->attachViewport (getViewport ());
+    getRenderWindow ()->addListener (mCaelumSystem.get ());
+    mRoot->addFrameListener (mCaelumSystem.get ());
 
     try {
         mCaelumSystem->setPrecipitationController (new PrecipitationController (mSceneMgr));
@@ -77,30 +103,17 @@ void CaelumLabFrameListener::initCaelum ()
     mCaelumSystem->setManageAmbientLight (true);
     mCaelumSystem->setMinimumAmbientLight (Ogre::ColourValue (0.1, 0.1, 0.1));
 
-    // Test spinning the caelum root node. Looks wrong in the demo;
-    // but at least the sky components are aligned with each other.
-    if (false) {
-        mCaelumSystem->getCaelumCameraNode ()->setOrientation(
-                Ogre::Quaternion (Ogre::Radian (Ogre::Math::PI), Ogre::Vector3::UNIT_Z) *
-                Ogre::Quaternion (Ogre::Radian (Ogre::Math::PI / 2), Ogre::Vector3::UNIT_X));
-        mCaelumSystem->getCaelumCameraNode ()->_update (true, true);
-    }
-
     // Setup sun options
     if (mCaelumSystem->getSun ()) {
-        // Make the sun very obvious:
-        //mCaelumSystem->getSun ()->setDiffuseMultiplier (Ogre::ColourValue (1, 10, 1));
-
         mCaelumSystem->getSun ()->setAutoDisableThreshold (0.05);
         mCaelumSystem->getSun ()->setAutoDisable (false);
     }
 
     if (mCaelumSystem->getMoon ()) {
-        // Make the moon very obvious:
-        //mCaelumSystem->getMoon ()->setDiffuseMultiplier (Ogre::ColourValue (1, 1, 10));
-
         mCaelumSystem->getMoon ()->setAutoDisableThreshold (0.05);
         mCaelumSystem->getMoon ()->setAutoDisable (false);
+        // Only the sun casts shadows.
+        mCaelumSystem->getMoon ()->getMainLight ()->setCastShadows (false);
     }
 
     if (mCaelumSystem->getCloudSystem ()) {
@@ -118,183 +131,112 @@ void CaelumLabFrameListener::initCaelum ()
         mCaelumSystem->getPrecipitationController ()->setIntensity (0);
     }
 
-    // Set time acceleration.
-    //mCaelumSystem->getUniversalClock ()->setTimeScale (0);
-
     // Sunrise with visible moon.
     mCaelumSystem->getUniversalClock ()->setGregorianDateTime (2007, 4, 9, 9, 33, 0);
 }
 
-void CaelumLabFrameListener::destroyCaelum ()
+void CaelumLabApplication::destroyCaelum ()
 {
-	mCaelumSystem.reset();
-}
-
-void CaelumLabFrameListener::initGui () {
-    mGuiRenderer.reset(new CEGUI::OgreCEGUIRenderer (
-            mWindow, Ogre::RENDER_QUEUE_OVERLAY, false, 3000, mSceneMgr));
-    mGuiSystem.reset(new CEGUI::System (mGuiRenderer.get()));
-
-    CEGUI::Logger::getSingleton ().setLoggingLevel (CEGUI::Informative);
-
-    // load scheme and set up defaults
-    CEGUI::SchemeManager::getSingleton ().loadScheme((CEGUI::utf8*)"TaharezLookSkin.scheme");
-    mGuiSystem->setDefaultMouseCursor ((CEGUI::utf8*)"TaharezLook", (CEGUI::utf8*)"MouseArrow");
-    // BlueHighway-10 does not rescale with resolution. This is desirable.
-    mGuiSystem->setDefaultFont ((CEGUI::utf8*)"BlueHighway-10");
-
-    CEGUI::WindowManager* wmgr = CEGUI::WindowManager::getSingletonPtr ();
-    CEGUI::Window* sheet = wmgr->loadWindowLayout (CEGUI::String("CaelumLab.layout")); 
-    mGuiSystem->setGUISheet (sheet);
-
-    CEGUI::Window* wnd = CEGUI::WindowManager::getSingleton().getWindow("CaelumLab");
-    wnd->subscribeEvent(CEGUI::Window::EventMouseMove, 
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleMouseMove, this));
-    wnd->subscribeEvent(CEGUI::Window::EventMouseButtonUp, 
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleMouseUp, this));
-    wnd->subscribeEvent(CEGUI::Window::EventMouseButtonDown, 
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleMouseDown, this));
-    (getWidget<CEGUI::Scrollbar> ("CaelumLab/TimeScaleScrollbar"))->getThumb ()->subscribeEvent(
-            CEGUI::Window::EventMouseDoubleClick,
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleTimeScaleDoubleClick, this));
-    (getWidget<CEGUI::Scrollbar> ("CaelumLab/DumpButton"))->subscribeEvent(
-            CEGUI::Window::EventMouseClick,
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleDumpClick, this));
-    (getWidget<CEGUI::Scrollbar> ("CaelumLab/ResetButton"))->subscribeEvent(
-            CEGUI::Window::EventMouseClick,
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleResetClick, this));
-    (getWidget<CEGUI::Scrollbar> ("CaelumLab/QuitButton"))->subscribeEvent(
-            CEGUI::Window::EventMouseClick,
-            CEGUI::Event::Subscriber(&CaelumLabFrameListener::handleQuitClick, this));
-
-    mScriptingUI.init ();
-    initMaterialSchemeUI ();
-}
-
-CEGUI::MouseButton convertOISMouseButtonToCegui (int buttonID) {
-    switch (buttonID) {
-        case 0: return CEGUI::LeftButton;
-        case 1: return CEGUI::RightButton;
-        case 2:	return CEGUI::MiddleButton;
-        case 3: return CEGUI::X1Button;
-        default: return CEGUI::LeftButton;
+    if (!mCaelumSystem) {
+        return;
     }
+    mRoot->removeFrameListener (mCaelumSystem.get ());
+    getRenderWindow ()->removeListener (mCaelumSystem.get ());
+    mCaelumSystem.reset();
 }
 
-bool CaelumLabFrameListener::mouseMoved (const OIS::MouseEvent &arg) {
-    CEGUI::System::getSingleton ().injectMouseMove (arg.state.X.rel, arg.state.Y.rel);
-    return true;
-}
-
-bool CaelumLabFrameListener::mousePressed (const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+void CaelumLabApplication::initDepthComposer ()
 {
-    CEGUI::System::getSingleton ().injectMouseButtonDown (convertOISMouseButtonToCegui (id));
-    return true;
+    mCaelumSystem->setDepthComposer (new DepthComposer (mSceneMgr));
+
+    mCaelumSystem->setGroundFogDensityMultiplier (0.03);
+    mCaelumSystem->getDepthComposer ()->setGroundFogVerticalDecay (0.06);
+    mCaelumSystem->getDepthComposer ()->setGroundFogBaseLevel (0);
 }
 
-bool CaelumLabFrameListener::mouseReleased (const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+void CaelumLabApplication::setShadowsEnabled (bool enabled)
 {
-    CEGUI::System::getSingleton ().injectMouseButtonUp (convertOISMouseButtonToCegui (id));
-    return true;
-}
+    mShadowsEnabled = enabled;
 
-bool CaelumLabFrameListener::keyPressed (const OIS::KeyEvent &arg)
-{
-    if (arg.key == OIS::KC_ESCAPE) {
-        mShutdownRequested = true;
-    }
-    CEGUI::System::getSingleton ().injectKeyDown (arg.key);
-    CEGUI::System::getSingleton ().injectChar (arg.text);
-    return true;
-}
+    auto matProfile = static_cast<TerrainMaterialGeneratorA::SM2Profile*>(
+            mTerrainGlobals->getDefaultMaterialGenerator ()->getActiveProfile ());
+    matProfile->setReceiveDynamicShadowsEnabled (enabled);
 
-bool CaelumLabFrameListener::keyReleased (const OIS::KeyEvent &arg)
-{
-    CEGUI::System::getSingleton ().injectKeyUp (arg.key);
-    return true;
-}
-
-bool CaelumLabFrameListener::handleMouseMove(const CEGUI::EventArgs& evt) {
-    const CEGUI::MouseEventArgs& me = static_cast<const CEGUI::MouseEventArgs&>(evt);
-
-    // Rotate camera
-    if (mMouse->getMouseState ().buttonDown (OIS::MB_Right)) {
-        // Timing does not matter for RotX/RotY; only mouse motion.
-        mRotX += Ogre::Degree(-me.moveDelta.d_x * 0.5);
-        mRotY += Ogre::Degree(-me.moveDelta.d_y * 0.5);
-        CEGUI::MouseCursor::getSingleton ().setPosition (mLastMousePosition);
+    RTShader::RenderState* renderState = mShaderGenerator->getRenderState (MSN_SHADERGEN);
+    if (auto srs = renderState->getSubRenderState (RTShader::SRS_SHADOW_MAPPING)) {
+        renderState->removeSubRenderState (srs);
     }
 
-    return true;
-}
+    if (enabled) {
+        // Use the integrated PSSM of the RTSS for the sun light.
+        mSceneMgr->setShadowTechnique (SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
+        mSceneMgr->setShadowFarDistance (3000);
+        mSceneMgr->setShadowTextureCountPerLightType (Ogre::Light::LT_DIRECTIONAL, 3);
+        mSceneMgr->setShadowTextureCount (3);
+        mSceneMgr->setShadowTextureConfig (0, 2048, 2048, PF_DEPTH16);
+        mSceneMgr->setShadowTextureConfig (1, 1024, 1024, PF_DEPTH16);
+        mSceneMgr->setShadowTextureConfig (2, 1024, 1024, PF_DEPTH16);
+        mSceneMgr->setShadowTextureSelfShadow (true);
+        mSceneMgr->setShadowCasterRenderBackFaces (true);
 
-bool CaelumLabFrameListener::handleMouseUp(const CEGUI::EventArgs& evt) {
-    //const CEGUI::MouseEventArgs& me = static_cast<const CEGUI::MouseEventArgs&>(evt);
-
-    if (!rightMouseDown()) {
-        CEGUI::MouseCursor::getSingleton ().show ();
-        if (mLastMousePositionSet) {
-            CEGUI::MouseCursor::getSingleton ().setPosition (mLastMousePosition);
-            mLastMousePositionSet = false;
+        if (!mPSSMSetup) {
+            mPSSMSetup = PSSMShadowCameraSetup::create ();
         }
-        CEGUI::WindowManager::getSingleton ().getWindow("CaelumLab")->releaseInput ();
+        mSceneMgr->setShadowCameraSetup (mPSSMSetup);
+        updatePSSMSplitPoints ();
+
+        auto pssm = static_cast<PSSMShadowCameraSetup*> (mPSSMSetup.get ());
+        auto subRenderState = mShaderGenerator->createSubRenderState (RTShader::SRS_SHADOW_MAPPING);
+        subRenderState->setParameter ("split_points", pssm->getSplitPoints ());
+        renderState->addTemplateSubRenderState (subRenderState);
+        matProfile->setReceiveDynamicShadowsPSSM (pssm);
+    } else {
+        mSceneMgr->setShadowTechnique (SHADOWTYPE_NONE);
     }
 
-    return true;
+    mShaderGenerator->invalidateScheme (MSN_SHADERGEN);
 }
 
-bool CaelumLabFrameListener::handleMouseDown(const CEGUI::EventArgs& evt) {
-    //const CEGUI::MouseEventArgs& me = static_cast<const CEGUI::MouseEventArgs&>(evt);
+void CaelumLabApplication::updatePSSMSplitPoints ()
+{
+    auto pssm = static_cast<PSSMShadowCameraSetup*> (mPSSMSetup.get ());
+    Real nearClip = mCamera->getNearClipDistance ();
+    pssm->setSplitPadding (nearClip * 2);
+    pssm->calculateSplitPoints (3, nearClip, mSceneMgr->getShadowFarDistance ());
+    pssm->setOptimalAdjustFactor (0, 2);
+    pssm->setOptimalAdjustFactor (1, 1);
+    pssm->setOptimalAdjustFactor (2, 0.5);
 
-    if (rightMouseDown()) {
-        CEGUI::MouseCursor::getSingleton ().hide ();
-        if (!mLastMousePositionSet) {
-            mLastMousePosition = CEGUI::MouseCursor::getSingleton ().getPosition ();
-            mLastMousePositionSet = true;
-        }
-        CEGUI::WindowManager::getSingleton ().getWindow("CaelumLab")->captureInput ();
+    if (auto srs = mShaderGenerator->getRenderState (MSN_SHADERGEN)->getSubRenderState (RTShader::SRS_SHADOW_MAPPING)) {
+        srs->setParameter ("split_points", pssm->getSplitPoints ());
     }
-
-    return true;
 }
 
-const String formatTime(int year, int month, int day, int hour, int minute, int second) {
-    return StringConverter::toString(year, 4, '0') + "-" +
-           StringConverter::toString(month, 2, '0') + "-" +
-           StringConverter::toString(day, 2, '0') + "T" +
-           StringConverter::toString(hour, 2, '0') + ":" +
-           StringConverter::toString(minute, 2, '0') + ":" +
-           StringConverter::toString(second, 2, '0');
+static String formatTime (int year, int month, int day, int hour, int minute, int second) {
+    return StringUtil::format ("%04d-%02d-%02dT%02d:%02d:%02d", year, month, day, hour, minute, second);
 }
 
-const String formatTimeFromJDay (LongReal jday) {
+static String formatTimeFromJDay (LongReal jday) {
     int year, month, day, hour, minute;
     LongReal second;
     Astronomy::getGregorianDateTimeFromJulianDay(jday, year, month, day, hour, minute, second);
     return formatTime(year, month, day, hour, minute, static_cast<int>(second));
 }
 
-const String formatDegMinSec (Ogre::Degree angle) {
+static String formatDegMinSec (Ogre::Degree angle) {
     Real aa = Math::Abs(angle.valueDegrees());
-    String sign = (angle.valueDegrees() < 0) ? "-" : "";
     int sec = (int)(aa * 3600);
-    return sign +
-            StringConverter::toString(sec / 3600, 2, '0') +  "\xB0" +
-            StringConverter::toString(sec / 60 % 60, 2, '0') + "`" + 
-            StringConverter::toString(sec % 60, 2, '0') + "``";
+    return StringUtil::format ("%s%02dd%02d'%02d\"",
+            (angle.valueDegrees() < 0) ? "-" : "", sec / 3600, sec / 60 % 60, sec % 60);
 }
 
-const String formatHorizDirection (Ogre::Degree azm, Ogre::Degree alt) {
-    //Real az = azm.valueDegrees();
-    //Real al = alt.valueDegrees();
+static String formatHorizDirection (Ogre::Degree azm, Ogre::Degree alt) {
     Real az = fmod(fmod(azm.valueDegrees(), 360) + 360, 360);
-    assert(0 <= az && az <= 360);
     Real al = fmod(fmod(alt.valueDegrees() + 180, 360) - 180, 360);
-    assert(-180 <= al && al <= 180);
     return "azm " + formatDegMinSec(Degree(az)) + " alt " + formatDegMinSec(Degree(al));
 }
 
-const String formatHorizDirection (Vector3 dir) {
+static String formatHorizDirection (Vector3 dir) {
     LongReal theta, phi, r;
     Astronomy::convertRectangularToSpherical(
                 -dir.z, dir.x, -dir.y,
@@ -302,881 +244,394 @@ const String formatHorizDirection (Vector3 dir) {
     return formatHorizDirection(Degree(theta), Degree(phi));
 }
 
-bool CaelumLabFrameListener::updateInput (const FrameEvent& evt)
-{
-    // Keyboard input; should probably replace ExampleFrameListener calls
-    if (evt.timeSinceLastFrame == 0) {
-        mMoveScale = 1;
-    } else {
-        mMoveScale = mMoveSpeed * evt.timeSinceLastFrame;
-    }
-    if (!processUnbufferedKeyInput (evt)) {
-        return false;
-    }
-
-    /*
-    // Precise per-frame magic.
-    LogManager::getSingleton().getDefaultLog()->logMessage(
-			"Caelum lab"
-			" update seconds: " + StringConverter::toString(evt.timeSinceLastFrame, 10) +
-            " move scale = " + StringConverter::toString(mMoveScale, 10) +
-            " move speed = " + StringConverter::toString(mMoveSpeed, 10) +
-            " move relative = " + StringConverter::toString(mTranslateVector));
-    */
-
-    // Do the actual motion.
-    mCamera->yaw(mRotX);
-    mCamera->pitch(mRotY);
-    mCamera->moveRelative(mTranslateVector);
-
-    // Clear motion.
-    mRotX = 0;
-    mRotY = 0;
-    mTranslateVector = Ogre::Vector3::ZERO;
-
-    return true;
+static void labelText (const char* label, const String& text) {
+    ImGui::LabelText (label, "%s", text.c_str ());
 }
 
-void CaelumLabFrameListener::dumpRenderTargets ()
+/// Logarithmic slider for a Real; returns if the value was changed.
+static bool sliderReal (const char* label, Real& value, Real minValue, Real maxValue, bool logarithmic = false) {
+    float tmp = value;
+    bool changed = ImGui::SliderFloat (label, &tmp, minValue, maxValue, logarithmic ? "%.5g" : "%.3f",
+            logarithmic ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None);
+    if (changed) {
+        value = tmp;
+    }
+    return changed;
+}
+
+void CaelumLabApplication::drawTimeUI ()
 {
-    // This does not include RTT strangely
-    Ogre::RenderSystem::RenderTargetIterator rtit =
-            Ogre::Root::getSingletonPtr()->getRenderSystem()->getRenderTargetIterator();
-    while (rtit.hasMoreElements()) {
-        Ogre::RenderTarget* rt = rtit.getNext();
-        Ogre::String name = rt->getName();
-        std::replace(name.begin(), name.end(), '/', '_');
-        Ogre::String fileName = rt->writeContentsToTimestampedFile("RTDump ", " " + name + ".png");
-        Ogre::LogManager::getSingletonPtr()->logMessage("Written render target " + rt->getName() + " to " + fileName);
+    UniversalClock* clock = mCaelumSystem->getUniversalClock ();
+
+    // The precision of float is not enough here.
+    double jday = clock->getJulianDay ();
+    if (ImGui::InputDouble ("Julian day", &jday, 0, 0, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        clock->setJulianDay (Math::Clamp (jday, -10000000.0, 10000000.0));
+    }
+    labelText ("UTC time", formatTimeFromJDay (jday));
+
+    Real timeScale = clock->getTimeScale ();
+    if (sliderReal ("Time scale", timeScale, -10000, 10000, true)) {
+        clock->setTimeScale (timeScale);
+    }
+    if (ImGui::Button ("Pause")) {
+        clock->setTimeScale (0);
+    }
+    ImGui::SameLine ();
+    if (ImGui::Button ("Real time")) {
+        clock->setTimeScale (1);
     }
 }
 
-void CaelumLabFrameListener::dumpRenderQueueShadows ()
+void CaelumLabApplication::drawCameraUI ()
 {
-    RenderQueue::QueueGroupIterator it = mSceneMgr->getRenderQueue()->_getQueueGroupIterator();
-    while (it.hasMoreElements()) {
-        int key = it.peekNextKey();
-        RenderQueueGroup* rqg = it.getNext();
-        Ogre::LogManager::getSingletonPtr()->logMessage(
-                "Render queue group " + StringConverter::toString(key) +
-                " shadows " + StringConverter::toString(rqg->getShadowsEnabled()));
+    labelText ("Position", StringConverter::toString (mCamera->getDerivedPosition ()));
+    labelText ("Direction", formatHorizDirection (-mCamera->getDerivedDirection ()));
+
+    Real speed = mCameraMan->getTopSpeed ();
+    if (sliderReal ("Speed", speed, 0.05, 500, true)) {
+        mCameraMan->setTopSpeed (speed);
     }
-    Ogre::LogManager::getSingletonPtr()->logMessage(
-            "World geometry render queue group " + 
-            StringConverter::toString(mSceneMgr->getWorldGeometryRenderQueue()));
-}
 
-void CaelumLabFrameListener::dumpMaterialNames ()
-{
-    MaterialManager::ResourceMapIterator it = Ogre::MaterialManager::getSingleton ().getResourceIterator ();
-    while (it.hasMoreElements()) {
-        Ogre::ResourcePtr res = it.getNext();
-        Ogre::MaterialPtr mat = static_cast<Ogre::MaterialPtr>(res);
-        Ogre::LogManager::getSingletonPtr()->logMessage(
-                "Material name " + mat->getName());
+    Real fov = mCamera->getFOVy ().valueDegrees ();
+    if (sliderReal ("FOV", fov, 1, 120)) {
+        mCamera->setFOVy (Ogre::Degree (fov));
     }
-}
 
-bool CaelumLabFrameListener::handleDumpClick (const CEGUI::EventArgs& args)
-{
-    //dumpRenderTargets ();
-    dumpMaterialNames ();
-    //dumpRenderQueueShadows ();
-
-    return true;
-}
-
-
-bool CaelumLabFrameListener::handleResetClick (const CEGUI::EventArgs& args)
-{
-    destroyCaelum ();
-    initCaelum ();
-
-    return true;
-}
-
-bool CaelumLabFrameListener::handleQuitClick (const CEGUI::EventArgs& args)
-{
-    mShutdownRequested = true;
-
-    return true;
-}
-
-template <typename T>
-inline T clamp(const T& value, const T& minValue, const T& maxValue) {
-    return std::min(maxValue, std::max(minValue, value));
-}
-
-struct ExpSliderMapper
-{
-    Real MinValue;
-    Real MaxValue;
-    Real MagicValue;
-    Real MagicPosition;
-    Real Exponent;
-
-    Real valueToPosition (Real value)
-    {
-        assert(MinValue <= MagicValue && MagicValue <= MaxValue);
-        assert(0 <= MagicPosition && MagicPosition <= 1);
-
-        value = clamp (value, MinValue, MaxValue);
-
-        Real relPosition;
-        if (value < MagicValue) {
-            relPosition = pow ((MagicValue - value) / (MagicValue - MinValue), 1 / Exponent);
-        } else {
-            relPosition = pow ((value - MagicValue) / (MaxValue - MagicValue), 1 / Exponent);
+    Real nearClip = mCamera->getNearClipDistance ();
+    if (sliderReal ("Near clip", nearClip, 0.00001, 500, true)) {
+        mCamera->setNearClipDistance (nearClip);
+        // See the effect of clip distances on PSSM in real-time.
+        if (mShadowsEnabled) {
+            updatePSSMSplitPoints ();
         }
-        relPosition = clamp<Real> (relPosition, 0, 1);
-
-        Real position;
-        if (value < MagicValue) {
-            position = (1 - relPosition) * MagicPosition;
-        } else {
-            position = relPosition * (1 - MagicPosition) + MagicPosition;
-        }
-        position = clamp<Real> (position, 0, 1);
-
-        return position;
     }
 
-    Real positionToValue (Real position)
-    {
-        assert(MinValue <= MagicValue && MagicValue <= MaxValue);
-        assert(0 <= MagicPosition && MagicPosition <= 1);
-
-        position = clamp<Real> (position, 0, 1);
-
-        Real relValue;
-        if (position < MagicPosition) {
-            relValue = pow ((MagicPosition - position) / MagicPosition, Exponent);
-        } else {
-            relValue = pow ((position - MagicPosition) / (1 - MagicPosition), Exponent);
-        }
-        relValue = clamp<Real> (relValue, 0, 1);
-
-        Real value;
-        if (position < MagicPosition) {
-            value = MagicValue + (MinValue - MagicValue) * relValue;
-        } else {
-            value = MagicValue + (MaxValue - MagicValue) * relValue;
-        }
-        value = clamp (value, MinValue, MaxValue);
-
-        return value;
-    }
-};
-
-bool CaelumLabFrameListener::updateScrollbarTweak (
-        const Ogre::String& editboxName,
-        const Ogre::String& scrollbarName,
-        Real& value,
-        Real minValue,
-        Real maxValue,
-        Real magicValue,
-        Real magicPosition,
-        Real exponent)
-{
-    CEGUI::Editbox* editbox = getWidget<CEGUI::Editbox> (editboxName.c_str());
-    CEGUI::Scrollbar* scrollbar = getWidget<CEGUI::Scrollbar> (scrollbarName.c_str());
-
-    ExpSliderMapper mapper = { minValue, maxValue, magicValue, magicPosition, exponent };
-    if (magicPosition < 0) {
-        magicValue = minValue + maxValue / 2;
-        magicPosition = 0.5;
-        exponent = 1;
-    }
-    if (editbox->hasInputFocus ()) {
-        value = StringConverter::parseReal(String(editbox->getText ().c_str()));
-        value = std::max(minValue, std::min(maxValue, value));
-        scrollbar->setScrollPosition (mapper.valueToPosition(value));
-        return true;
-    } else if (scrollbar->getThumb ()->isPushed ()) {
-        assert(scrollbar->getPageSize() == 0);
-        assert(scrollbar->getDocumentSize() == 1);
-        value = mapper.positionToValue (scrollbar->getScrollPosition ());
-        editbox->setText (StringConverter::toString (value));
-        return true;
-    } else {
-        editbox->setText (StringConverter::toString (value));
-        scrollbar->setScrollPosition (mapper.valueToPosition(value));
-        return false;
+    Real farClip = mCamera->getFarClipDistance ();
+    if (sliderReal ("Far clip (0 = inf)", farClip, 0, 50000, true)) {
+        mCamera->setFarClipDistance (farClip);
     }
 }
 
-bool CaelumLabFrameListener::updateScrollbarTweak (
-        const Ogre::String& editboxName,
-        const Ogre::String& scrollbarName,
-        Real& value,
-        Real minValue,
-        Real maxValue)
-{
-    // Pass through with dummy exponential parameters.
-    return updateScrollbarTweak(
-            editboxName, scrollbarName,
-            value, minValue, maxValue,
-            (minValue + maxValue) / 2, 0.5, 1);
-}
-
-bool CaelumLabFrameListener::handleTimeScaleDoubleClick (const CEGUI::EventArgs& args)
-{
-    mCaelumSystem->getUniversalClock ()->setTimeScale (1);
-    getWidget<CEGUI::Editbox> ("CaelumLab/TimeScaleEditbox")->setText ("1");
-    getWidget<CEGUI::Scrollbar> ("CaelumLab/TimeScaleScrollbar")->setScrollPosition (0.5f);
-
-    return true;
-}
-
-void CaelumLabFrameListener::updateWidgets ()
+void CaelumLabApplication::drawSunMoonUI ()
 {
     LongReal jday = mCaelumSystem->getUniversalClock ()->getJulianDay ();
 
-    // Time
-    { 
-        // Bind julian day. The precission of ogre's string converter is not enough here.
-        CEGUI::Editbox* julianDayEditbox = getWidget<CEGUI::Editbox> ("CaelumLab/JulianDayEditbox");
-        if (julianDayEditbox->hasInputFocus ()) {
-            std::stringstream jdaystr (std::string(julianDayEditbox->getText ().c_str()));
-            jdaystr >> jday;
-            jday = std::max(-10000000.0, std::min(10000000.0, jday));
-            mCaelumSystem->getUniversalClock ()->setJulianDay (jday);
-        } else {
-            std::stringstream jdaystr;
-            jdaystr.precision(15);
-            jdaystr << jday;
-            julianDayEditbox->setText (jdaystr.str());
-        }
-        getWidget<CEGUI::Editbox> ("CaelumLab/UtcTimeEditbox")->setText (formatTimeFromJDay(jday));
-
-        // Bind time scale
-        Real mul = mCaelumSystem->getUniversalClock ()->getTimeScale ();
-        if (updateScrollbarTweak(
-                "CaelumLab/TimeScaleEditbox",
-                "CaelumLab/TimeScaleScrollbar",
-                mul, -10000, 10000, 1, 0.5, 3))
-        {
-            mCaelumSystem->getUniversalClock ()->setTimeScale (mul);
+    if (BaseSkyLight* sun = mCaelumSystem->getSun ()) {
+        labelText ("Sun direction", formatHorizDirection (mCaelumSystem->getSunDirection (jday)));
+        ImGui::Checkbox ("Follow sun", &mFollowSun);
+        if (mFollowSun) {
+            mCameraNode->setDirection (-sun->getLightDirection (), Node::TS_WORLD);
         }
     }
 
-    // Camera
-    {
-        getWidget<CEGUI::Editbox> ("CaelumLab/CameraPositionEditbox")->setText (
-                StringConverter::toString (mCamera->getDerivedPosition ()));
-        getWidget<CEGUI::Editbox> ("CaelumLab/CameraDirectionEditbox")->setText (
-                formatHorizDirection (-mCamera->getDerivedDirection()));
-
-        updateScrollbarTweak("CaelumLab/CameraSpeedEditbox", "CaelumLab/CameraSpeedScrollbar",
-                mMoveSpeed, 0.05, 500, 0.05, 0, 3);
-
-        Real fov = mCamera->getFOVy ().valueDegrees ();
-        updateScrollbarTweak("CaelumLab/CameraFovEditbox", "CaelumLab/CameraFovScrollbar",
-                fov, 1, 120);
-        mCamera->setFOVy (Ogre::Degree(fov));
-
-        bool clipDistancesModified = false;
-
-        Real nearClip = mCamera->getNearClipDistance ();
-        clipDistancesModified |= updateScrollbarTweak(
-                "CaelumLab/CameraNearClipEditbox",
-                "CaelumLab/CameraNearClipScrollbar",
-                nearClip, 0.00001, 500, 0.00001, 0, 5);
-        mCamera->setNearClipDistance (nearClip);
-
-        Real farClip = mCamera->getFarClipDistance ();
-        clipDistancesModified |= updateScrollbarTweak(
-                "CaelumLab/CameraFarClipEditbox",
-                "CaelumLab/CameraFarClipScrollbar",
-                farClip, 0, 50000, 0, 0, 4);
-        mCamera->setFarClipDistance (farClip);
-
-        // See the effect of clip distances on PSSM in real-time.
-        if (clipDistancesModified) {
-            if (mMaterialScheme == SMS_PSSM) {
-                updatePSSMCamera();
-            }
-        }
-    }
-
-    // Sun stuff. Add more here.
-    if (mCaelumSystem->getSun ()) {
-        getWidget<CEGUI::Editbox> ("CaelumLab/SunDirectionEditbox")->setText (
-                formatHorizDirection (mCaelumSystem->getSunDirection (jday)));
-        if (getWidget<CEGUI::PushButton> ("CaelumLab/SunDirectionFocusButton")->isPushed()) {
-            mCamera->setDirection (-mCaelumSystem->getSun ()->getLightDirection ());
-        }
-    }
-
-    // Moon stuff
-    if (mCaelumSystem->getMoon ()) {
+    if (Moon* moon = mCaelumSystem->getMoon ()) {
         Ogre::Vector3 moondir = mCaelumSystem->getMoonDirection (jday);
-        getWidget<CEGUI::Editbox> ("CaelumLab/MoonDirectionEditbox")->setText (
-                formatHorizDirection (moondir));
-        getWidget<CEGUI::Editbox> ("CaelumLab/MoonPhaseEditbox")->setText (
-                StringConverter::toString (mCaelumSystem->getMoonPhase (jday)));
-        getWidget<CEGUI::Editbox> ("CaelumLab/MoonLightEditbox")->setText (
-                StringConverter::toString (mCaelumSystem->getMoonLightColour (moondir)));
-        if (getWidget<CEGUI::PushButton> ("CaelumLab/MoonDirectionFocusButton")->isPushed()) {
-            mCamera->setDirection (-mCaelumSystem->getMoon ()->getLightDirection ());
-        }
-    }
-
-    // Clouds
-	if (mCaelumSystem->getCloudSystem ())
-    {
-        if (mCaelumSystem->getCloudSystem ()->getLayerCount() > 0) {
-            Real cover1 = mCaelumSystem->getCloudSystem ()->getLayer (0)->getCloudCover ();
-            updateScrollbarTweak("CaelumLab/CloudLayer1CoverEditbox", "CaelumLab/CloudLayer1CoverScrollbar",
-                    cover1, 0, 1);
-            mCaelumSystem->getCloudSystem ()->getLayer (0)->setCloudCover (cover1);
-            Real height1 = mCaelumSystem->getCloudSystem ()->getLayer (0)->getHeight ();
-            updateScrollbarTweak("CaelumLab/CloudLayer1HeightEditbox", "CaelumLab/CloudLayer1HeightScrollbar",
-                    height1, 100, 15000);
-            mCaelumSystem->getCloudSystem ()->getLayer (0)->setHeight (height1);
-        }
-
-        if (mCaelumSystem->getCloudSystem ()->getLayerCount() > 1) {
-            Real cover2 = mCaelumSystem->getCloudSystem ()->getLayer (1)->getCloudCover ();
-            updateScrollbarTweak("CaelumLab/CloudLayer2CoverEditbox", "CaelumLab/CloudLayer2CoverScrollbar",
-                    cover2, 0, 1);
-            mCaelumSystem->getCloudSystem ()->getLayer (1)->setCloudCover (cover2);
-            Real height2 = mCaelumSystem->getCloudSystem ()->getLayer (1)->getHeight ();
-            updateScrollbarTweak("CaelumLab/CloudLayer2HeightEditbox", "CaelumLab/CloudLayer2HeightScrollbar",
-                    height2, 100, 15000);
-            mCaelumSystem->getCloudSystem ()->getLayer (1)->setHeight (height2);
-        }
-	}	
-
-    // Starfield
-    if (mCaelumSystem->getPointStarfield ())
-    {
-        Real magScale = mCaelumSystem->getPointStarfield ()->getMagnitudeScale ();
-        updateScrollbarTweak("CaelumLab/StarMagScaleEditbox", "CaelumLab/StarMagScaleScrollbar",
-                magScale, 1, 5);
-        mCaelumSystem->getPointStarfield ()->setMagnitudeScale (magScale);
-
-        Real mag0size = mCaelumSystem->getPointStarfield ()->getMag0PixelSize ();
-        updateScrollbarTweak("CaelumLab/StarMag0SizeEditbox", "CaelumLab/StarMag0SizeScrollbar",
-                mag0size, 0, 50);
-        mCaelumSystem->getPointStarfield ()->setMag0PixelSize (mag0size);
-
-        Real minSize = mCaelumSystem->getPointStarfield ()->getMinPixelSize ();
-        updateScrollbarTweak("CaelumLab/StarMinSizeEditbox", "CaelumLab/StarMinSizeScrollbar",
-                minSize, 0, 50);
-        mCaelumSystem->getPointStarfield ()->setMinPixelSize (minSize);
-
-        Real maxSize = mCaelumSystem->getPointStarfield ()->getMaxPixelSize ();
-        updateScrollbarTweak("CaelumLab/StarMaxSizeEditbox", "CaelumLab/StarMaxSizeScrollbar",
-                maxSize, 0, 50);
-        mCaelumSystem->getPointStarfield ()->setMaxPixelSize (maxSize);
-    }
-
-    // Precipitation.
-	if (PrecipitationController* prec = mCaelumSystem->getPrecipitationController ())
-    {
-        // A combo would be much better here.
-		Real typeReal = prec->getPresetType ();
-		updateScrollbarTweak(
-                "CaelumLab/PrecipitationTypeEditbox",
-                "CaelumLab/PrecipitationTypeScrollbar",
-                typeReal, 0, 8);
-        Caelum::PrecipitationType typeEnum = static_cast<Caelum::PrecipitationType>(static_cast<int>(typeReal));
-        if (prec->getPresetType () != typeEnum && PrecipitationController::isPresetType(typeEnum)) {
-			prec->setPresetType (typeEnum);
-        }
-
-		Real speed = prec->getSpeed ();
-		if (updateScrollbarTweak (
-                "CaelumLab/PrecipitationSpeedEditbox",
-                "CaelumLab/PrecipitationSpeedScrollbar",
-                speed, 0, 1))
-        {
-		    prec->setSpeed (speed);
-        }
-
-	    Real intensity = prec->getIntensity ();
-		updateScrollbarTweak (
-				"CaelumLab/PrecipitationIntensityEditbox",
-				"CaelumLab/PrecipitationIntensityScrollbar",
-                intensity, 0, 1);
-		prec->setIntensity (intensity);
-	}
-
-    updateDepthComposerWidgets ();
-    updateMaterialSchemeUI ();
-}
-
-void CaelumLabFrameListener::initDepthComposer ()
-{
-    mCaelumSystem->setDepthComposer (new DepthComposer (mSceneMgr));
-
-    DepthComposerInstance* inst = mCaelumSystem->getDepthComposer ()->getViewportInstance (getViewport ());
-    //inst->getDepthRenderer()->setRenderGroupRangeFilter (20, 80);
-    inst->getDepthRenderer()->setViewportVisibilityMask (~0x00001000);
-    mCaelumSystem->forceSubcomponentVisibilityFlags (0x00001000);
-
-    mCaelumSystem->setGroundFogDensityMultiplier (0.03);
-    mCaelumSystem->getDepthComposer ()->setGroundFogVerticalDecay (0.06);
-    mCaelumSystem->getDepthComposer ()->setGroundFogBaseLevel (0);
-
-    initDepthComposerWidgets ();
-    updateDepthComposerWidgets ();
-}
-
-void CaelumLabFrameListener::setupDepthComposerFlags ()
-{
-    assert (mCaelumSystem->getDepthComposer () && "No depth composer");
-    DepthComposerInstance* inst = mCaelumSystem->getDepthComposer ()->getViewportInstance (getViewport ());
-    //inst->getDepthRenderer()->setRenderGroupRangeFilter (20, 80);
-    inst->getDepthRenderer()->setViewportVisibilityMask (~0x00001000);
-    mCaelumSystem->forceSubcomponentVisibilityFlags (0x00001000);
-}
-
-void CaelumLabFrameListener::disableDepthComposer ()
-{
-    mCaelumSystem->setDepthComposer (0);
-}
-
-void CaelumLabFrameListener::initDepthComposerWidgets ()
-{
-    CEGUI::Checkbox* cbEnabled = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/EnabledCheckbox");
-    CEGUI::Checkbox* cbDebug = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/DebugDepthRenderCheckbox");
-    CEGUI::Checkbox* cbSkyDomeHaze = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/SkyDomeHazeCheckbox");
-    CEGUI::Checkbox* cbExpGroundFog = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/GroundFogCheckbox");
-
-    Caelum::DepthComposer* composer = mCaelumSystem->getDepthComposer();
-    cbEnabled->setSelected (composer != 0);
-    cbDebug->setSelected (composer != 0 && composer->getDebugDepthRender ());
-    cbSkyDomeHaze->setSelected (composer != 0 && composer->getSkyDomeHazeEnabled ());
-    cbExpGroundFog->setSelected (composer != 0 && composer->getGroundFogEnabled ());
-}
-
-void CaelumLabFrameListener::updateDepthComposerWidgets ()
-{
-    CEGUI::Checkbox* cbEnabled = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/EnabledCheckbox");
-    CEGUI::Checkbox* cbDebug = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/DebugDepthRenderCheckbox");
-    CEGUI::Checkbox* cbSkyDomeHaze = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/SkyDomeHazeCheckbox");
-    CEGUI::Checkbox* cbExpGroundFog = getWidget<CEGUI::Checkbox> (
-            "CaelumLab/DepthComposer/GroundFogCheckbox");
-
-    if (cbEnabled->isSelected () == true && mCaelumSystem->getDepthComposer () == 0) {
-        initDepthComposer ();
-    }
-    if (cbEnabled->isSelected () != true && mCaelumSystem->getDepthComposer () != 0) {
-        disableDepthComposer ();
-    }
-
-    bool enableCompositor = mCaelumSystem->getDepthComposer () != 0;
-    cbDebug->setEnabled (enableCompositor);
-    bool debugDepthRender = (cbDebug->isSelected() && !cbDebug->isDisabled());
-    cbSkyDomeHaze->setEnabled (enableCompositor && !debugDepthRender);
-    cbExpGroundFog->setEnabled (enableCompositor && !debugDepthRender);
-    bool enableExpGroundFog = (cbExpGroundFog->isSelected() && !cbExpGroundFog->isDisabled());
-    bool enableSkyDomeHaze = (cbSkyDomeHaze->isSelected() && !cbSkyDomeHaze->isDisabled());
-
-    getWindow ("CaelumLab/DepthComposer/GroundFogDensityLabel")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogDensityEditbox")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogDensityScrollbar")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogVerticalDecayLabel")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogVerticalDecayEditbox")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogVerticalDecayScrollbar")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogBaseLevelLabel")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogBaseLevelEditbox")->setEnabled (enableExpGroundFog);
-    getWindow ("CaelumLab/DepthComposer/GroundFogBaseLevelScrollbar")->setEnabled (enableExpGroundFog);
-
-    if (mCaelumSystem->getDepthComposer ())
-    {
-        mCaelumSystem->getDepthComposer ()->setDebugDepthRender (debugDepthRender);
-        mCaelumSystem->getDepthComposer ()->setSkyDomeHazeEnabled (enableSkyDomeHaze);
-        mCaelumSystem->getDepthComposer ()->setGroundFogEnabled (enableExpGroundFog);
-    }
-
-    if (mCaelumSystem->getDepthComposer ())
-    {
-        Real tmp;
-
-        // HACK: Control density through CaelumSystem.
-        tmp = mCaelumSystem->getGroundFogDensityMultiplier ();
-        updateScrollbarTweak(
-                "CaelumLab/DepthComposer/GroundFogDensityEditbox",
-                "CaelumLab/DepthComposer/GroundFogDensityScrollbar",
-                tmp, 0, 1.5, 0, 0, 5);
-        mCaelumSystem->setGroundFogDensityMultiplier (tmp);
-
-        // Vertical decay
-        tmp = mCaelumSystem->getDepthComposer ()->getGroundFogVerticalDecay ();
-        updateScrollbarTweak(
-                "CaelumLab/DepthComposer/GroundFogVerticalDecayEditbox",
-                "CaelumLab/DepthComposer/GroundFogVerticalDecayScrollbar",
-                tmp, 0, 5, 0, 0, 5);
-        mCaelumSystem->getDepthComposer ()->setGroundFogVerticalDecay (tmp);
-
-        // Base level
-        tmp = mCaelumSystem->getDepthComposer ()->getGroundFogBaseLevel ();
-        updateScrollbarTweak(
-                "CaelumLab/DepthComposer/GroundFogBaseLevelEditbox",
-                "CaelumLab/DepthComposer/GroundFogBaseLevelScrollbar",
-                tmp, -50, 200);
-        mCaelumSystem->getDepthComposer ()->setGroundFogBaseLevel (tmp);
-    }
-}
-
-// Recursive implementation of setTerrainShadowsOn
-void forceTerrainShadows(Ogre::SceneNode* node, bool enabled)
-{
-    // Look at child nodes.
-    SceneNode::ChildNodeIterator childIterator = node->getChildIterator();
-    while (childIterator.hasMoreElements()) {
-        SceneNode* childNode = static_cast<SceneNode*>(childIterator.getNext());
-        forceTerrainShadows(childNode, enabled);
-    }
-
-    // Look at attached objects.
-    SceneNode::ObjectIterator objectIterator = node->getAttachedObjectIterator();
-    while (objectIterator.hasMoreElements()) {
-        MovableObject* object = objectIterator.getNext();
-        //LogManager::getSingleton().logMessage("Found object of type " + object->getMovableType());
-        if (object->getMovableType() == "TerrainMipMap") {
-            object->setCastShadows(enabled);
+        labelText ("Moon direction", formatHorizDirection (moondir));
+        labelText ("Moon phase", StringConverter::toString (mCaelumSystem->getMoonPhase (jday)));
+        labelText ("Moon light", StringConverter::toString (mCaelumSystem->getMoonLightColour (moondir)));
+        ImGui::Checkbox ("Follow moon", &mFollowMoon);
+        if (mFollowMoon) {
+            mCameraNode->setDirection (-moon->getLightDirection (), Node::TS_WORLD);
         }
     }
 }
 
-void CaelumLabFrameListener::setTerrainShadowsOn(bool value) {
-    if (mTerrainShadowsOn != value) {
-        mTerrainShadowsOn = value;
-        forceTerrainShadows (mSceneMgr->getRootSceneNode(), value);
+void CaelumLabApplication::drawCloudsUI ()
+{
+    CloudSystem* clouds = mCaelumSystem->getCloudSystem ();
+    if (!clouds) {
+        ImGui::TextDisabled ("No cloud system");
+        return;
+    }
+
+    for (int i = 0; i < clouds->getLayerCount (); ++i) {
+        ImGui::PushID (i);
+        FlatCloudLayer* layer = clouds->getLayer (i);
+        ImGui::Text ("Layer %d", i + 1);
+
+        Real cover = layer->getCloudCover ();
+        if (sliderReal ("Cover", cover, 0, 1)) {
+            layer->setCloudCover (cover);
+        }
+        Real height = layer->getHeight ();
+        if (sliderReal ("Height", height, 100, 15000)) {
+            layer->setHeight (height);
+        }
+        ImGui::PopID ();
     }
 }
 
-CaelumLabFrameListener::ScriptingUI::ScriptingUI (CaelumLabFrameListener* parent): mParent(parent)
+void CaelumLabApplication::drawStarfieldUI ()
 {
+    PointStarfield* stars = mCaelumSystem->getPointStarfield ();
+    if (!stars) {
+        ImGui::TextDisabled ("No point starfield");
+        return;
+    }
+
+    Real magScale = stars->getMagnitudeScale ();
+    if (sliderReal ("Magnitude scale", magScale, 1, 5)) {
+        stars->setMagnitudeScale (magScale);
+    }
+    Real mag0size = stars->getMag0PixelSize ();
+    if (sliderReal ("Mag0 pixel size", mag0size, 0, 50)) {
+        stars->setMag0PixelSize (mag0size);
+    }
+    Real minSize = stars->getMinPixelSize ();
+    if (sliderReal ("Min pixel size", minSize, 0, 50)) {
+        stars->setMinPixelSize (minSize);
+    }
+    Real maxSize = stars->getMaxPixelSize ();
+    if (sliderReal ("Max pixel size", maxSize, 0, 50)) {
+        stars->setMaxPixelSize (maxSize);
+    }
 }
 
-CaelumLabFrameListener::ScriptingUI::~ScriptingUI ()
+void CaelumLabApplication::drawPrecipitationUI ()
 {
+    PrecipitationController* prec = mCaelumSystem->getPrecipitationController ();
+    if (!prec) {
+        ImGui::TextDisabled ("No precipitation controller");
+        return;
+    }
+
+    static const char* typeNames[] = {
+        "Drizzle", "Rain", "Snow", "Snow grains", "Ice crystals", "Ice pellets", "Hail", "Small hail", "Custom"
+    };
+    int type = prec->getPresetType ();
+    if (ImGui::Combo ("Type", &type, typeNames, IM_ARRAYSIZE(typeNames))) {
+        Caelum::PrecipitationType typeEnum = static_cast<Caelum::PrecipitationType> (type);
+        if (PrecipitationController::isPresetType (typeEnum)) {
+            prec->setPresetType (typeEnum);
+        }
+    }
+
+    Real speed = prec->getSpeed ();
+    if (sliderReal ("Speed", speed, 0, 1)) {
+        prec->setSpeed (speed);
+    }
+    Real intensity = prec->getIntensity ();
+    if (sliderReal ("Intensity", intensity, 0, 1)) {
+        prec->setIntensity (intensity);
+    }
 }
 
-void CaelumLabFrameListener::ScriptingUI::initLoadableScriptList ()
+void CaelumLabApplication::drawDepthComposerUI ()
 {
-    mLoadableScriptList.clear();
+    bool enabled = mCaelumSystem->getDepthComposer () != 0;
+    if (ImGui::Checkbox ("Enabled", &enabled)) {
+        mDeferredActions.push_back ([this, enabled] () {
+            if (enabled) {
+                initDepthComposer ();
+            } else {
+                mCaelumSystem->setDepthComposer (0);
+            }
+        });
+    }
+
+    DepthComposer* composer = mCaelumSystem->getDepthComposer ();
+    ImGui::BeginDisabled (!composer);
+
+    bool debugDepthRender = composer && composer->getDebugDepthRender ();
+    if (ImGui::Checkbox ("Debug depth render", &debugDepthRender)) {
+        composer->setDebugDepthRender (debugDepthRender);
+    }
+
+    ImGui::BeginDisabled (debugDepthRender);
+    bool skyDomeHaze = composer && composer->getSkyDomeHazeEnabled ();
+    if (ImGui::Checkbox ("Sky dome haze", &skyDomeHaze)) {
+        composer->setSkyDomeHazeEnabled (skyDomeHaze);
+    }
+    bool groundFog = composer && composer->getGroundFogEnabled ();
+    if (ImGui::Checkbox ("Ground fog", &groundFog)) {
+        composer->setGroundFogEnabled (groundFog);
+    }
+
+    ImGui::BeginDisabled (!groundFog);
+    if (composer) {
+        // Density is controlled through CaelumSystem.
+        Real density = mCaelumSystem->getGroundFogDensityMultiplier ();
+        if (sliderReal ("Fog density", density, 0, 1.5, true)) {
+            mCaelumSystem->setGroundFogDensityMultiplier (density);
+        }
+        Real decay = composer->getGroundFogVerticalDecay ();
+        if (sliderReal ("Fog vertical decay", decay, 0, 5, true)) {
+            composer->setGroundFogVerticalDecay (decay);
+        }
+        Real baseLevel = composer->getGroundFogBaseLevel ();
+        if (sliderReal ("Fog base level", baseLevel, -50, 200)) {
+            composer->setGroundFogBaseLevel (baseLevel);
+        }
+    }
+    ImGui::EndDisabled ();
+    ImGui::EndDisabled ();
+    ImGui::EndDisabled ();
+}
+
+void CaelumLabApplication::drawShadowsUI ()
+{
+    bool shadows = mShadowsEnabled;
+    if (ImGui::Checkbox ("PSSM shadows", &shadows)) {
+        setShadowsEnabled (shadows);
+    }
+}
+
+void CaelumLabApplication::drawScriptsUI ()
+{
 #if CAELUM_SCRIPT_SUPPORT
     PropScriptResourceManager* mgr = CaelumPlugin::getSingleton ().getPropScriptResourceManager ();
-    for (Ogre::ResourceManager::ResourceMapIterator it = mgr->getResourceIterator(); it.hasMoreElements(); it.moveNext ())
-    {
-        Ogre::ResourcePtr resource = it.peekNextValue ();
-        LoadableScript item;
-        item.objectName = resource->getName ();
-        mLoadableScriptList.push_back (item);
-    }
-#endif
-}
-
-static void sizeComboList(CEGUI::Combobox* cb)
-{
-    // get the size of the attached items
-    float items_size = 0.0f;
-    for (size_t i = 0; i < cb->getItemCount(); ++i) {
-        items_size += cb->getListboxItemFromIndex(i)->getPixelSize().d_height;
-    }
-
-    // get size of editbox portion
-    float edit_size = cb->getEditbox()->getPixelSize().d_height;
-
-    // calculate how much size is taken by frame imagery & scrollbars
-    CEGUI::ComboDropList* dl = cb->getDropList();
-    CEGUI::String render_area_name(dl->getHorzScrollbar()->isVisible() ?
-        "ItemRenderingAreaHScroll" : "ItemRenderingArea" );
-
-    const CEGUI::WidgetLookFeel& wl =
-        CEGUI::WidgetLookManager::getSingleton().getWidgetLook(dl->getLookNFeel());
-
-    float images_size = dl->getPixelSize().d_height -
-        wl.getNamedArea(render_area_name).getArea().getPixelRect(*dl).getHeight();
-
-    // consider the possibility of an offset list position
-    float droplist_offset =
-        dl->getYPosition().asAbsolute(cb->getPixelSize().d_height) - edit_size;
-
-    // set final size
-    cb->setHeight( CEGUI::UDim( 0.0f,
-                   items_size + edit_size + images_size + droplist_offset) );
-}
-
-void CaelumLabFrameListener::ScriptingUI::init ()
-{
-    CEGUI::Combobox* loadScriptCombo = mParent->getWidget<CEGUI::Combobox> ("CaelumLab/LoadScriptCombo");
-
-#if CAELUM_SCRIPT_SUPPORT
-    loadScriptCombo->resetList ();
-    loadScriptCombo->setSortingEnabled (false);
-
-    initLoadableScriptList ();
-    for (LoadableScriptList::const_iterator it = mLoadableScriptList.begin(), end = mLoadableScriptList.end(); it != end; ++it) {
-        int index = it - mLoadableScriptList.begin ();
-        //String text = it->objectName; + " (file " + it->fileName + " group " + it->groupName + ")";
-        String text = it->objectName;
-        loadScriptCombo->addItem (new CEGUI::ListboxTextItem (CEGUI::String(text), index + 1));
-    }
-    sizeComboList (loadScriptCombo);
-
-    clearSelection ();
-
-    loadScriptCombo->subscribeEvent (
-            CEGUI::Combobox::EventListSelectionAccepted,
-            CEGUI::Event::Subscriber (&CaelumLabFrameListener::ScriptingUI::handleLoadScript, this));
-#else
-    loadScriptCombo->clearAllSelections ();
-    loadScriptCombo->setText ("No script support");
-    loadScriptCombo->setEnabled (false);
-#endif
-}
-
-void CaelumLabFrameListener::ScriptingUI::clearSelection ()
-{
-    CEGUI::Combobox* loadScriptCombo = mParent->getWidget<CEGUI::Combobox> ("CaelumLab/LoadScriptCombo");
-
-    loadScriptCombo->clearAllSelections ();
-    loadScriptCombo->getEditbox ()->setText ("Pick item to load");
-    //loadScriptCombo->setItemSelectState (static_cast<size_t> (0), true);
-}
-
-bool CaelumLabFrameListener::ScriptingUI::handleLoadScript (const CEGUI::EventArgs& args)
-{
-#if CAELUM_SCRIPT_SUPPORT
-    CEGUI::Combobox* loadScriptCombo = mParent->getWidget<CEGUI::Combobox> ("CaelumLab/LoadScriptCombo");
-
-    int scriptIndex = loadScriptCombo->getSelectedItem ()->getID () - 1;
-    const LoadableScript& script = mLoadableScriptList[scriptIndex];
-
-    CaelumPlugin::getSingleton ().loadCaelumSystemFromScript (
-            mParent->mCaelumSystem.get(),
-            script.objectName);
-
-    clearSelection();
-
-    // Refresh all widgets with data from CaelumSystem.
-    mParent->initDepthComposerWidgets();
-    mParent->updateWidgets();
-
-    // Special setup for depth composer flags.
-    if (mParent->mCaelumSystem->getDepthComposer ()) {
-        mParent->setupDepthComposerFlags();
-    }
-#endif
-
-    return true;
-}
-
-void CaelumLabFrameListener::initMaterialSchemeUI ()
-{
-    CEGUI::Combobox* materialSchemeCombo = getWidget<CEGUI::Combobox> ("CaelumLab/MaterialSchemeCombo");
-
-    materialSchemeCombo->resetList ();
-    materialSchemeCombo->setSortingEnabled (false);
-
-    materialSchemeCombo->addItem (new CEGUI::ListboxTextItem (
-                CEGUI::String("Default"), 0));
-    materialSchemeCombo->addItem (new CEGUI::ListboxTextItem (
-                CEGUI::String("PSSM"), 1));
-
-    materialSchemeCombo->clearAllSelections ();
-    materialSchemeCombo->getEditbox ()->setText ("Default");
-    materialSchemeCombo->setItemSelectState (static_cast<size_t> (0), true);
-
-    CEGUI::Checkbox* forceTerrainShadowsCheckbox = getWidget<CEGUI::Checkbox> ("CaelumLab/ForceTerrainShadowsCheckbox");
-    forceTerrainShadowsCheckbox->setSelected (this->getTerrainShadowsOn());
-}
-
-void CaelumLabFrameListener::updateMaterialSchemeUI ()
-{
-    CEGUI::Combobox* materialSchemeCombo = getWidget<CEGUI::Combobox> ("CaelumLab/MaterialSchemeCombo");
-    CEGUI::Checkbox* forceTerrainShadowsCheckbox = getWidget<CEGUI::Checkbox> ("CaelumLab/ForceTerrainShadowsCheckbox");
-
-    // Check for a material scheme change
-    SampleMaterialScheme scheme = mMaterialScheme;
-    if (materialSchemeCombo->getSelectedItem ()) {
-        scheme = static_cast<SampleMaterialScheme>(materialSchemeCombo->getSelectedItem ()->getID ());
-    }
-    if (scheme != mMaterialScheme) {
-        mMaterialScheme = scheme;
-        if (mMaterialScheme == SMS_PSSM) {
-            setupPSSM();
-        } else {
-            mSceneMgr->setShadowTechnique(SHADOWTYPE_NONE);
-            forceTerrainShadows(mSceneMgr->getRootSceneNode(), false);
-            getViewport()->setMaterialScheme ("Default:");
-        }
-    }
-
-    // Update terrain shadows on/off
-    this->setTerrainShadowsOn(forceTerrainShadowsCheckbox->isSelected());
-}
-
-void CaelumLabFrameListener::setupPSSM ()
-{
-    mSceneMgr->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
-
-    // 3 textures per directional light
-    mSceneMgr->setShadowTextureCountPerLightType(Ogre::Light::LT_DIRECTIONAL, 3);
-    // We have two lights (sun and moon) so we request 6 textures.
-    // Textures don't get reused here; 3 textures will not work.
-
-    String deviceName = Root::getSingleton().getRenderSystem()->getCapabilities()->getDeviceName();
-    String rsName = Root::getSingleton().getRenderSystem()->getName();
-    if (rsName.find("OpenGL") != String::npos &&
-        deviceName.find("GeForce 7") != String::npos)
-    {
-        LogManager::getSingleton().logMessage("Warning: Downgrading shadow texture quality for GeForce7 and OpenGL");
-        mSceneMgr->setShadowTextureSettings(1024, 6, PF_FLOAT16_R);
-    } else {
-        mSceneMgr->setShadowTextureSettings(2048, 6, PF_FLOAT32_R);
-    }
-    mSceneMgr->setShadowTextureSelfShadow(true);
-    mSceneMgr->setShadowTextureCasterMaterial("CaelumSample/PSSM/ShadowCaster");
-
-    // Shadow camera setup
-    PSSMShadowCameraSetup* pssmSetup = new PSSMShadowCameraSetup();
-
-    mSceneMgr->setShadowCameraSetup(ShadowCameraSetupPtr(pssmSetup));
-
-    updatePSSMCamera();
-
-    getViewport()->setMaterialScheme ("PSSM");
-}
-
-void CaelumLabFrameListener::updatePSSMCamera ()
-{
-    PSSMShadowCameraSetup* pssmSetup = static_cast<PSSMShadowCameraSetup*>(mSceneMgr->getShadowCameraSetup().get());
-
-    Real nearClip = getCamera()->getNearClipDistance();
-    Real farClip = getCamera()->getFarClipDistance();
-    // It seems that PSSM fails with infinite clip distances.
-    if (farClip < nearClip) {
-        farClip = 100 * nearClip;
-    }
-    pssmSetup->calculateSplitPoints(3, nearClip, farClip);
-    pssmSetup->setSplitPadding(10);
-    pssmSetup->setOptimalAdjustFactor(0, 2);
-    pssmSetup->setOptimalAdjustFactor(1, 1);
-    pssmSetup->setOptimalAdjustFactor(2, 0.5);
-
-    // Send split point to actual materials.
-    // This must be done manually.
-    {
-        Vector4 splitPoints;
-        const PSSMShadowCameraSetup::SplitPointList& splitPointList = pssmSetup->getSplitPoints();
-        for (int i = 0; i < 3; ++i)
-        {
-            splitPoints[i] = splitPointList[i];
-        }
-
-        const char *pssmMaterials[]  = {
-            "Examples/TudorHouse",
-            "CaelumSample/Terrain",
-            "CaelumSample/AlphaRejectionTest",
-            "CaelumSample/AlphaBlendTest",
-            "3D-Diggers/fir01",
-            "3D-Diggers/fir02",
-            "SOLID/TEX/wood7.jpg",
-            "SOLID/TEX/Leaves.png",
-            "SOLID/TEX/PineLeaves.png",
-            0
-        };
-
-        for (const char** matIter = pssmMaterials; *matIter; ++matIter) {
-            MaterialPtr mat = MaterialManager::getSingleton().getByName(*matIter);
-            if (mat.isNull()) {
-                LogManager::getSingleton().logMessage(String("Couldn't find pssm material") + *matIter);
-                continue;
+    if (ImGui::BeginCombo ("Load script", "Pick item to load")) {
+        String selected;
+        for (const auto& it : mgr->getResourceIterator ()) {
+            if (ImGui::Selectable (it.second->getName ().c_str ())) {
+                selected = it.second->getName ();
             }
-            GpuProgramParametersSharedPtr fpParams = mat->getTechnique("PSSM")->getPass("Directional")->getFragmentProgramParameters();
-            fpParams->setIgnoreMissingParams (true);
-            fpParams->setNamedConstant ("pssmSplitPoints", splitPoints);
         }
+        ImGui::EndCombo ();
+
+        if (!selected.empty ()) {
+            mDeferredActions.push_back ([this, selected] () {
+                CaelumPlugin::getSingleton ().loadCaelumSystemFromScript (mCaelumSystem.get (), selected);
+            });
+        }
+    }
+#else
+    ImGui::TextDisabled ("No script support");
+#endif
+}
+
+void CaelumLabApplication::dumpRenderTargets ()
+{
+    std::vector<Ogre::RenderTarget*> targets = {getRenderWindow ()};
+    for (const auto& it : Ogre::TextureManager::getSingleton ().getResourceIterator ()) {
+        auto tex = static_pointer_cast<Ogre::Texture> (it.second);
+        if (tex->isLoaded () && (tex->getUsage () & TU_RENDERTARGET)) {
+            targets.push_back (tex->getBuffer ()->getRenderTarget ());
+        }
+    }
+
+    for (Ogre::RenderTarget* rt : targets) {
+        Ogre::String name = rt->getName ();
+        std::replace (name.begin (), name.end (), '/', '_');
+        Ogre::String fileName = rt->writeContentsToTimestampedFile ("RTDump ", " " + name + ".png");
+        Ogre::LogManager::getSingletonPtr ()->logMessage ("Written render target " + rt->getName () + " to " + fileName);
     }
 }
 
-bool CaelumLabFrameListener::frameStarted (const FrameEvent& evt)
+void CaelumLabApplication::dumpMaterialNames ()
 {
-    if (mShutdownRequested || mWindow->isClosed()) {
-        return false;
+    for (const auto& it : Ogre::MaterialManager::getSingleton ().getResourceIterator ()) {
+        Ogre::LogManager::getSingletonPtr ()->logMessage ("Material name " + it.second->getName ());
     }
-    mGuiSystem->injectTimePulse (evt.timeSinceLastFrame);
+}
 
-    mKeyboard->capture ();
-    mMouse->capture ();
+void CaelumLabApplication::drawDebugUI ()
+{
+    if (ImGui::Button ("Dump material names")) {
+        dumpMaterialNames ();
+    }
+    ImGui::SameLine ();
+    if (ImGui::Button ("Dump render targets")) {
+        dumpRenderTargets ();
+    }
+}
 
-    if (!updateInput (evt)) {
-        return false;
+void CaelumLabApplication::drawUI ()
+{
+    float vpScale = OverlayManager::getSingleton ().getPixelRatio ();
+    ImGui::SetNextWindowPos (ImVec2 (10 * vpScale, 10 * vpScale), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize (ImVec2 (380 * vpScale, getViewport ()->getActualHeight () - 20 * vpScale), ImGuiCond_FirstUseEver);
+    ImGui::Begin ("CaelumLab");
+
+    ImGui::TextDisabled ("Right mouse button: look around, WASD: move");
+
+    if (ImGui::CollapsingHeader ("Time", ImGuiTreeNodeFlags_DefaultOpen)) {
+        drawTimeUI ();
+    }
+    if (ImGui::CollapsingHeader ("Camera")) {
+        drawCameraUI ();
+    }
+    if (ImGui::CollapsingHeader ("Sun & Moon")) {
+        drawSunMoonUI ();
+    }
+    if (ImGui::CollapsingHeader ("Clouds")) {
+        drawCloudsUI ();
+    }
+    if (ImGui::CollapsingHeader ("Starfield")) {
+        drawStarfieldUI ();
+    }
+    if (ImGui::CollapsingHeader ("Precipitation")) {
+        drawPrecipitationUI ();
+    }
+    if (ImGui::CollapsingHeader ("Depth composer")) {
+        drawDepthComposerUI ();
+    }
+    if (ImGui::CollapsingHeader ("Shadows")) {
+        drawShadowsUI ();
+    }
+    if (ImGui::CollapsingHeader ("Scripts")) {
+        drawScriptsUI ();
+    }
+    if (ImGui::CollapsingHeader ("Debug")) {
+        drawDebugUI ();
     }
 
-    mCaelumSystem->notifyCameraChanged (mCamera);
-    mCaelumSystem->updateSubcomponents (evt.timeSinceLastFrame);
-    updateWidgets ();
+    ImGui::Separator ();
+    if (ImGui::Button ("Reset")) {
+        mDeferredActions.push_back ([this] () {
+            destroyCaelum ();
+            initCaelum ();
+        });
+    }
+    ImGui::SameLine ();
+    if (ImGui::Button ("Quit")) {
+        mRoot->queueEndRendering ();
+    }
 
+    ImGui::End ();
+}
+
+bool CaelumLabApplication::frameEnded (const Ogre::FrameEvent& evt)
+{
+    for (auto& action : mDeferredActions) {
+        action ();
+    }
+    mDeferredActions.clear ();
     return true;
 }
 
-void CaelumLabApplication::createFrameListener () {
-    mFrameListener = new CaelumLabFrameListener (mWindow, mCamera);
-    mRoot->addFrameListener (mFrameListener);
+void CaelumLabApplication::preViewportUpdate (const Ogre::RenderTargetViewportEvent& evt)
+{
+    if (!evt.source->getOverlaysEnabled ()) {
+        return;
+    }
+    ImGuiOverlay::NewFrame ();
+    drawUI ();
 }
 
-void CaelumLabApplication::chooseSceneManager () {
-    mSceneMgr = mRoot->createSceneManager ("TerrainSceneManager");
+void CaelumLabApplication::loadResources ()
+{
+    new CaelumPlugin ();
+    CaelumPlugin::getSingleton ().initialise ();
+    ExampleApplication::loadResources ();
 }
 
-void CaelumLabApplication::createCamera () {
+void CaelumLabApplication::createCamera ()
+{
     // Create the camera
     mCamera = mSceneMgr->createCamera ("PlayerCam");
 
-    mCamera->setPosition (Vector3 (775, 100, 997));
-    mCamera->lookAt (Vector3 (775, 100, 1000));
+    mCameraNode = mSceneMgr->getRootSceneNode ()->createChildSceneNode ();
+    mCameraNode->setPosition (Vector3 (775, 100, 997));
+    mCameraNode->setFixedYawAxis (true);
+    mCameraNode->lookAt (Vector3 (775, 100, 1000), Node::TS_PARENT);
+    mCameraNode->attachObject (mCamera);
 
-    // Start with very generous settings (precision-wise)
+    // The DepthComposer uses a 16 bit depth buffer; keep the near clip distance large enough
     mCamera->setNearClipDistance (10);
-    mCamera->setFarClipDistance (50000);
-	mCamera->setFOVy(Ogre::Degree(45));
-}
-
-void CaelumLabApplication::installCaelumPlugin () {
-    if (CaelumPlugin::getSingletonPtr ()) {
-        LogManager::getSingleton ().logMessage(
-                "CaelumLabApplication: Caelum plugin seems to be already installed");
-    } else {
-        Root::getSingleton().installPlugin (new CaelumPlugin ());
-    }
-}
-
-void CaelumLabApplication::setupResources () {
-    installCaelumPlugin ();
-    ExampleApplication::setupResources ();
-}
-
-Real CaelumLabApplication::getHeightAtPoint (Real x, Real z)
-{
-    RaySceneQuery* rayQuery = mSceneMgr->createRayQuery(Ray(Vector3::ZERO, Vector3::ZERO));
-    rayQuery->setRay(Ray(Vector3(x, 0, z), Vector3::UNIT_Y));
-
-    Real result = -1;
-    RaySceneQueryResult queryResult = rayQuery->execute();
-    for (Ogre::uint i = 0; i < queryResult.size(); ++i) {
-        if (queryResult[i].worldFragment) {
-            result = queryResult[i].distance;
-        }
-    }
-
-    mSceneMgr->destroyQuery (rayQuery);
-    return result;
+    mCamera->setFarClipDistance (10000);
+    mCamera->setFOVy (Ogre::Degree (45));
 }
 
 struct RandomModelInfo
@@ -1192,12 +647,12 @@ struct RandomModelInfo
     Ogre::Vector3 scale;
 };
 
-void CaelumLabApplication::createScene () {
-    std::string terrain_cfg("CaelumDemoTerrain.cfg");
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    terrain_cfg = mResourcePath + terrain_cfg;
-#endif
-    mSceneMgr->setWorldGeometry (terrain_cfg);
+void CaelumLabApplication::createScene ()
+{
+    mTerrainGlobals.reset (new TerrainGlobalOptions ());
+    mTerrainGlobals->setCastsDynamicShadows (true);
+    mTerrainGroup.reset (new TerrainGroup (mSceneMgr));
+    mTerrainGroup->loadLegacyTerrain ("CaelumDemoTerrain.cfg");
 
     typedef std::vector<RandomModelInfo> RandomModelVector;
     RandomModelVector randomModels;
@@ -1209,15 +664,15 @@ void CaelumLabApplication::createScene () {
     // Create a random plane mesh.
     Ogre::String planeMeshName = "CaelumSample/FlatPlane";
     Ogre::MeshManager::getSingleton().createPlane(
-            planeMeshName, Caelum::RESOURCE_GROUP_NAME,
+            planeMeshName, RGN_DEFAULT,
             Ogre::Plane(Ogre::Vector3::UNIT_X, 0),
             20, 20, 4, 4, true, 1, 2, 2,
             Ogre::Vector3::UNIT_Z);
-    randomModels.push_back(RandomModelInfo("CaelumSample/FlatPlane", "CaelumSample/AlphaRejectionTest",
+    randomModels.push_back(RandomModelInfo(planeMeshName, "CaelumSample/AlphaRejectionTest",
                     Vector3(0, 10, 0),
                     Quaternion::IDENTITY,
                     Vector3::UNIT_SCALE));
-    randomModels.push_back(RandomModelInfo("CaelumSample/FlatPlane", "CaelumSample/AlphaBlendTest",
+    randomModels.push_back(RandomModelInfo(planeMeshName, "CaelumSample/AlphaBlendTest",
                     Vector3(0, 10, 0),
                     Quaternion::IDENTITY,
                     Vector3::UNIT_SCALE));
@@ -1242,23 +697,20 @@ void CaelumLabApplication::createScene () {
         // Pick model.
         const RandomModelInfo& model = randomModels[rand() % randomModels.size()];
 
-        Entity *entity = mSceneMgr->createEntity (
-                "CaelumSample/RandomScene/Entity" + StringConverter::toString(i), model.mesh);
-        SceneNode *sceneNode = mSceneMgr->getRootSceneNode ()->createChildSceneNode(
-                "CaelumSample/RandomScene/Node" + StringConverter::toString (i));
+        Entity *entity = mSceneMgr->createEntity (model.mesh);
+        SceneNode *sceneNode = mSceneMgr->getRootSceneNode ()->createChildSceneNode ();
 
         if (!model.mat.empty ()) {
             entity->setMaterialName (model.mat);
         }
- 
+
         // Place randomly on the terrain around the camera.
         Vector3 randPos(300 * Math::SymmetricRandom (), 0, 300 * Math::SymmetricRandom ());
-        Vector3 pos = randPos + mCamera->getPosition ();
-        pos.y = getHeightAtPoint (pos.x, pos.z);
+        Vector3 pos = randPos + mCameraNode->getPosition ();
+        pos.y = mTerrainGroup->getHeightAtWorldPosition (pos);
 
         // Add a random rotation around the vertical.
         Quaternion randRot(Ogre::Degree(0.01 * (rand() % 36000)), Vector3::UNIT_Y);
-        //Quaternion randRot = Quaternion::IDENTITY;
 
         // Enforce placement
         sceneNode->attachObject (entity);
@@ -1266,27 +718,56 @@ void CaelumLabApplication::createScene () {
         sceneNode->rotate (randRot * model.rot);
         sceneNode->scale (model.scale);
     }
+
+    initCaelum ();
 }
 
-extern "C" int main(int argc, char **argv)
+void CaelumLabApplication::createFrameListener ()
+{
+    // The overlay system renders ImGui.
+    mSceneMgr->addRenderQueueListener (getOverlaySystem ());
+    // DPI scaling; initialiseImGui scales the style by the pixel ratio
+    float vpScale = getDisplayDPI () / 96;
+    OverlayManager::getSingleton ().setPixelRatio (vpScale);
+    ImGuiOverlay* imguiOverlay = initialiseImGui ();
+    ImGui::GetStyle ().FontScaleMain = vpScale;
+    imguiOverlay->show ();
+    // Ogre up to 14.6 applies the scene fog, which Caelum manages, to the UI
+    MaterialManager::getSingleton ().getByName ("ImGui/material", RGN_INTERNAL)->getTechnique (0)->getPass (0)->setFog (true);
+    getRenderWindow ()->addListener (this);
+
+    mCameraMan.reset (new OgreBites::CameraMan (mCameraNode));
+    mCameraMan->setStyle (OgreBites::CS_FREELOOK);
+    mCameraMan->setTopSpeed (50);
+    mLabInputListener.reset (new CaelumLabInputListener (this, mCameraMan.get ()));
+
+    // ImGui gets the events first; deleted by ExampleApplication::shutdown.
+    mFrameListener = new OgreBites::InputListenerChain ({getImGuiInputListener (), mLabInputListener.get ()});
+    addInputListener (mFrameListener);
+}
+
+void CaelumLabApplication::destroyScene ()
+{
+    getRenderWindow ()->removeListener (this);
+    destroyCaelum ();
+    mTerrainGroup.reset ();
+    mTerrainGlobals.reset ();
+}
+
+int main (int argc, char **argv)
 {
     try {
-        chdirExePath(argv[0]);
+        chdirExePath (argv[0]);
 
         CaelumLabApplication app;
         app.go ();
-
-        // Normal shutdown.
         return 0;
-    } catch (Ogre::Exception& e) {
+
+    } catch (Exception& e) {
         reportException (e.getFullDescription ().c_str ());
-    } catch (CEGUI::Exception& e) {
-        reportException (e.getMessage ().c_str ());
     } catch (std::exception& e) {
         reportException (e.what ());
     }
 
-    // Error.
     return 1;
 }
-

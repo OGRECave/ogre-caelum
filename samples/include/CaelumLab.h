@@ -3,184 +3,91 @@
 // of this distribution.
 
 #include "CaelumDemoCommon.h"
-
-#include "CEGUI/CEGUI.h"
-#include "OgreCEGUIRenderer.h"
 #include "ExampleApplication.h"
 
-enum SampleMaterialScheme
+#include <OgreCameraMan.h>
+#include <OgreImGuiOverlay.h>
+#include <OgreTerrainGroup.h>
+
+#include <functional>
+
+/** Passes input to the camera man; mouse look only while the right button is pressed.
+ */
+class CaelumLabInputListener : public OgreBites::InputListener
 {
-    SMS_DEFAULT = 0,
-    SMS_PSSM = 1,
+    OgreBites::ApplicationContext* mApp;
+    OgreBites::CameraMan* mCameraMan;
+    bool mMouseLook;
+
+public:
+    CaelumLabInputListener (OgreBites::ApplicationContext* app, OgreBites::CameraMan* cameraMan):
+            mApp (app), mCameraMan (cameraMan), mMouseLook (false)
+    {
+    }
+
+    void frameRendered (const Ogre::FrameEvent& evt) { mCameraMan->frameRendered (evt); }
+    bool keyPressed (const OgreBites::KeyboardEvent& evt);
+    bool keyReleased (const OgreBites::KeyboardEvent& evt) { return mCameraMan->keyReleased (evt); }
+    bool mouseMoved (const OgreBites::MouseMotionEvent& evt);
+    bool mousePressed (const OgreBites::MouseButtonEvent& evt);
+    bool mouseReleased (const OgreBites::MouseButtonEvent& evt);
 };
 
-class CaelumLabFrameListener:
-        public ExampleFrameListener,
-        private OIS::MouseListener,
-        private OIS::KeyListener
+class CaelumLabApplication : public ExampleApplication, public Ogre::RenderTargetListener
 {
+public:
+    CaelumLabApplication ();
+
 private:
-    SceneManager* mSceneMgr;
+    std::unique_ptr<CaelumSystem> mCaelumSystem;
 
-    std::auto_ptr<CaelumSystem> mCaelumSystem;
+    std::unique_ptr<TerrainGlobalOptions> mTerrainGlobals;
+    std::unique_ptr<TerrainGroup> mTerrainGroup;
 
-    // Reversing these two causes a crash.
-    std::auto_ptr<CEGUI::Renderer> mGuiRenderer;
-    std::auto_ptr<CEGUI::System> mGuiSystem;
-    bool mShutdownRequested;
+    std::unique_ptr<OgreBites::CameraMan> mCameraMan;
+    std::unique_ptr<CaelumLabInputListener> mLabInputListener;
+
+    // Changes to the scene that must not happen while rendering a viewport.
+    std::vector<std::function<void ()>> mDeferredActions;
+
+    bool mFollowSun;
+    bool mFollowMoon;
+    bool mShadowsEnabled;
+    ShadowCameraSetupPtr mPSSMSetup;
+
+    void loadResources ();
+    void createCamera ();
+    void createScene ();
+    void createFrameListener ();
+    void destroyScene ();
+
+    bool frameEnded (const Ogre::FrameEvent& evt);
 
     void initCaelum ();
     void destroyCaelum ();
-    void initGui ();
 
-    // Quick fetch a widget. Checks existence and type.
-    // Throws on not found.
-    template<class WidgetT> inline WidgetT* getWidget (const char* name) {
-        return static_cast<WidgetT*>(CEGUI::WindowManager::getSingleton ().getWindow (name));
-    }
-    inline CEGUI::Window* getWindow (const char* name) {
-        return getWidget<CEGUI::Window> (name);
-    }
+    void initDepthComposer ();
 
-    inline Viewport* getViewport () { return mCamera->getViewport (); }
-    inline Camera* getCamera () { return mCamera; }
+    void setShadowsEnabled (bool enabled);
+    void updatePSSMSplitPoints ();
 
-private:
-    // Handle OIS events and send them to CEGUI.
-    bool mouseMoved (const OIS::MouseEvent &arg);
-    bool mousePressed (const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-    bool mouseReleased (const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-    bool keyPressed (const OIS::KeyEvent &arg);
-    bool keyReleased (const OIS::KeyEvent &arg);
-
-    inline bool rightMouseDown () { return mMouse->getMouseState ().buttonDown (OIS::MB_Right); }
-    inline bool leftMouseDown () { return mMouse->getMouseState ().buttonDown (OIS::MB_Left); }
-
-    bool mLastMousePositionSet;
-    CEGUI::Point mLastMousePosition;
-
-    // CEGUI event handling.
-	bool handleMouseMove (const CEGUI::EventArgs& evt);
-	bool handleMouseUp (const CEGUI::EventArgs& evt);
-	bool handleMouseDown (const CEGUI::EventArgs& evt);
-
-    bool handleTimeScaleDoubleClick (const CEGUI::EventArgs& args);
-    bool handleResetClick (const CEGUI::EventArgs& args);
-    bool handleQuitClick (const CEGUI::EventArgs& args);
-    bool handleDumpClick (const CEGUI::EventArgs& args);
+    // Draw the ImGui windows; once per frame.
+    void preViewportUpdate (const Ogre::RenderTargetViewportEvent& evt);
+    void drawUI ();
+    void drawTimeUI ();
+    void drawCameraUI ();
+    void drawSunMoonUI ();
+    void drawCloudsUI ();
+    void drawStarfieldUI ();
+    void drawPrecipitationUI ();
+    void drawDepthComposerUI ();
+    void drawShadowsUI ();
+    void drawScriptsUI ();
+    void drawDebugUI ();
 
     // Various obscure debug functions.
     void dumpRenderTargets ();
-    void dumpRenderQueueShadows ();
     void dumpMaterialNames ();
 
-    /** Update a scrolling tweaker.
-     *  The value is only changed if the control is currently focused.
-     *  @returns if the value was changed. 
-     */ 
-    bool updateScrollbarTweak (
-            const Ogre::String& editboxName,
-            const Ogre::String& scrollbarName,
-            Real& value,
-            Real minValue,
-            Real maxValue,
-            Real magicValue,
-            Real magicPosition,
-            Real exponent);
-
-    /** Limited variant of the above; w/o exponential magic.
-     */
-    bool updateScrollbarTweak (
-            const Ogre::String& editboxName,
-            const Ogre::String& scrollbarName,
-            Real& value, Real minValue, Real maxValue);
-
-    // Frame updates.
-    bool frameStarted (const FrameEvent& evt);
-    bool updateInput (const FrameEvent& evt);
-    void updateWidgets ();
-
-    // Can be called multiple times; will reset.
-    // Will also updateDepthComposerWidgets()
-    void initDepthComposer ();
-    void disableDepthComposer ();
-    void setupDepthComposerFlags ();
-
-    void initDepthComposerWidgets ();
-    void updateDepthComposerWidgets ();
-
-private:
-    SampleMaterialScheme mMaterialScheme;
-    bool mTerrainShadowsOn;
-
-    // Ogre's default terrain scene manager does not support shadows.
-    // Still it's possible to hack our way through and force the renderables
-    // which make up the terrain to cast shadows.
-    //
-    // The terrain scene manager creates a bunch of TerrainRenderables which
-    // implement Renderable and MovableObject. By default those set
-    // MovableObject:mCastShadows to false but we can flip that externally.
-    void setTerrainShadowsOn(bool value);
-    bool getTerrainShadowsOn() { return mTerrainShadowsOn; }
-
-    void initMaterialSchemeUI ();
-    void updateMaterialSchemeUI ();
-    bool handleForceTerrainShadowsChanged (const CEGUI::EventArgs& args);
-
-    void setupPSSM ();
-    void updatePSSMCamera ();
-
-public:
-    CaelumLabFrameListener (RenderWindow* win, Camera* cam);
-    ~CaelumLabFrameListener ();
-
-private:
-    class ScriptingUI 
-    {
-    public:
-        ScriptingUI (CaelumLabFrameListener* parent);
-        ~ScriptingUI ();
-
-        void init ();
-
-    private:
-        struct LoadableScript {
-            String objectName;
-        };
-        typedef std::vector<LoadableScript> LoadableScriptList;
-        LoadableScriptList mLoadableScriptList;
-
-        void initLoadableScriptList ();
-
-    private:
-        void clearSelection ();
-        bool handleLoadScript (const CEGUI::EventArgs& args);
-
-        CaelumLabFrameListener* mParent;
-    };
-
-    ScriptingUI mScriptingUI;
-};
-
-class CaelumLabApplication: public ExampleApplication
-{
-public:
-    void createFrameListener ();
-    void chooseSceneManager ();
-    void createCamera ();
-    void createScene ();
-
-    void setupResources ();
-
-private:
-    // Install CaelumPlugin manually. Nothing happens if already installed.
-    //
-    // This is only required when statically linking to Caelum (in the linux build).
-    // On windows caelum should be registered in plugins.cfg.
-    //
-    // It gets called from setupResources.
-    void installCaelumPlugin ();
-
-    /// Return height at point or -1 if nothing hit.
-    Real getHeightAtPoint (Real x, Real z);
+    Viewport* getViewport () { return getRenderWindow ()->getViewport (0); }
 };
