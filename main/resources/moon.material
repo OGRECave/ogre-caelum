@@ -2,23 +2,22 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-fragment_program Caelum/PhaseMoonFP cg hlsl
+fragment_program Caelum/PhaseMoonFP glsl glsles glslang hlsl
 {
-	source CaelumPhaseMoon.cg
-	entry_point PhaseMoonFP
-	target ps_2_0 arbfp1 fp30 glslf
+	source PhaseMoon.frag
+	target ps_3_0
 
 	default_params
 	{
+		param_named moonDisc int 0
 		param_named phase float 0.3
 	}
 }
 
-vertex_program Caelum/PhaseMoonVP cg hlsl
+vertex_program Caelum/PhaseMoonVP glsl glsles glslang hlsl
 {
-    source CaelumPhaseMoon.cg
-    entry_point PhaseMoonVP
-    target vs_2_0 arbvp1 glslv
+    source PhaseMoon.vert
+    target vs_3_0
 
     default_params
     {
