@@ -19,9 +19,6 @@ namespace Caelum
         // First clone material
         mMaterial.reset(InternalUtilities::checkLoadMaterialClone(SKY_DOME_MATERIAL_NAME, SKY_DOME_MATERIAL_NAME + uniqueSuffix));
 
-        // Determine if the shader technique works.
-        mShadersEnabled = mMaterial->getBestTechnique()->getPass(0)->isProgrammable();
-
         // Force setting haze, ensure mHazeEnabled != value.
         mHazeEnabled = true;
         setHazeEnabled(false);
@@ -54,18 +51,12 @@ namespace Caelum
     void SkyDome::setSunDirection (const Ogre::Vector3& sunDir) {
         float elevation = sunDir.dotProduct (Ogre::Vector3::UNIT_Y);
         elevation = elevation * 0.5 + 0.5;
-        Ogre::Pass* pass = mMaterial->getBestTechnique()->getPass(0);
-        if (mShadersEnabled) {
-            mParams.sunDirection.set(mParams.vpParams, sunDir);
-            mParams.offset.set(mParams.fpParams, elevation);
-        } else {
-            Ogre::TextureUnitState* gradientsTus = pass->getTextureUnitState(0);
-            gradientsTus->setTextureUScroll (elevation);
-        }
+        mParams.sunDirection.set(mParams.vpParams, sunDir);
+        mParams.offset.set(mParams.fpParams, elevation);
     }
 
     void SkyDome::setHazeColour (const Ogre::ColourValue& hazeColour) {
-        if (mShadersEnabled && mHazeEnabled) {
+        if (mHazeEnabled) {
             mParams.hazeColour.set(mParams.fpParams, hazeColour);
         }    
     }
@@ -73,7 +64,7 @@ namespace Caelum
     void SkyDome::setSkyGradientsImage (const Ogre::String& gradients)
     {
         Ogre::TextureUnitState* gradientsTus =
-                mMaterial->getTechnique (0)->getPass (0)->getTextureUnitState(0);
+                mMaterial->getBestTechnique ()->getPass (0)->getTextureUnitState(0);
 
         gradientsTus->setTextureAddressingMode (Ogre::TextureUnitState::TAM_CLAMP);
 
@@ -82,12 +73,8 @@ namespace Caelum
 
     void SkyDome::setAtmosphereDepthImage (const Ogre::String& atmosphereDepth)
     {
-        if (!mShadersEnabled) {
-            return;
-        }
-
         Ogre::TextureUnitState* atmosphereTus =
-                mMaterial->getTechnique (0)->getPass (0)->getTextureUnitState(1);
+                mMaterial->getBestTechnique ()->getPass (0)->getTextureUnitState(1);
 
         atmosphereTus->setTextureName (atmosphereDepth);
         atmosphereTus->setTextureAddressingMode (Ogre::TextureUnitState::TAM_CLAMP, Ogre::TextureUnitState::TAM_WRAP, Ogre::TextureUnitState::TAM_WRAP);
@@ -104,11 +91,7 @@ namespace Caelum
         }
         mHazeEnabled = value;
 
-        if (!mShadersEnabled) {
-            return;
-        }
-
-        Ogre::Pass *pass = mMaterial->getTechnique (0)->getPass (0);
+        Ogre::Pass *pass = mMaterial->getBestTechnique ()->getPass (0);
         if (value) {
             pass->setFragmentProgram("CaelumSkyDomeFP");
         } else {
