@@ -35,9 +35,6 @@ namespace Caelum
         PrivateEntityPtr mEntity;
 
     private:
-		/// True if selected technique has shaders.
-		bool mShadersEnabled;
-
         /// If haze is enabled.
 		bool mHazeEnabled;
 
