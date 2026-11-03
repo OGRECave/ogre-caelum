@@ -68,7 +68,7 @@ void CaelumLabApplication::initCaelum ()
         logUnsupportedException (ex);
     }
     try {
-        mCaelumSystem->setSun (new Caelum::SphereSun(mSceneMgr, mCaelumSystem->getCaelumCameraNode ()));
+        mCaelumSystem->setSun (new Caelum::Sun(mSceneMgr, mCaelumSystem->getCaelumCameraNode ()));
     } catch (Caelum::UnsupportedException& ex) {
         logUnsupportedException (ex);
     }
