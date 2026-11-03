@@ -25,30 +25,6 @@ vertex_program Caelum/PhaseMoonVP glsl glsles glslang hlsl
     }
 }
 
-material Caelum/FullMoon
-{
-    receive_shadows off
-    technique Default
-    {
-        pass Main
-        {
-            lighting off
-            depth_check off
-            depth_write off
-            fog_override true none
-            ambient 0 0 0
-            diffuse 0 0 0
-            scene_blend alpha_blend 
-            emissive vertexcolour
-
-            texture_unit Texture0
-            {
-                texture moon_disc.dds 2d
-            }
-        }
-    }
-}
-
 material Caelum/PhaseMoon
 {
     receive_shadows off
@@ -79,28 +55,3 @@ material Caelum/PhaseMoon
         }
     }
 }
-
-material Caelum/MoonBackground
-{
-    receive_shadows off
-    technique Default
-    {
-        pass Main
-        {
-            // Used fixed function lighting to return black.
-            lighting off
-            
-            depth_check off
-            depth_write off
-            fog_override true none
-            scene_blend alpha_blend
-
-            texture_unit MoonDisc
-            {
-                texture moon_disc.dds
-                colour_op_ex source1 src_manual src_diffuse 0 0 0 0
-            }
-        }
-    }
-}
-

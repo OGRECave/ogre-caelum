@@ -13,8 +13,8 @@
 namespace Caelum
 {
     /** Class representing the moon.
-     *  Drawn as two billboards; one after the stars and one after the skydome.
-     *  Drawing it before the skydome will make it invisible in daylight; and that's bad.
+     *  Drawn as a single billboard after the skydome, so that it also works in
+     *  daylight; the shader keeps the disc opaque to hide the sky behind it.
      */
     class CAELUM_EXPORT Moon:
             public BaseSkyLight
@@ -23,21 +23,12 @@ namespace Caelum
 		/// Name of the moon material.
 		static const Ogre::String MOON_MATERIAL_NAME;
 
-        /// Name of the moon background material.
-		static const Ogre::String MOON_BACKGROUND_MATERIAL_NAME;
-
 	private:
         /// Material for MoonBB
 		PrivateMaterialPtr mMoonMaterial;
 
 		/// The moon sprite.
 		PrivateBillboardSetPtr mMoonBB;
-
-        /// Material for mBackBB
-		PrivateMaterialPtr mBackMaterial;
-		
-        /// The moon's background; used to block the stars.
-		PrivateBillboardSetPtr mBackBB;
 
 		/// The moon sprite visible angle
 		Ogre::Degree mAngularSize;
