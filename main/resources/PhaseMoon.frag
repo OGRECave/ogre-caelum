@@ -12,39 +12,40 @@ OGRE_UNIFORMS(
 uniform float phase;
 )
 
-// Get how much of a certain point on the moon is seen (or not) because of the phase.
-// uv is the rect position on moon; as seen from the earth.
-// phase ranges from 0 (full moon) to 1 (again fool moon)
-float MoonPhaseFactor(vec2 uv, float phase)
-{
-    // 1. In phase interval [0..1/2) day-to-night terminator appeared on the right side of the moon and moves to the left by cosine law
-    // 2. In phase interval [1/2..1) night-to-day terminator appeared on the right side of the moon and moves to the left by cosine law
-    // but if we swapped for simplicity left and right sides of the moon for the second interval than
-    // 2' In phase interval [1/2..1) night-to-day terminator appeared on the left side of the moon and moves to the right by cosine law
-    // therefore in such coord system terminator would move from right to left and to the right again, and picture would be like this:
-    // Moon => (day | night)
-
-    float cY = uv.y - 0.5;                             // signed
-    float cX = sqrt(0.25 - cY * cY);                   // positive, half of disk chord
-
-    float termX = cX * cos((2.0 * 3.1416) * phase);    // determine terminator position in our tweaked coord system
-    float refX = (uv.x - 0.5) * sign(0.5 - phase);     // reverse X axis for phase interval [1/2..1)
-
-    return 0.5 * sign(termX - refX) + 0.5;             // day if refX < termX
-}
+// Faint reflected light from the Earth on the night side of the moon.
+#define EARTHSHINE 0.03
 
 MAIN_PARAMETERS
 IN(vec2 oTexCoord, TEXCOORD0)
+IN(vec4 oColour, TEXCOORD1)
 MAIN_DECLARATION
 {
-    vec4 outcol = texture2D(moonDisc, oTexCoord);
-    float alpha = MoonPhaseFactor(oTexCoord, phase);
+    vec4 moonDiscColour = texture2D(moonDisc, oTexCoord);
 
-    // Get luminance from the texture.
-    float lum = dot(outcol.rgb, vec3(0.3333, 0.3333, 0.3333));
-    //float lum = dot(outcol.rgb, vec3(0.3, 0.59, 0.11));
-    outcol.a = min(outcol.a, lum * alpha);
-    outcol.rgb /= lum;
+    // Interpret the billboard coordinates as points on a sphere. z points
+    // towards the observer, so the normal runs from 1 in the centre of the
+    // disc to 0 at its edge.
+    vec2 discPos = oTexCoord * 2.0 - 1.0;
+    float z = sqrt(max(0.0, 1.0 - dot(discPos, discPos)));
+    vec3 normal = vec3(discPos, z);
 
-    gl_FragColor = outcol;
+    // Phase 0 is a full moon and 0.5 a new moon; the light comes from the
+    // direction matching that phase in the plane of the billboard.
+    float sunAngle = 6.2831853 * phase;
+    vec3 lightDirection = vec3(-sin(sunAngle), 0.0, cos(sunAngle));
+
+    // Soft day/night boundary (penumbra) instead of a hard-edged terminator.
+    float day = smoothstep(-0.03, 0.03, dot(normal, lightDirection));
+
+    // The moon scatters light closer to a Lommel-Seeliger law than to a
+    // Lambertian one; flatten the limb so a full moon does not look like a
+    // shaded ball.
+    float limb = mix(0.85, 1.0, sqrt(z));
+
+    vec3 colour = moonDiscColour.rgb * oColour.rgb *
+            (day * limb + (1.0 - day) * EARTHSHINE);
+
+    // The disc stays opaque (alpha from the texture) so that the moon hides
+    // the stars and the sky dome behind it, on both the lit and the night side.
+    gl_FragColor = vec4(colour, moonDiscColour.a);
 }
