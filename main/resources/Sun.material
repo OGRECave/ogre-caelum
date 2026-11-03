@@ -2,21 +2,6 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution.
 
-material CaelumSphereSun
-{
-    technique Defaulto
-    {
-        pass Main
-        {
-            depth_check off
-            depth_write off
-            fog_override true none
-            ambient 0 0 0
-            diffuse 0 0 0
-        }
-    }
-}
-
 material CaelumSpriteSun
 {
     receive_shadows off

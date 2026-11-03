@@ -8,50 +8,6 @@
 
 namespace Caelum
 {
-    const Ogre::String SphereSun::SUN_MATERIAL_NAME = "CaelumSphereSun";
-
-    SphereSun::SphereSun
-    (
-        Ogre::SceneManager *sceneMgr,
-        Ogre::SceneNode *caelumRootNode,
-        const Ogre::String &meshName
-    ):
-        BaseSkyLight(sceneMgr, caelumRootNode)
-    {
-        Ogre::String uniqueSuffix = "/" + InternalUtilities::pointerToString (this);
-        mSunMaterial.reset (InternalUtilities::checkLoadMaterialClone (SUN_MATERIAL_NAME, SUN_MATERIAL_NAME + uniqueSuffix));
-
-        mSunEntity.reset (sceneMgr->createEntity ("Caelum/SphereSun" + uniqueSuffix, meshName));
-        mSunEntity->setMaterialName (mSunMaterial->getName ());
-        mSunEntity->setCastShadows (false);
-        mSunEntity->setRenderQueueGroup (CAELUM_RENDER_QUEUE_SUN);
-
-        mNode->attachObject (mSunEntity.get ());
-    }
-
-    SphereSun::~SphereSun () { }
-
-    void SphereSun::setBodyColour (const Ogre::ColourValue &colour) {
-        BaseSkyLight::setBodyColour(colour);
-
-        // Set sun material colour.
-        mSunMaterial->setSelfIllumination (colour);
-    }
-
-    void SphereSun::notifyCameraChanged (Ogre::Camera *cam) {
-        // This calls setFarRadius
-        CameraBoundElement::notifyCameraChanged(cam);
-
-        // Set sun position.
-        Ogre::Real sunDistance = mRadius - mRadius * Ogre::Math::Tan (Ogre::Degree (0.01));
-        mNode->setPosition(-mDirection * sunDistance);
-
-        // Set sun scaling  in [1.6(6) ~ 2.0] range.
-        float factor = 2 - mBodyColour.b / 3;
-        float scale = factor * sunDistance * Ogre::Math::Tan (Ogre::Degree (0.01));
-        mNode->setScale (Ogre::Vector3::UNIT_SCALE * scale);
-    }
-
     const Ogre::String SpriteSun::SUN_MATERIAL_NAME = "CaelumSpriteSun";
 
     SpriteSun::SpriteSun (

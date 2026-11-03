@@ -95,7 +95,6 @@ namespace Caelum
     class SkyDome;
     class BaseSkyLight;
     class Moon;
-    class SphereSun;
     class SpriteSun;
     class ImageStarfield;
     class PointStarfield;
